@@ -37,7 +37,7 @@ export default function Home() {
               <Button
                 size="lg"
                 variant="secondary"
-                className="w-full !bg-[var(--color-btn-secondary-bg)] !text-[var(--color-btn-secondary-text)] md:!text-[15px] lg:!text-[16px] !border-[var(--color-btn-secondary-border)] hover:!bg-[var(--color-btn-secondary-bg-hover)] hover:!text-[var(--color-btn-secondary-text-hover)]"
+                className="w-full !bg-[var(--color-btn-secondary-bg)] !text-[var(--color-btn-secondary-text)] md:!text-[15px] lg:!text-[16px] hover:!bg-[var(--color-btn-secondary-bg-hover)] hover:!text-[var(--color-btn-secondary-text-hover)]"
               >
                 Start a New Application
               </Button>

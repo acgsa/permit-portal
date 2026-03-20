@@ -106,7 +106,7 @@ export default function LoginPage() {
                 type="submit"
                 variant="secondary"
                 size="lg"
-                className="w-full !bg-[var(--color-btn-secondary-bg)] !text-[var(--color-btn-secondary-text)] !border-[var(--color-btn-secondary-border)] hover:!bg-[var(--color-btn-secondary-bg-hover)] hover:!text-[var(--color-btn-secondary-text-hover)]"
+                    className="w-full !bg-[var(--color-btn-secondary-bg)] !text-[var(--color-btn-secondary-text)] hover:!bg-[var(--color-btn-secondary-bg-hover)] hover:!text-[var(--color-btn-secondary-text-hover)]"
                 disabled={loading}
               >
                 {loading ? 'Signing in...' : 'Sign In'}

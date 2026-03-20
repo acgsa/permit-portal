@@ -76,7 +76,7 @@ export default function AboutPage() {
               <Button
                 variant="secondary"
                 size="lg"
-                className="!bg-[var(--color-btn-secondary-bg)] !text-[var(--color-btn-secondary-text)] !border-[var(--color-btn-secondary-border)] hover:!bg-[var(--color-btn-secondary-bg-hover)] hover:!text-[var(--color-btn-secondary-text-hover)]"
+                className="!bg-[var(--color-btn-secondary-bg)] !text-[var(--color-btn-secondary-text)] hover:!bg-[var(--color-btn-secondary-bg-hover)] hover:!text-[var(--color-btn-secondary-text-hover)]"
               >
                 Applicant Log In
               </Button>

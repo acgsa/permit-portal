@@ -292,21 +292,55 @@
 }
 
 .ui-button--secondary {
-  border-color: var(--color-btn-secondary-border);
+  border-color: transparent !important;
+  background-color: var(--color-btn-secondary-bg);
+  color: var(--color-btn-secondary-text);
+}
+
+.btn-secondary {
+  border-color: transparent !important;
   background-color: var(--color-btn-secondary-bg);
   color: var(--color-btn-secondary-text);
 }
 
 .ui-button--secondary:not(:disabled):hover {
-  border-color: var(--color-btn-secondary-border-hover);
+  border-color: transparent !important;
   background-color: var(--color-btn-secondary-bg-hover);
   color: var(--color-btn-secondary-text-hover);
 }
 
+.btn-secondary:not(:disabled):hover {
+  border-color: transparent !important;
+  background-color: var(--color-btn-secondary-bg-hover);
+  color: var(--color-btn-secondary-text-hover);
+}
+
+.ui-button--secondary:not(:disabled):active {
+  border-color: transparent !important;
+}
+
+.btn-secondary:not(:disabled):active {
+  border-color: transparent !important;
+}
+
 .ui-button--secondary:disabled {
-  border-color: var(--color-btn-secondary-bg-disabled);
+  border-color: transparent !important;
   background-color: var(--color-btn-secondary-bg-disabled);
   color: var(--color-btn-secondary-text-disabled);
+}
+
+.btn-secondary:disabled {
+  border-color: transparent !important;
+  background-color: var(--color-btn-secondary-bg-disabled);
+  color: var(--color-btn-secondary-text-disabled);
+}
+
+.ui-button--secondary:focus-visible {
+  border-color: var(--color-border-focus) !important;
+}
+
+.btn-secondary:focus-visible {
+  border-color: var(--color-border-focus) !important;
 }
 
 .ui-button--outline {
@@ -527,10 +561,17 @@ a:hover {
 }
 
 .usg-ribbon-text {
-  font-size: var(--font-size-body-xs);
+  font-size: 10px;
   color: #d3d9e4;
-  line-height: var(--line-height-body-xs);
+  line-height: 14px;
   text-transform: uppercase;
+}
+
+@media (min-width: 640px) {
+  .usg-ribbon-text {
+    font-size: var(--font-size-body-xs);
+    line-height: var(--line-height-body-xs);
+  }
 }
 
 [data-theme="dark"] .sidebar-nav-panel {

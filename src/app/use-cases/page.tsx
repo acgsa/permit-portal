@@ -46,7 +46,7 @@ export default function UseCasesPage() {
               <Button
                 size="lg"
                 variant="secondary"
-                className="mt-6 !bg-[var(--color-btn-secondary-bg)] !text-[var(--color-btn-secondary-text)] !border-[var(--color-btn-secondary-border)] hover:!bg-[var(--color-btn-secondary-bg-hover)] hover:!text-[var(--color-btn-secondary-text-hover)]"
+                className="mt-6 !bg-[var(--color-btn-secondary-bg)] !text-[var(--color-btn-secondary-text)] hover:!bg-[var(--color-btn-secondary-bg-hover)] hover:!text-[var(--color-btn-secondary-text-hover)]"
               >
                 Start a New Application
               </Button>
@@ -140,7 +140,7 @@ export default function UseCasesPage() {
             <Button
               variant="secondary"
               size="lg"
-              className="w-full sm:w-auto !bg-[var(--color-btn-secondary-bg)] !text-[var(--color-btn-secondary-text)] !border-[var(--color-btn-secondary-border)] hover:!bg-[var(--color-btn-secondary-bg-hover)] hover:!text-[var(--color-btn-secondary-text-hover)]"
+              className="w-full sm:w-auto !bg-[var(--color-btn-secondary-bg)] !text-[var(--color-btn-secondary-text)] hover:!bg-[var(--color-btn-secondary-bg-hover)] hover:!text-[var(--color-btn-secondary-text-hover)]"
             >
               Start a New Application
             </Button>
