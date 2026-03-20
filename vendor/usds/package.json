@@ -1,0 +1,23 @@
+{
+  "name": "usds",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/usds.cjs",
+  "module": "./dist/usds.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/usds.js",
+      "require": "./dist/usds.cjs"
+    },
+    "./styles": "./dist/usds.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  }
+}
