@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions
+  xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+  xmlns:spiff="http://spiffworkflow.org/bpmn/schema/1.0/core"
+  id="permit_process_definitions"
+  targetNamespace="http://permit.gov/bpmn"
+  exporter="PERMIT.GOV BPMN Editor"
+  exporterVersion="0.1.0">
+
+  <bpmn:process id="PermitApplication" name="Federal Permit Application" isExecutable="true">
+
+    <bpmn:startEvent id="start" name="Applicant Submits">
+      <bpmn:outgoing>to_intake</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <bpmn:userTask id="intake" name="Intake Review">
+      <bpmn:extensionElements>
+        <spiff:properties>
+          <spiff:property name="formJsonSchemaFilename" value="intake_form.json"/>
+        </spiff:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>to_intake</bpmn:incoming>
+      <bpmn:outgoing>to_agency_review</bpmn:outgoing>
+    </bpmn:userTask>
+
+    <bpmn:userTask id="agency_review" name="Agency Review">
+      <bpmn:incoming>to_agency_review</bpmn:incoming>
+      <bpmn:outgoing>to_nepa</bpmn:outgoing>
+    </bpmn:userTask>
+
+    <bpmn:userTask id="nepa_compliance" name="NEPA Compliance Review">
+      <bpmn:incoming>to_nepa</bpmn:incoming>
+      <bpmn:outgoing>to_decision</bpmn:outgoing>
+    </bpmn:userTask>
+
+    <bpmn:exclusiveGateway id="decision_gate" name="Decision">
+      <bpmn:incoming>to_decision</bpmn:incoming>
+      <bpmn:outgoing>to_approved</bpmn:outgoing>
+      <bpmn:outgoing>to_denied</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <bpmn:endEvent id="approved" name="Permit Approved">
+      <bpmn:incoming>to_approved</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <bpmn:endEvent id="denied" name="Permit Denied">
+      <bpmn:incoming>to_denied</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <bpmn:sequenceFlow id="to_intake"        sourceRef="start"         targetRef="intake"/>
+    <bpmn:sequenceFlow id="to_agency_review"  sourceRef="intake"        targetRef="agency_review"/>
+    <bpmn:sequenceFlow id="to_nepa"           sourceRef="agency_review" targetRef="nepa_compliance"/>
+    <bpmn:sequenceFlow id="to_decision"       sourceRef="nepa_compliance" targetRef="decision_gate"/>
+    <bpmn:sequenceFlow id="to_approved"       sourceRef="decision_gate" targetRef="approved">
+      <bpmn:conditionExpression>approved == true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="to_denied"         sourceRef="decision_gate" targetRef="denied">
+      <bpmn:conditionExpression>approved == false</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+
+  </bpmn:process>
+
+</bpmn:definitions>

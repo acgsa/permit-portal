@@ -1,0 +1,79 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { WorkspaceShell } from '@/components/WorkspaceShell';
+import { Card } from '@/components/Card';
+import { useAuth } from '@/contexts/AuthContext';
+
+type Props = {
+  applicationId: string;
+};
+
+const STATUS_STEPS = [
+  { label: 'Application Submitted', icon: '✔️' },
+  { label: 'Initial Screening', icon: '✔️' },
+  { label: 'Field Review', icon: '🕒' },
+  { label: 'Public Comment', icon: '' },
+  { label: 'Assessment', icon: '' },
+  { label: 'Final Decision', icon: '' },
+];
+
+export default function ApplicationDetailClient({ applicationId }: Props) {
+  const { user, token, logout } = useAuth();
+  const router = useRouter();
+  const applicationTitle = 'Eagle Exhibition Toms River Avian Care';
+  const lastUpdated = 'July 22, 2025';
+  const currentStep = 2;
+
+  if (!token) return null;
+
+  return (
+    <WorkspaceShell
+      role={user?.role}
+      userSub={user?.sub}
+      onSignOut={() => {
+        logout();
+        router.push('/');
+      }}
+    >
+      <div className="mx-auto w-full max-w-4xl space-y-[var(--space-md)] bg-black p-[var(--space-md)]">
+        <h1 className="text-3xl font-bold text-white">Application Status</h1>
+        <div className="text-[var(--color-text-disabled)] text-sm">
+          <span className="font-mono text-[var(--color-text-body)]">#{applicationId}</span> : {applicationTitle}
+        </div>
+        <div className="text-xs text-[var(--color-text-disabled)]">Last Updated: {lastUpdated}</div>
+        <Card className="bg-[var(--color-bg-elevated)] dark:bg-[var(--color-bg-elevated)]">
+          <div className="flex flex-col gap-[var(--space-md)]">
+            <div className="flex flex-row items-center justify-between bg-[var(--color-bg-muted)] dark:bg-[var(--color-bg-muted)] rounded-t-md px-4 py-3">
+              {STATUS_STEPS.map((step, idx) => (
+                <div key={step.label} className="flex-1 flex flex-col items-center">
+                  <div className={`w-8 h-8 flex items-center justify-center rounded-full border-2 ${idx <= currentStep ? 'border-blue-500 bg-blue-700 text-white' : 'border-gray-700 bg-gray-900 text-gray-400'} font-bold text-lg mb-1`}>
+                    {step.icon || (idx <= currentStep ? <span>&#9679;</span> : <span>&#9675;</span>)}
+                  </div>
+                  <div className={`text-xs text-center ${idx === currentStep ? 'text-blue-400 font-semibold' : 'text-gray-400'}`}>{step.label}</div>
+                </div>
+              ))}
+            </div>
+            <div className="flex items-center justify-between px-8">
+              {STATUS_STEPS.map((_, idx) => (
+                <div key={idx} className={`h-1 w-full ${idx < currentStep ? 'bg-blue-500' : 'bg-gray-700'} ${idx === STATUS_STEPS.length - 1 ? '' : 'mr-2'}`} />
+              ))}
+            </div>
+            <div className="px-[var(--space-md)] pb-[var(--space-md)] pt-[var(--space-xs)]">
+              <div className="mb-[var(--space-md)]">
+                <div className="font-semibold text-white mb-[var(--space-xs)]">Current status:</div>
+                <div className="text-[var(--color-text-body)]">Your application is in review by the field team. Check back for updates.</div>
+              </div>
+              <div className="mb-[var(--space-xs)] font-semibold text-white">Notifications:</div>
+              <ul className="list-disc pl-6 text-[var(--color-text-body)]">
+                <li>No action needed right now. Check your inbox for any requests for additional info.</li>
+                <li>Pro Tip: Upload supporting docs early to speed things up!</li>
+              </ul>
+              <div className="mt-[var(--space-md)] text-xs text-[var(--color-text-disabled)]">This tracker will update automatically.</div>
+            </div>
+          </div>
+        </Card>
+      </div>
+    </WorkspaceShell>
+  );
+}

@@ -34,3 +34,31 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Demo Mode For GitHub Pages
+
+This repo supports two runtime modes from the same source code:
+
+- Live mode: Next.js frontend + Python backend API
+- Demo mode: static export with mock auth and mock API data
+
+### Local demo build
+
+```bash
+DEMO_STATIC_EXPORT=true \
+NEXT_PUBLIC_APP_MODE=demo \
+NEXT_PUBLIC_API_URL=https://demo.invalid \
+npm run build
+```
+
+Static output is generated in `out/`.
+
+### GitHub Pages deployment
+
+Use the workflow at `.github/workflows/pages-demo.yml` from repo root. It builds the `permit-portal` app in demo mode and deploys `permit-portal/out` to GitHub Pages.
+
+### Environment variables
+
+- `NEXT_PUBLIC_APP_MODE=demo` enables mock login/data adapters.
+- `DEMO_STATIC_EXPORT=true` switches Next output to static export.
+- `NEXT_PUBLIC_BASE_PATH` is set by CI for project Pages paths.
