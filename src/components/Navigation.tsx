@@ -6,23 +6,16 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Button } from 'usds';
 import { useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
 import { MenuIcon, XMarkIcon } from './Icons';
 import usappLogo from '@/logo/USAPP.svg';
 
 export function Navigation() {
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { user } = useAuth();
-
-  // Use transparency and blur for logged out (user == null)
-  const navClass = user == null
-    ? "sticky top-0 z-50 flex justify-center backdrop-blur-xl bg-black/60 px-2 sm:px-6 lg:px-8"
-    : "sticky top-0 z-50 flex justify-center px-2 sm:px-6 lg:px-8";
+  const navClass = "sticky top-0 z-50 flex justify-center backdrop-blur-xl bg-black/60 px-2 sm:px-6 lg:px-8";
   const navStyle = {
     paddingTop: 'var(--space-sm)',
     paddingBottom: 'var(--space-sm)',
-    ...(user == null ? {} : { backgroundColor: '#000000' })
   };
   return (
     <nav className={navClass} style={navStyle}>

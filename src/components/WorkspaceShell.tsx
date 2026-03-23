@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { Menu, DrawerButton, Button } from 'usds';
+import { Menu, DrawerButton, Button, Avatar } from 'usds';
 import fppLogo from '@/logo/FPP2.svg';
 import { resolveStaffProfile } from '@/lib/mockFederalPortalData';
 
@@ -21,17 +21,21 @@ type NavItem = {
 };
 
 function getPrimaryNavItems(role?: string): NavItem[] {
-  if (role === 'staff' || role === 'admin') {
+  if (role === 'admin') {
+    return [
+      { label: 'Dashboard', href: '/dashboard' },
+      { label: 'Workflow Manager', href: '/staff/workflow-manager' },
+      { label: 'Admin Controls', href: '/staff/admin-controls' },
+    ];
+  }
+
+  if (role === 'staff') {
     const staffItems: NavItem[] = [
       { label: 'Dashboard', href: '/dashboard' },
+      { label: 'Workflow Manager', href: '/staff/workflow-manager' },
       { label: 'My Tasks', href: '/my-tasks' },
       { label: 'Messages', href: '/messages' },
     ];
-
-    if (role === 'admin') {
-      staffItems.push({ label: 'Admin Controls', href: '/staff/admin-controls' });
-    }
-
     return staffItems;
   }
 
@@ -121,6 +125,7 @@ interface MenuItem {
 }
 
 interface CustomSidebarProps {
+  role?: string;
   displayName: string;
   initials: string;
   organizationLabel?: string;
@@ -130,6 +135,7 @@ interface CustomSidebarProps {
 }
 
 function CustomSidebarInner({
+  role,
   displayName,
   initials,
   organizationLabel,
@@ -155,6 +161,7 @@ function CustomSidebarInner({
 
   const primaryActiveIndex = primaryMenuItems.findIndex((item) => matchesNavHref(item.href));
   const resourceActiveIndex = resourceMenuItems.findIndex((item) => matchesNavHref(item.href));
+  const avatarColor = role === 'admin' ? 'green' : role === 'staff' ? 'gold' : 'blue-400';
 
   const toggleTheme = () => {
     const htmlElement = document.documentElement;
@@ -227,9 +234,9 @@ function CustomSidebarInner({
           type="button"
           onClick={() => setUserMenuOpen(!userMenuOpen)}
           className="relative"
-          style={{ width: 40, height: 40, minWidth: 40, minHeight: 40, borderRadius: 'var(--radius-md)', backgroundColor: 'rgb(96, 165, 250)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgb(17, 24, 39)', fontWeight: '600', fontSize: '18px', border: 'none', cursor: 'pointer' }}
+          style={{ width: 40, height: 40, minWidth: 40, minHeight: 40, padding: 0, border: 'none', background: 'transparent', cursor: 'pointer' }}
         >
-          {initials}
+          <Avatar initials={initials} size="md" shape="square" color={avatarColor} />
         </button>
         <div className={`sidebar-nav-user-copy${isOpen ? "" : " sidebar-nav-user-copy-hidden"}`}>
           <div className="sidebar-nav-user-name">{displayName}</div>
@@ -309,6 +316,7 @@ export function WorkspaceShell({ role, userSub, organizationLabel, onSignOut, ch
   return (
     <div className="h-screen min-h-0 overflow-hidden bg-steel-950 flex flex-col md:flex-row" suppressHydrationWarning>
       <CustomSidebar
+        role={role}
         displayName={displayName}
         initials={initials}
         organizationLabel={resolvedOrganizationLabel}

@@ -1,7 +1,14 @@
 const TOKEN_KEY = 'permit_gov_token';
+const AUTH_CHANGE_EVENT = 'permit_gov_auth_change';
+
+function emitAuthChange(): void {
+  if (typeof window === 'undefined') return;
+  window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
+}
 
 export function saveToken(token: string): void {
   localStorage.setItem(TOKEN_KEY, token);
+  emitAuthChange();
 }
 
 export function getToken(): string | null {
@@ -11,6 +18,27 @@ export function getToken(): string | null {
 
 export function clearToken(): void {
   localStorage.removeItem(TOKEN_KEY);
+  emitAuthChange();
+}
+
+export function subscribeTokenChange(onStoreChange: () => void): () => void {
+  if (typeof window === 'undefined') {
+    return () => {};
+  }
+
+  const onStorage = (event: StorageEvent) => {
+    if (event.key === TOKEN_KEY) {
+      onStoreChange();
+    }
+  };
+
+  window.addEventListener('storage', onStorage);
+  window.addEventListener(AUTH_CHANGE_EVENT, onStoreChange);
+
+  return () => {
+    window.removeEventListener('storage', onStorage);
+    window.removeEventListener(AUTH_CHANGE_EVENT, onStoreChange);
+  };
 }
 
 /** Decode the JWT payload (no verification — for UI display only). */

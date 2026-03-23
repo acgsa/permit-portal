@@ -1,9 +1,11 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card } from '@/components/Card';
 import { WorkspaceShell } from '@/components/WorkspaceShell';
+import { PortalPageScaffold } from '@/components/PortalPageScaffold';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   getVisibleFederalApplications,
@@ -27,11 +29,17 @@ function statusPillClass(status: FederalApplicationRecord['status']): string {
 export default function DashboardPage() {
   const { user, token, logout } = useAuth();
   const router = useRouter();
+  const isStaffUser = user?.role === 'staff' || user?.role === 'admin';
+
+  useEffect(() => {
+    if (token && !isStaffUser) {
+      router.replace('/home');
+    }
+  }, [token, isStaffUser, router]);
 
   if (!token) return null;
 
-  if (user?.role !== 'staff' && user?.role !== 'admin') {
-    router.replace('/home');
+  if (!isStaffUser) {
     return null;
   }
 
@@ -55,51 +63,46 @@ export default function DashboardPage() {
         router.push('/');
       }}
     >
-      <div className="w-full space-y-8">
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div>
-            <h1 className="text-3xl font-bold">Federal Staff Dashboard</h1>
-            <p className="text-steel-300 mt-1">
-              {staffProfile.displayName} · {staffProfile.title}
-            </p>
-            <p className="text-steel-400 mt-1">
-              Scope: {staffProfile.role === 'admin' ? 'All agencies and regions' : `${staffProfile.region} region`} · {staffProfile.agency}
-            </p>
-          </div>
-          {staffProfile.role === 'admin' && (
+      <PortalPageScaffold
+        eyebrow="Federal Staff Portal"
+        title="Federal Staff Dashboard"
+        subtitle={`${staffProfile.displayName} · ${staffProfile.title} · Scope: ${staffProfile.role === 'admin' ? 'All agencies and regions' : `${staffProfile.region} region`} · ${staffProfile.agency}`}
+        actions={
+          staffProfile.role === 'admin' ? (
             <Link
               href="/staff/admin-controls"
-              className="rounded-sm bg-[var(--color-btn-primary-bg)] px-4 py-2 text-sm font-semibold text-[var(--color-btn-primary-text)] hover:bg-[var(--color-btn-primary-bg-hover)]"
+              className="rounded-sm bg-[var(--color-btn-primary-bg)] px-4 py-2 type-body-strong-sm text-[var(--color-btn-primary-text)] hover:bg-[var(--color-btn-primary-bg-hover)]"
             >
               Open Admin Controls
             </Link>
-          )}
-        </div>
+          ) : null
+        }
+      >
 
-        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <section className="grid gap-[var(--space-md)] sm:grid-cols-2 lg:grid-cols-4">
           <Card>
-            <p className="text-sm text-steel-500">Submitted</p>
-            <p className="text-3xl font-semibold text-white mt-1">{submittedCount}</p>
+            <p className="type-body-sm text-steel-500">Submitted</p>
+            <p className="type-heading-h4 mt-[var(--space-xs)] text-white">{submittedCount}</p>
           </Card>
           <Card>
-            <p className="text-sm text-steel-500">In Review</p>
-            <p className="text-3xl font-semibold text-white mt-1">{inReviewCount}</p>
+            <p className="type-body-sm text-steel-500">In Review</p>
+            <p className="type-heading-h4 mt-[var(--space-xs)] text-white">{inReviewCount}</p>
           </Card>
           <Card>
-            <p className="text-sm text-steel-500">Pending Interagency</p>
-            <p className="text-3xl font-semibold text-white mt-1">{pendingInteragencyCount}</p>
+            <p className="type-body-sm text-steel-500">Pending Interagency</p>
+            <p className="type-heading-h4 mt-[var(--space-xs)] text-white">{pendingInteragencyCount}</p>
           </Card>
           <Card>
-            <p className="text-sm text-steel-500">Approved</p>
-            <p className="text-3xl font-semibold text-white mt-1">{approvedCount}</p>
+            <p className="type-body-sm text-steel-500">Approved</p>
+            <p className="type-heading-h4 mt-[var(--space-xs)] text-white">{approvedCount}</p>
           </Card>
         </section>
 
         <section>
-          <h2 className="text-xl font-semibold mb-4">Current Agency Applications</h2>
+          <h2 className="type-heading-h6 mb-[var(--space-sm)] text-[var(--color-text)]">Current Agency Applications</h2>
           <div className="overflow-x-auto rounded-sm border border-white/10 bg-white/[0.02]">
-            <table className="min-w-full text-sm">
-              <thead className="bg-white/[0.04] text-left text-steel-300">
+            <table className="min-w-full type-body-sm">
+              <thead className="bg-white/[0.04] text-left text-steel-300 type-body-strong-sm">
                 <tr>
                   <th className="px-4 py-3 font-medium">Application ID</th>
                   <th className="px-4 py-3 font-medium">Applicant</th>
@@ -133,32 +136,35 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        <section className="grid gap-4 sm:grid-cols-2">
+        <section className="grid gap-[var(--space-md)] sm:grid-cols-2">
           <Card>
-            <h3 className="text-lg font-semibold text-white">Access Model (Demo)</h3>
-            <p className="mt-2 text-sm text-steel-300">
+            <h3 className="type-heading-h6 text-white">Access Model (Demo)</h3>
+            <p className="type-body-sm mt-[var(--space-xs)] text-steel-300">
               Super Admin users can view every application in every region and agency.
               Regional managers can view only applications in their assigned region.
             </p>
           </Card>
           <Card>
-            <h3 className="text-lg font-semibold text-white">Tools</h3>
-            <div className="mt-3 flex flex-wrap gap-3">
-              <Link href="/home/help-desk" className="rounded-sm border border-white/20 px-3 py-2 text-sm text-steel-100 hover:bg-white/10">
+            <h3 className="type-heading-h6 text-white">Tools</h3>
+            <div className="mt-[var(--space-sm)] flex flex-wrap gap-[var(--space-sm)]">
+              <Link href="/staff/workflow-manager" className="rounded-sm border border-white/20 px-3 py-2 type-body-sm text-steel-100 hover:bg-white/10">
+                Workflow Manager
+              </Link>
+              <Link href="/home/help-desk" className="rounded-sm border border-white/20 px-3 py-2 type-body-sm text-steel-100 hover:bg-white/10">
                 Help Desk
               </Link>
-              <Link href="/resources" className="rounded-sm border border-white/20 px-3 py-2 text-sm text-steel-100 hover:bg-white/10">
+              <Link href="/resources" className="rounded-sm border border-white/20 px-3 py-2 type-body-sm text-steel-100 hover:bg-white/10">
                 Resource Center
               </Link>
               {staffProfile.role === 'admin' && (
-                <Link href="/staff/admin-controls" className="rounded-sm border border-white/20 px-3 py-2 text-sm text-steel-100 hover:bg-white/10">
+                <Link href="/staff/admin-controls" className="rounded-sm border border-white/20 px-3 py-2 type-body-sm text-steel-100 hover:bg-white/10">
                   Manage Access Controls
                 </Link>
               )}
             </div>
           </Card>
         </section>
-      </div>
+      </PortalPageScaffold>
     </WorkspaceShell>
   );
 }

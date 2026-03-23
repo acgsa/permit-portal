@@ -5,6 +5,7 @@ import { Check, Circle, Clock3 } from 'lucide-react';
 import { WorkspaceShell } from '@/components/WorkspaceShell';
 import { Card } from '@/components/Card';
 import { LucideIcon } from '@/components/LucideIcon';
+import { PortalPageScaffold } from '@/components/PortalPageScaffold';
 import { useAuth } from '@/contexts/AuthContext';
 
 type Props = {
@@ -38,12 +39,11 @@ export default function ApplicationDetailClient({ applicationId }: Props) {
         router.push('/');
       }}
     >
-      <div className="mx-auto w-full max-w-4xl space-y-[var(--space-md)] bg-black p-[var(--space-md)]">
-        <h1 className="text-3xl font-bold text-white">Application Status</h1>
-        <div className="text-[var(--color-text-disabled)] text-sm">
-          <span className="font-mono text-[var(--color-text-body)]">#{applicationId}</span> : {applicationTitle}
-        </div>
-        <div className="text-xs text-[var(--color-text-disabled)]">Last Updated: {lastUpdated}</div>
+      <PortalPageScaffold
+        eyebrow="Applicant Portal"
+        title="Application Status"
+        subtitle={`#${applicationId} · ${applicationTitle} · Last Updated: ${lastUpdated}`}
+      >
         <Card className="bg-[var(--color-bg-elevated)] dark:bg-[var(--color-bg-elevated)]">
           <div className="flex flex-col gap-[var(--space-md)]">
             <div className="flex flex-row items-center justify-between bg-[var(--color-bg-muted)] dark:bg-[var(--color-bg-muted)] rounded-t-md px-4 py-3">
@@ -69,19 +69,19 @@ export default function ApplicationDetailClient({ applicationId }: Props) {
             </div>
             <div className="px-[var(--space-md)] pb-[var(--space-md)] pt-[var(--space-xs)]">
               <div className="mb-[var(--space-md)]">
-                <div className="font-semibold text-white mb-[var(--space-xs)]">Current status:</div>
-                <div className="text-[var(--color-text-body)]">Your application is in review by the field team. Check back for updates.</div>
+                <div className="type-body-strong-sm text-white mb-[var(--space-xs)]">Current status:</div>
+                <div className="type-body-sm text-[var(--color-text-body)]">Your application is in review by the field team. Check back for updates.</div>
               </div>
-              <div className="mb-[var(--space-xs)] font-semibold text-white">Notifications:</div>
-              <ul className="list-disc pl-6 text-[var(--color-text-body)]">
+              <div className="type-body-strong-sm mb-[var(--space-xs)] text-white">Notifications:</div>
+              <ul className="type-body-sm list-disc pl-6 text-[var(--color-text-body)]">
                 <li>No action needed right now. Check your inbox for any requests for additional info.</li>
                 <li>Pro Tip: Upload supporting docs early to speed things up!</li>
               </ul>
-              <div className="mt-[var(--space-md)] text-xs text-[var(--color-text-disabled)]">This tracker will update automatically.</div>
+              <div className="type-body-xs mt-[var(--space-md)] text-[var(--color-text-disabled)]">This tracker will update automatically.</div>
             </div>
           </div>
         </Card>
-      </div>
+      </PortalPageScaffold>
     </WorkspaceShell>
   );
 }
