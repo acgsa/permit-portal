@@ -1,8 +1,10 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { Check, Circle, Clock3 } from 'lucide-react';
 import { WorkspaceShell } from '@/components/WorkspaceShell';
 import { Card } from '@/components/Card';
+import { LucideIcon } from '@/components/LucideIcon';
 import { useAuth } from '@/contexts/AuthContext';
 
 type Props = {
@@ -10,12 +12,12 @@ type Props = {
 };
 
 const STATUS_STEPS = [
-  { label: 'Application Submitted', icon: '✔️' },
-  { label: 'Initial Screening', icon: '✔️' },
-  { label: 'Field Review', icon: '🕒' },
-  { label: 'Public Comment', icon: '' },
-  { label: 'Assessment', icon: '' },
-  { label: 'Final Decision', icon: '' },
+  { label: 'Application Submitted', icon: Check },
+  { label: 'Initial Screening', icon: Check },
+  { label: 'Field Review', icon: Clock3 },
+  { label: 'Public Comment', icon: null },
+  { label: 'Assessment', icon: null },
+  { label: 'Final Decision', icon: null },
 ];
 
 export default function ApplicationDetailClient({ applicationId }: Props) {
@@ -48,7 +50,13 @@ export default function ApplicationDetailClient({ applicationId }: Props) {
               {STATUS_STEPS.map((step, idx) => (
                 <div key={step.label} className="flex-1 flex flex-col items-center">
                   <div className={`w-8 h-8 flex items-center justify-center rounded-full border-2 ${idx <= currentStep ? 'border-blue-500 bg-blue-700 text-white' : 'border-gray-700 bg-gray-900 text-gray-400'} font-bold text-lg mb-1`}>
-                    {step.icon || (idx <= currentStep ? <span>&#9679;</span> : <span>&#9675;</span>)}
+                    {step.icon ? (
+                      <LucideIcon icon={step.icon} size={16} />
+                    ) : idx <= currentStep ? (
+                      <LucideIcon icon={Circle} size={10} fill="currentColor" />
+                    ) : (
+                      <LucideIcon icon={Circle} size={10} />
+                    )}
                   </div>
                   <div className={`text-xs text-center ${idx === currentStep ? 'text-blue-400 font-semibold' : 'text-gray-400'}`}>{step.label}</div>
                 </div>

@@ -31,6 +31,8 @@ function createDemoJwt(username: string, role: string): string {
 
 function roleFromUsername(username: string): string {
   const normalized = username.toLowerCase();
+  if (normalized.includes('doug.burgum')) return 'admin';
+  if (normalized.includes('harmony.munro')) return 'staff';
   if (normalized.includes('admin')) return 'admin';
   if (normalized.includes('staff') || normalized.includes('federal')) return 'staff';
   return 'applicant';

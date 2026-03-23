@@ -5,3 +5,4 @@ export { Navigation } from './Navigation';
 export { USGRibbon } from './USGRibbon';
 export { ThemeProviderComponent as ThemeProvider } from './ThemeProvider';
 export { Table } from './Table';
+export { LucideIcon } from './LucideIcon';

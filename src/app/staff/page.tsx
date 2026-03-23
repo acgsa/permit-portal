@@ -6,17 +6,31 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { IS_DEMO_MODE } from '@/lib/appMode';
+import { STAFF_DEMO_USERS } from '@/lib/mockFederalPortalData';
 
-const DEMO_EMAIL = 'staff.demo@agency.gov';
 const DEMO_PASSWORD = 'PermitPilot2026!';
 
 export default function StaffLoginPage() {
-  const [email, setEmail] = useState(DEMO_EMAIL);
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState(DEMO_PASSWORD);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { login } = useAuth();
   const router = useRouter();
+
+  const handleDemoPersonaLogin = async (demoEmail: string) => {
+    setError(null);
+    setLoading(true);
+    try {
+      await login(demoEmail, DEMO_PASSWORD);
+      router.push('/dashboard');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Login failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -24,7 +38,7 @@ export default function StaffLoginPage() {
     setLoading(true);
     try {
       await login(email, password);
-      router.push('/home');
+      router.push('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed. Please try again.');
     } finally {
@@ -52,75 +66,69 @@ export default function StaffLoginPage() {
                   <p className="type-body-sm">{error}</p>
                 </div>
               )}
-              <Input
-                label="Federal Email Address"
-                type="email"
-                placeholder="you@agency.gov"
-                value={email}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-                required
-                hint="Use your official .gov email address"
-              />
-
-              <Input
-                label="Password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-                required
-              />
-
-              <div className="rounded-sm border border-white/12" style={{ padding: 'var(--space-md)', display: 'flex', flexDirection: 'column', gap: 'var(--space-md)', backgroundColor: 'rgba(255, 255, 255, 0.04)' }}>
-                <p className="type-body-xs" style={{ color: 'var(--color-text-disabled)' }}>
-                  Pilot Demo Credentials:
-                </p>
-                <p className="type-body-xs" style={{ color: 'var(--color-text-disabled)' }}>Email: {DEMO_EMAIL}</p>
-                <p className="type-body-xs" style={{ color: 'var(--color-text-disabled)' }}>Password: {DEMO_PASSWORD}</p>
-                <Button
-                  type="button"
-                  variant="primary"
-                  size="md"
-                  className="w-full"
-                  onClick={() => {
-                    setEmail(DEMO_EMAIL);
-                    setPassword(DEMO_PASSWORD);
-                  }}
-                >
-                  Use Demo Credentials
-                </Button>
-              </div>
-
-              <div className="flex items-center justify-between" style={{ marginTop: 'var(--space-sm)' }}>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    className="w-4 h-4 rounded border"
-                    style={{ borderColor: 'var(--color-border-default)' }}
+              {IS_DEMO_MODE ? (
+                <div className="rounded-sm border border-white/12" style={{ padding: 'var(--space-md)', display: 'flex', flexDirection: 'column', gap: 'var(--space-md)', backgroundColor: 'rgba(255, 255, 255, 0.04)' }}>
+                  <p className="type-body-xs" style={{ color: 'var(--color-text-disabled)' }}>
+                    Staff Demo Access (Static Site)
+                  </p>
+                  <Button
+                    type="button"
+                    variant="primary"
+                    size="lg"
+                    className="w-full"
+                    disabled={loading}
+                    onClick={() => handleDemoPersonaLogin(STAFF_DEMO_USERS[0].email)}
+                  >
+                    {loading ? 'Signing in...' : 'Doug Burgum (Super Admin)'}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="lg"
+                    className="w-full !bg-[var(--color-btn-secondary-bg)] !text-[var(--color-btn-secondary-text)] hover:!bg-[var(--color-btn-secondary-bg-hover)] hover:!text-[var(--color-btn-secondary-text-hover)]"
+                    disabled={loading}
+                    onClick={() => handleDemoPersonaLogin(STAFF_DEMO_USERS[1].email)}
+                  >
+                    {loading ? 'Signing in...' : 'Harmony Munro (Regional Manager)'}
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <Input
+                    label="Federal Email Address"
+                    type="email"
+                    placeholder="you@agency.gov"
+                    value={email}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+                    required
+                    hint="Use your official .gov email address"
                   />
-                  <span className="type-body-sm" style={{ color: 'var(--color-text-body)' }}>
-                    Remember this device
-                  </span>
-                </label>
-                <a href="#" className="type-body-sm hover:text-white transition-colors" style={{ color: 'var(--color-text-body)' }}>
-                  Reset password
-                </a>
-              </div>
 
-              <Button
-                type="submit"
-                variant="secondary"
-                size="lg"
-                className="w-full !bg-[var(--color-btn-secondary-bg)] !text-[var(--color-btn-secondary-text)] hover:!bg-[var(--color-btn-secondary-bg-hover)] hover:!text-[var(--color-btn-secondary-text-hover)]"
-                disabled={loading}
-              >
-                {loading ? 'Signing in...' : 'Continue'}
-              </Button>
+                  <Input
+                    label="Password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+                    required
+                  />
+
+                  <Button
+                    type="submit"
+                    variant="secondary"
+                    size="lg"
+                    className="w-full !bg-[var(--color-btn-secondary-bg)] !text-[var(--color-btn-secondary-text)] hover:!bg-[var(--color-btn-secondary-bg-hover)] hover:!text-[var(--color-btn-secondary-text-hover)]"
+                    disabled={loading}
+                  >
+                    {loading ? 'Signing in...' : 'Continue'}
+                  </Button>
+                </>
+              )}
             </form>
 
             <div className="rounded-sm" style={{ marginTop: 'var(--space-2xl)', padding: 'var(--space-md)', backgroundColor: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
               <p className="type-body-xs" style={{ color: 'var(--color-text-disabled)', opacity: 0.8 }}>
-                Demo Access: Federal Portal provides access to permit reviews, agency dashboards, and reporting tools. Pilot sign-in goes directly to the home page without an additional verification step.
+                Demo Access: Federal Portal provides role-based staff dashboards. Super Admin sees all applications, while regional managers see only regional applications.
               </p>
             </div>
           </div>

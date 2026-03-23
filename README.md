@@ -62,3 +62,9 @@ Use the workflow at `.github/workflows/pages-demo.yml` from repo root. It builds
 - `NEXT_PUBLIC_APP_MODE=demo` enables mock login/data adapters.
 - `DEMO_STATIC_EXPORT=true` switches Next output to static export.
 - `NEXT_PUBLIC_BASE_PATH` is set by CI for project Pages paths.
+
+## Icon policy
+
+- Use USDS icons first when an equivalent icon exists in our USDS icon collection.
+- If an icon is not available in USDS, use Lucide via `lucide-react`.
+- Prefer the shared `LucideIcon` wrapper in `src/components/LucideIcon.tsx` to keep sizing and stroke styles consistent.
