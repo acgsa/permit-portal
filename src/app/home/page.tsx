@@ -1,6 +1,7 @@
 
 'use client';
 
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { WorkspaceShell } from '@/components/WorkspaceShell';
 import { useAuth } from '@/contexts/AuthContext';
@@ -9,7 +10,17 @@ import { Button, PlusIcon } from 'usds';
 export default function HomePage() {
   const firstName = 'John Doe';
   const router = useRouter();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
+
+  useEffect(() => {
+    if (user?.role === 'staff' || user?.role === 'admin') {
+      router.replace('/dashboard');
+    }
+  }, [user?.role, router]);
+
+  if (user?.role === 'staff' || user?.role === 'admin') {
+    return null;
+  }
 
   const summary = [
     { label: 'Total Applications', value: 0, color: 'var(--color-text)' },

@@ -6,6 +6,15 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { getToken, getTokenClaims } from '@/lib/auth';
+
+function getPostLoginPath(): '/home' | '/dashboard' {
+  const token = getToken();
+  if (!token) return '/home';
+  const claims = getTokenClaims(token);
+  const role = typeof claims.role === 'string' ? claims.role : 'applicant';
+  return role === 'staff' || role === 'admin' ? '/dashboard' : '/home';
+}
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -22,7 +31,7 @@ export default function LoginPage() {
       setEmail(demoEmail);
       setPassword(demoPassword);
       await login(demoEmail, demoPassword);
-      router.push('/home');
+      router.push(getPostLoginPath());
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Demo login failed.');
     } finally {
@@ -40,7 +49,7 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login(email, password);
-      router.push('/home');
+      router.push(getPostLoginPath());
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed. Please try again.');
     } finally {
@@ -125,7 +134,7 @@ export default function LoginPage() {
 
             <div className="border-t border-white/12" style={{ marginTop: 'var(--space-2xl)', paddingTop: 'var(--space-2xl)' }}>
               <p className="text-center type-body-sm" style={{ marginBottom: 'var(--space-md)', color: 'var(--color-text-body)' }}>
-                Don't have an account?
+                Don&apos;t have an account?
               </p>
               <Button
                 variant="primary"
