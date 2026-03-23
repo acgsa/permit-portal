@@ -66,33 +66,33 @@ export default function StaffLoginPage() {
                   <p className="type-body-sm">{error}</p>
                 </div>
               )}
-              {IS_DEMO_MODE ? (
-                <div className="rounded-sm border border-white/12" style={{ padding: 'var(--space-md)', display: 'flex', flexDirection: 'column', gap: 'var(--space-md)', backgroundColor: 'rgba(255, 255, 255, 0.04)' }}>
-                  <p className="type-body-xs" style={{ color: 'var(--color-text-disabled)' }}>
-                    Staff Demo Access (Static Site)
-                  </p>
-                  <Button
-                    type="button"
-                    variant="primary"
-                    size="lg"
-                    className="w-full"
-                    disabled={loading}
-                    onClick={() => handleDemoPersonaLogin(STAFF_DEMO_USERS[0].email)}
-                  >
-                    {loading ? 'Signing in...' : 'Doug Burgum (Super Admin)'}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    size="lg"
-                    className="w-full !bg-[var(--color-btn-secondary-bg)] !text-[var(--color-btn-secondary-text)] hover:!bg-[var(--color-btn-secondary-bg-hover)] hover:!text-[var(--color-btn-secondary-text-hover)]"
-                    disabled={loading}
-                    onClick={() => handleDemoPersonaLogin(STAFF_DEMO_USERS[1].email)}
-                  >
-                    {loading ? 'Signing in...' : 'Harmony Munro (Regional Manager)'}
-                  </Button>
-                </div>
-              ) : (
+              <div className="rounded-sm border border-white/12" style={{ padding: 'var(--space-md)', display: 'flex', flexDirection: 'column', gap: 'var(--space-md)', backgroundColor: 'rgba(255, 255, 255, 0.04)' }}>
+                <p className="type-body-xs" style={{ color: 'var(--color-text-disabled)' }}>
+                  Staff Demo Access
+                </p>
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="lg"
+                  className="w-full"
+                  disabled={loading}
+                  onClick={() => handleDemoPersonaLogin(STAFF_DEMO_USERS[0].email)}
+                >
+                  {loading ? 'Signing in...' : 'Doug Burgum (Super Admin)'}
+                </Button>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="lg"
+                  className="w-full !bg-[var(--color-btn-secondary-bg)] !text-[var(--color-btn-secondary-text)] hover:!bg-[var(--color-btn-secondary-bg-hover)] hover:!text-[var(--color-btn-secondary-text-hover)]"
+                  disabled={loading}
+                  onClick={() => handleDemoPersonaLogin(STAFF_DEMO_USERS[1].email)}
+                >
+                  {loading ? 'Signing in...' : 'Harmony Munro (Regional Manager)'}
+                </Button>
+              </div>
+
+              {!IS_DEMO_MODE && (
                 <>
                   <Input
                     label="Federal Email Address"
