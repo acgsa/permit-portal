@@ -72,7 +72,7 @@ export default function StaffLoginPage() {
                 </p>
                 <Button
                   type="button"
-                  variant="primary"
+                  variant="outline"
                   size="lg"
                   className="w-full"
                   disabled={loading}
@@ -82,9 +82,9 @@ export default function StaffLoginPage() {
                 </Button>
                 <Button
                   type="button"
-                  variant="secondary"
+                  variant="outline"
                   size="lg"
-                  className="w-full !bg-[var(--color-btn-secondary-bg)] !text-[var(--color-btn-secondary-text)] hover:!bg-[var(--color-btn-secondary-bg-hover)] hover:!text-[var(--color-btn-secondary-text-hover)]"
+                  className="w-full"
                   disabled={loading}
                   onClick={() => handleDemoPersonaLogin(STAFF_DEMO_USERS[1].email)}
                 >
