@@ -572,6 +572,142 @@ p {
   padding-top: var(--space-lg);
 }
 
+.pre-screener-checkbox-list .check-item {
+  border: 0;
+  padding: var(--space-xs) 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.pre-screener-checkbox-list .check-item:hover {
+  background: transparent;
+}
+
+.pre-screener-page .card {
+  border-radius: 14px;
+  border: 0;
+  background: linear-gradient(180deg, #1a212b 0%, #181f29 100%);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.34);
+}
+
+.pre-screener-page .pre-screener-intro {
+  margin-bottom: var(--space-3xl);
+}
+
+.pre-screener-page .card + .card {
+  margin-top: var(--space-3xl);
+}
+
+.pre-screener-page .card .card-text {
+  width: 100%;
+}
+
+.pre-screener-page .page-card-body {
+  gap: var(--space-xl);
+  text-align: center;
+}
+
+.pre-screener-page .input-label,
+.pre-screener-page .type-body-sm,
+.pre-screener-page .type-body-xs {
+  color: #c5cfdb;
+}
+
+.pre-screener-page .input-field,
+.pre-screener-page .select-field,
+.pre-screener-page .textarea-field {
+  border-radius: 4px;
+  border: 1px solid color-mix(in srgb, #8f9aaa 22%, transparent);
+  background: #090d13;
+  color: #f4f7fb;
+}
+
+.pre-screener-page .input-field::placeholder,
+.pre-screener-page .textarea-field::placeholder {
+  color: color-mix(in srgb, #c5cfdb 48%, transparent);
+}
+
+.pre-screener-step-kicker {
+  text-align: center;
+  letter-spacing: 0.14em;
+}
+
+.pre-screener-pill-list .check-item {
+  border: 0;
+  border-radius: 999px;
+  background: #353f4c;
+  color: #dbe4ef;
+  padding: 10px 18px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+
+.pre-screener-pill-list .check-item:hover {
+  background: #414c5b;
+}
+
+.pre-screener-pill-list .check-item input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pre-screener-pill-list .check-item:has(input:checked) {
+  background: #4f5d70;
+  border-color: #7e8da3;
+  color: #ffffff;
+}
+
+.pre-screener-yes-no {
+  gap: var(--space-md);
+}
+
+.pre-screener-yes-no .check-item {
+  border: 0;
+  border-radius: 999px;
+  background: #353f4c;
+  color: #dbe4ef;
+  min-height: 42px;
+  width: 100%;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+
+.pre-screener-yes-no .check-item input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pre-screener-yes-no .check-item:has(input:checked) {
+  background: #4f5d70;
+  border-color: #7e8da3;
+  color: #ffffff;
+}
+
+.pre-screener-page input[type="file"] {
+  width: 100%;
+  border-radius: 4px;
+  border: 1px solid color-mix(in srgb, #8f9aaa 22%, transparent);
+  background: #090d13;
+  padding: 10px;
+}
+
+/* Show required marker through USDS field labels when inputs/selects are required. */
+.input-wrapper:has(.input-field[required]) .input-label::after,
+.input-wrapper:has(.select-field[required]) .input-label::after {
+  content: ' *';
+  color: var(--color-error);
+}
+
 a {
   color: var(--color-text-link);
   text-decoration: none;
