@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ComponentType } from 'react';
 import {
   Background,
   Controls,
@@ -186,6 +186,8 @@ const starterUiSchema: RjsfUiSchema = {
   },
 };
 
+const RjsfForm = Form as unknown as ComponentType<Record<string, unknown>>;
+
 function WorkflowManagerContent() {
   const { user, token, logout } = useAuth();
   const router = useRouter();
@@ -198,7 +200,7 @@ function WorkflowManagerContent() {
   const [formData, setFormData] = useState<Record<string, unknown>>({});
 
   const onConnect = (params: Connection) => {
-    setEdges((prevEdges) => addEdge({ ...params, markerEnd: { type: MarkerType.ArrowClosed } }, prevEdges));
+    setEdges((prevEdges: Edge[]) => addEdge({ ...params, markerEnd: { type: MarkerType.ArrowClosed } }, prevEdges));
   };
 
   const selectedNode = useMemo(
@@ -263,7 +265,7 @@ function WorkflowManagerContent() {
                   onNodesChange={onNodesChange}
                   onEdgesChange={onEdgesChange}
                   onConnect={onConnect}
-                  onNodeClick={(_, node) => setSelectedNodeId(node.id)}
+                  onNodeClick={(_event: unknown, node: Node) => setSelectedNodeId(node.id)}
                   fitView
                   nodeTypes={nodeTypes}
                 >
@@ -321,12 +323,12 @@ function WorkflowManagerContent() {
             </div>
 
             {parsedSchema && parsedUiSchema ? (
-              <Form
+              <RjsfForm
                 schema={parsedSchema}
                 uiSchema={parsedUiSchema}
                 validator={validator}
                 formData={formData}
-                onChange={(event) => setFormData(event.formData as Record<string, unknown>)}
+                onChange={(event: { formData?: unknown }) => setFormData((event.formData ?? {}) as Record<string, unknown>)}
                 onSubmit={() => {}}
               >
                 <div className="mt-[var(--space-md)]">
@@ -334,7 +336,7 @@ function WorkflowManagerContent() {
                     Save Step Form
                   </Button>
                 </div>
-              </Form>
+              </RjsfForm>
             ) : (
               <p className="text-sm text-[var(--color-error)]">Provide valid JSON to render the RJSF form preview.</p>
             )}

@@ -3,7 +3,7 @@
 import { Navigation } from '@/components/Navigation';
 import { PillButton } from 'usds';
 import Link from 'next/link';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { getToken, getTokenClaims } from '@/lib/auth';
@@ -21,6 +21,14 @@ function getPostLoginPath(returnTo: string | null): string {
 }
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginPageContent />
+    </Suspense>
+  );
+}
+
+function LoginPageContent() {
   // Demo credentials
   const demoEmail = 'applicant-demo@example.com';
   const demoPassword = 'demo1234';

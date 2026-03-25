@@ -10,7 +10,7 @@ import {
   type ApplicationDraft,
 } from '@/lib/applicantOnboarding';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 
 type FormState = {
   projectTitle: string;
@@ -48,6 +48,14 @@ function toFormState(data: Record<string, string>): FormState {
 }
 
 export default function Sf299FormPage() {
+  return (
+    <Suspense fallback={null}>
+      <Sf299FormPageContent />
+    </Suspense>
+  );
+}
+
+function Sf299FormPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const draftId = searchParams.get('draft');

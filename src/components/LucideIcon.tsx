@@ -1,6 +1,7 @@
+import type { SVGProps } from 'react';
 import type { LucideIcon as LucideIconType, LucideProps } from 'lucide-react';
 
-type LucideIconProps = Omit<LucideProps, 'size'> & {
+type LucideIconProps = Omit<LucideProps, 'size'> & SVGProps<SVGSVGElement> & {
   icon: LucideIconType;
   size?: number;
 };
