@@ -4,7 +4,7 @@ import usappLogo from '@/logo/USAPP.svg';
 
 export function Footer() {
   return (
-    <footer className="flex justify-center border-t border-white/10 bg-[#0a0b0d] text-white px-2 sm:px-6 lg:px-8" style={{ paddingTop: 'var(--space-3xl)', paddingBottom: 'var(--space-3xl)' }}>
+    <footer className="flex justify-center border-t border-white/10 bg-[#0a0b0d] text-white px-2 sm:px-6 lg:px-8" style={{ marginTop: '120px', paddingTop: 'var(--space-3xl)', paddingBottom: 'var(--space-3xl)' }}>
       <div className="w-full max-w-7xl" style={{ marginLeft: 'clamp(var(--space-sm), 5vw, var(--space-lg))', marginRight: 'clamp(var(--space-sm), 5vw, var(--space-lg))' }}>
         {/* Brand and links section */}
         <div className="grid gap-12 lg:gap-16 lg:grid-cols-[auto_1fr]" style={{ marginBottom: 'var(--space-3xl)' }}>

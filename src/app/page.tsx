@@ -1,6 +1,6 @@
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
-import { Button, ArrowDownIcon } from 'usds';
+import { PillButton, ArrowDownIcon } from 'usds';
 import { CyclingHeadline } from '@/components/CyclingHeadline';
 import { HeroBackgroundVideo } from '@/components/HeroBackgroundVideo';
 import Link from 'next/link';
@@ -33,15 +33,17 @@ export default function Home() {
       <section className="flex justify-center bg-black text-[var(--color-text-body)] px-2 sm:px-6 lg:px-8" style={{ paddingTop: 'var(--space-2xl)', paddingBottom: 'var(--space-3xl)' }}>
         <div className="w-full max-w-7xl flex flex-col items-center gap-8 text-center" style={{ marginLeft: 'clamp(var(--space-sm), 5vw, var(--space-lg))', marginRight: 'clamp(var(--space-sm), 5vw, var(--space-lg))' }}>
           <div className="flex justify-center">
-            <Link href="/login" className="w-full max-w-xs">
-              <Button
+            <div className="w-full max-w-sm">
+            <Link href="/pre-screener" className="w-full max-w-xs">
+              <PillButton
                 size="lg"
                 variant="secondary"
                 className="w-full !bg-[var(--color-btn-secondary-bg)] !text-[var(--color-btn-secondary-text)] md:!text-[15px] lg:!text-[16px] hover:!bg-[var(--color-btn-secondary-bg-hover)] hover:!text-[var(--color-btn-secondary-text-hover)]"
               >
                 Start a New Application
-              </Button>
+              </PillButton>
             </Link>
+            </div>
           </div>
 
           <div className="flex justify-center text-[var(--steel-100)] opacity-100 transition-colors hover:text-white">
@@ -116,14 +118,14 @@ export default function Home() {
             </h3>
             <div className="mt-8 flex flex-wrap gap-4">
               <Link href="/staff">
-                <Button variant="primary" size="lg">
+                <PillButton variant="primary" size="lg">
                   For Federal Employees
-                </Button>
+                </PillButton>
               </Link>
               <Link href="/login">
-                <Button variant="secondary" size="lg">
+                <PillButton variant="secondary" size="lg">
                   For Applicants
-                </Button>
+                </PillButton>
               </Link>
             </div>
           </div>

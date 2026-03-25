@@ -4,25 +4,30 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Button } from 'usds';
-import { useState } from 'react';
+import { PillButton } from 'usds';
+import { useEffect, useState } from 'react';
 import { MenuIcon, XMarkIcon } from './Icons';
 import usappLogo from '@/logo/USAPP.svg';
 
 export function Navigation() {
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const navClass = "sticky top-0 z-50 flex justify-center backdrop-blur-xl bg-black/60 px-2 sm:px-6 lg:px-8";
-  const navStyle = {
-    paddingTop: 'var(--space-sm)',
-    paddingBottom: 'var(--space-sm)',
-  };
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const navClass = `sticky top-0 z-50 flex h-[70px] justify-center backdrop-blur-xl px-2 sm:px-6 lg:px-8 transition-colors duration-300 ${isScrolled ? 'bg-black/80' : 'bg-black/60'}`;
   return (
-    <nav className={navClass} style={navStyle}>
+    <nav className={navClass}>
       <div className="w-full max-w-7xl" style={{ marginLeft: 'clamp(var(--space-sm), 5vw, var(--space-lg))', marginRight: 'clamp(var(--space-sm), 5vw, var(--space-lg))' }}>
-        <div className="flex items-center justify-between">
+        <div className="flex h-full items-center justify-between">
           <Link href="/" className="flex items-center gap-4">
-            <Image src={usappLogo} alt="US Application Portal logo" width={40} height={40} className="h-[40px] w-[40px] object-contain" priority />
+            <Image src={usappLogo} alt="US Application Portal logo" width={46} height={46} className="h-[46px] w-[46px] object-contain" priority />
             <h6 className="type-heading-h6 text-[var(--color-text-body)]">
               Federal Permit Portal
             </h6>
@@ -45,20 +50,20 @@ export function Navigation() {
               <span aria-hidden="true" className="h-5 w-px bg-[var(--color-border)]" />
             </div>
             <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
+              <PillButton
+                variant="primary"
                 size="md"
                 onClick={() => router.push('/staff')}
               >
                 Federal Portal
-              </Button>
-              <Button
+              </PillButton>
+              <PillButton
                 variant="secondary"
                 size="md"
                 onClick={() => router.push('/login')}
               >
                 Applicant Login
-              </Button>
+              </PillButton>
             </div>
           </div>
           {/* Mobile hamburger */}
@@ -88,20 +93,20 @@ export function Navigation() {
           >
             About
           </Link>
-          <Button
-            variant="ghost"
+          <PillButton
+            variant="primary"
             size="sm"
             onClick={() => { setMobileMenuOpen(false); router.push('/staff'); }}
           >
             Federal Portal
-          </Button>
-          <Button
+          </PillButton>
+          <PillButton
             variant="secondary"
             size="sm"
             onClick={() => { setMobileMenuOpen(false); router.push('/login'); }}
           >
             Applicant Login
-          </Button>
+          </PillButton>
         </div>
       )}
     </nav>

@@ -3,7 +3,7 @@ import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { AnchorNav } from '@/components/AnchorNav';
 import { ParallaxImage } from '@/components/ParallaxImage';
-import { Button } from 'usds';
+import { PillButton } from 'usds';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
@@ -43,13 +43,13 @@ export default function UseCasesPage() {
           </p>
           <div>
             <Link href="/login">
-              <Button
+              <PillButton
                 size="lg"
                 variant="secondary"
                 className="mt-6 !bg-[var(--color-btn-secondary-bg)] !text-[var(--color-btn-secondary-text)] hover:!bg-[var(--color-btn-secondary-bg-hover)] hover:!text-[var(--color-btn-secondary-text-hover)]"
               >
                 Start a New Application
-              </Button>
+              </PillButton>
             </Link>
           </div>
         </div>
@@ -137,13 +137,13 @@ export default function UseCasesPage() {
             Ready to move your project forward?
           </h2>
           <Link href="/login" className="w-full sm:w-auto text-left">
-            <Button
+            <PillButton
               variant="secondary"
               size="lg"
               className="w-full sm:w-auto !bg-[var(--color-btn-secondary-bg)] !text-[var(--color-btn-secondary-text)] hover:!bg-[var(--color-btn-secondary-bg-hover)] hover:!text-[var(--color-btn-secondary-text-hover)]"
             >
               Start a New Application
-            </Button>
+            </PillButton>
           </Link>
         </div>
       </section>

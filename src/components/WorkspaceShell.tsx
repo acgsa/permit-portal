@@ -170,6 +170,29 @@ function CustomSidebarInner({
     setTheme(newTheme);
   };
 
+  const userMenuItems: MenuItem[] = [
+    {
+      type: 'subtext',
+      label: `Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`,
+      subtext: '',
+      href: '#',
+      onClick: () => {
+        toggleTheme();
+        setUserMenuOpen(false);
+      },
+    },
+    {
+      type: 'subtext',
+      label: 'Sign Out',
+      subtext: '',
+      href: '#',
+      onClick: () => {
+        setUserMenuOpen(false);
+        onSignOut();
+      },
+    },
+  ];
+
   return (
     <aside className={`sidebar-nav-panel${isOpen ? "" : " sidebar-nav-panel-closed"}`} aria-label="Sidebar navigation panel" style={{ width: isOpen ? 200 : 66, border: 'none', borderRadius: '0', display: 'flex', flexDirection: 'column', height: '100vh' }} suppressHydrationWarning>
       <div className="sidebar-nav-panel-top">
@@ -249,35 +272,12 @@ function CustomSidebarInner({
               position: 'absolute',
               bottom: '100%',
               left: 0,
-              right: 0,
-              backgroundColor: 'var(--color-bg)',
-              border: '1px solid var(--color-border)',
-              borderRadius: 'var(--radius-sm)',
               marginBottom: '8px',
               zIndex: 50,
-              boxShadow: 'var(--shadow-md)',
-              minWidth: '180px',
+              minWidth: '220px',
             }}
           >
-            <button
-              type="button"
-              onClick={toggleTheme}
-              className="w-full text-left px-4 py-3 text-sm hover:bg-[var(--color-bg-hover)] transition-colors border-b border-[var(--color-border)] flex items-center justify-between"
-            >
-              <span>
-                {theme === 'light' ? '☀️ Light Mode' : '🌙 Dark Mode'}
-              </span>
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setUserMenuOpen(false);
-                onSignOut();
-              }}
-              className="w-full text-left px-4 py-3 text-sm hover:bg-[var(--color-bg-hover)] transition-colors text-[var(--color-error)]"
-            >
-              Sign Out
-            </button>
+            <Menu size="sm" items={userMenuItems} />
           </div>
         )}
       </div>
@@ -314,7 +314,7 @@ export function WorkspaceShell({ role, userSub, organizationLabel, onSignOut, ch
   }));
 
   return (
-    <div className="h-screen min-h-0 overflow-hidden bg-steel-950 flex flex-col md:flex-row" suppressHydrationWarning>
+    <div className="h-screen min-h-0 overflow-hidden bg-[var(--color-bg)] flex flex-col md:flex-row" suppressHydrationWarning>
       <CustomSidebar
         role={role}
         displayName={displayName}

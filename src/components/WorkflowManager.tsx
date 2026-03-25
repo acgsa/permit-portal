@@ -22,6 +22,7 @@ import { WorkspaceShell } from '@/components/WorkspaceShell';
 import { PortalPageScaffold } from '@/components/PortalPageScaffold';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
+import { Button, Card } from 'usds';
 
 type WorkflowNodeType = 'submission' | 'router' | 'staffReview' | 'finance' | 'moreInfo' | 'approval';
 
@@ -252,83 +253,93 @@ function WorkflowManagerContent() {
         subtitle="Design the permit lifecycle from submission through reviews, payment checks, and final approvals. Custom BPMN-style nodes use USDS tokens, and node forms are configured with RJSF schemas."
       >
         <section className="grid grid-cols-1 gap-[var(--space-md)] xl:grid-cols-[1.9fr_1fr]">
-          <div className="h-[680px] rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-bg-subtle)]">
-            <ReactFlow
-              nodes={nodes}
-              edges={edges}
-              onNodesChange={onNodesChange}
-              onEdgesChange={onEdgesChange}
-              onConnect={onConnect}
-              onNodeClick={(_, node) => setSelectedNodeId(node.id)}
-              fitView
-              nodeTypes={nodeTypes}
-            >
-              <MiniMap pannable zoomable />
-              <Controls />
-              <Background gap={20} color="var(--color-border-strong)" />
-            </ReactFlow>
-          </div>
+          <Card>
+            <div className="flex flex-col gap-[var(--space-md)]">
+              <h2 className="type-heading-h6 text-[var(--color-text)]">Workflow Canvas</h2>
+              <div className="h-[620px] rounded-[var(--radius-sm)] border border-[var(--color-border)] bg-[var(--color-bg-subtle)]">
+                <ReactFlow
+                  nodes={nodes}
+                  edges={edges}
+                  onNodesChange={onNodesChange}
+                  onEdgesChange={onEdgesChange}
+                  onConnect={onConnect}
+                  onNodeClick={(_, node) => setSelectedNodeId(node.id)}
+                  fitView
+                  nodeTypes={nodeTypes}
+                >
+                  <MiniMap pannable zoomable />
+                  <Controls />
+                  <Background gap={20} color="var(--color-border-strong)" />
+                </ReactFlow>
+              </div>
+            </div>
+          </Card>
 
-          <aside className="space-y-[var(--space-md)] rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-bg-subtle)] p-[var(--space-md)]">
-            <div>
-              <h2 className="type-heading-h6 text-[var(--color-text)]">Node Configuration</h2>
+          <Card>
+            <div className="flex flex-col gap-[var(--space-md)]">
+              <div className="space-y-[var(--space-xs)]">
+                <h2 className="type-heading-h6 text-[var(--color-text)]">Node Configuration</h2>
+                <p className="type-body-sm text-[var(--color-text-body)]">
+                  Selected node: <span className="font-semibold">{selectedNode?.data.label ?? 'None'}</span>
+                </p>
+              </div>
+
+              <div className="space-y-[var(--space-xs)]">
+                <label className="type-body-xs font-semibold uppercase tracking-wide text-[var(--color-text-placeholder)]">
+                  RJSF JSON Schema
+                </label>
+                <textarea
+                  className="h-40 w-full rounded-[var(--radius-sm)] border border-[var(--color-border-strong)] bg-[var(--color-bg)] p-2 font-mono text-xs text-[var(--color-text)]"
+                  value={schemaJson}
+                  onChange={(event) => setSchemaJson(event.target.value)}
+                />
+                {schemaError && <p className="text-xs text-[var(--color-error)]">{schemaError}</p>}
+              </div>
+
+              <div className="space-y-[var(--space-xs)]">
+                <label className="type-body-xs font-semibold uppercase tracking-wide text-[var(--color-text-placeholder)]">
+                  RJSF UI Schema
+                </label>
+                <textarea
+                  className="h-32 w-full rounded-[var(--radius-sm)] border border-[var(--color-border-strong)] bg-[var(--color-bg)] p-2 font-mono text-xs text-[var(--color-text)]"
+                  value={uiSchemaJson}
+                  onChange={(event) => setUiSchemaJson(event.target.value)}
+                />
+                {uiSchemaError && <p className="text-xs text-[var(--color-error)]">{uiSchemaError}</p>}
+              </div>
+            </div>
+          </Card>
+        </section>
+
+        <Card>
+          <div className="flex flex-col gap-[var(--space-md)]">
+            <div className="space-y-[var(--space-xs)]">
+              <h2 className="type-heading-h6 text-[var(--color-text)]">RJSF Form Preview</h2>
               <p className="type-body-sm text-[var(--color-text-body)]">
-                Selected node: <span className="font-semibold">{selectedNode?.data.label ?? 'None'}</span>
+                This preview represents the staff-facing data capture for the selected workflow step.
               </p>
             </div>
 
-            <div className="space-y-[var(--space-xs)]">
-              <label className="type-body-xs font-semibold uppercase tracking-wide text-[var(--color-text-placeholder)]">
-                RJSF JSON Schema
-              </label>
-              <textarea
-                className="h-40 w-full rounded-[var(--radius-sm)] border border-[var(--color-border-strong)] bg-[var(--color-bg)] p-2 font-mono text-xs text-[var(--color-text)]"
-                value={schemaJson}
-                onChange={(event) => setSchemaJson(event.target.value)}
-              />
-              {schemaError && <p className="text-xs text-[var(--color-error)]">{schemaError}</p>}
-            </div>
-
-            <div className="space-y-[var(--space-xs)]">
-              <label className="type-body-xs font-semibold uppercase tracking-wide text-[var(--color-text-placeholder)]">
-                RJSF UI Schema
-              </label>
-              <textarea
-                className="h-32 w-full rounded-[var(--radius-sm)] border border-[var(--color-border-strong)] bg-[var(--color-bg)] p-2 font-mono text-xs text-[var(--color-text)]"
-                value={uiSchemaJson}
-                onChange={(event) => setUiSchemaJson(event.target.value)}
-              />
-              {uiSchemaError && <p className="text-xs text-[var(--color-error)]">{uiSchemaError}</p>}
-            </div>
-          </aside>
-        </section>
-
-        <section className="rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-bg-subtle)] p-[var(--space-md)]">
-          <h2 className="type-heading-h6 text-[var(--color-text)]">RJSF Form Preview</h2>
-          <p className="type-body-sm mb-[var(--space-sm)] text-[var(--color-text-body)]">
-            This preview represents the staff-facing data capture for the selected workflow step.
-          </p>
-
-          {parsedSchema && parsedUiSchema ? (
-            <Form
-              schema={parsedSchema}
-              uiSchema={parsedUiSchema}
-              validator={validator}
-              formData={formData}
-              onChange={(event) => setFormData(event.formData as Record<string, unknown>)}
-              onSubmit={() => {}}
-            >
-              <button
-                type="submit"
-                className="rounded-[var(--radius-sm)] border border-[var(--color-btn-secondary-border)] bg-[var(--color-btn-secondary-bg)] px-3 py-2 text-sm font-semibold text-[var(--color-btn-secondary-text)]"
+            {parsedSchema && parsedUiSchema ? (
+              <Form
+                schema={parsedSchema}
+                uiSchema={parsedUiSchema}
+                validator={validator}
+                formData={formData}
+                onChange={(event) => setFormData(event.formData as Record<string, unknown>)}
+                onSubmit={() => {}}
               >
-                Save Step Form
-              </button>
-            </Form>
-          ) : (
-            <p className="text-sm text-[var(--color-error)]">Provide valid JSON to render the RJSF form preview.</p>
-          )}
-        </section>
+                <div className="mt-[var(--space-md)]">
+                  <Button type="submit" variant="secondary" size="sm">
+                    Save Step Form
+                  </Button>
+                </div>
+              </Form>
+            ) : (
+              <p className="text-sm text-[var(--color-error)]">Provide valid JSON to render the RJSF form preview.</p>
+            )}
+          </div>
+        </Card>
       </PortalPageScaffold>
     </WorkspaceShell>
   );

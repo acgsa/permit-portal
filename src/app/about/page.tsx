@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
-import { Button } from 'usds';
+import { PillButton } from 'usds';
 
 export const metadata: Metadata = {
   title: 'About — PERMIT.GOV',
@@ -68,18 +68,18 @@ export default function AboutPage() {
           </h2>
           <div className="flex flex-wrap items-center gap-4">
             <Link href="/use-cases">
-              <Button variant="outline" size="lg">
+              <PillButton variant="outline" size="lg">
                 Browse Use Cases
-              </Button>
+              </PillButton>
             </Link>
             <Link href="/login">
-              <Button
+              <PillButton
                 variant="secondary"
                 size="lg"
                 className="!bg-[var(--color-btn-secondary-bg)] !text-[var(--color-btn-secondary-text)] hover:!bg-[var(--color-btn-secondary-bg-hover)] hover:!text-[var(--color-btn-secondary-text-hover)]"
               >
                 Applicant Log In
-              </Button>
+              </PillButton>
             </Link>
           </div>
         </div>

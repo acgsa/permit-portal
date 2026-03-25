@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
-import { Button } from 'usds';
+import { PillButton } from 'usds';
 
 export const metadata: Metadata = {
   title: 'Agency Partnerships - PERMIT.GOV',
@@ -37,14 +37,14 @@ export default function PartnershipsPage() {
             </ul>
             <div className="mt-8 flex flex-wrap gap-4">
               <Link href="/staff">
-                <Button variant="secondary" size="md">
+                <PillButton variant="secondary" size="md">
                   Federal Employee Login
-                </Button>
+                </PillButton>
               </Link>
               <Link href="/use-cases">
-                <Button variant="outline" size="md">
+                <PillButton variant="outline" size="md">
                   Explore Use Cases
-                </Button>
+                </PillButton>
               </Link>
             </div>
           </div>
