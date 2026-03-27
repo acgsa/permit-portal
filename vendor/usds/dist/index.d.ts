@@ -225,6 +225,32 @@ declare interface FilterItem {
     hasDropdown?: boolean;
 }
 
+export declare function FormChoice({ options, value, onChange, type, name, layout, className, }: FormChoiceProps): JSX.Element;
+
+declare interface FormChoiceOption {
+    value: string;
+    label: string;
+}
+
+declare interface FormChoiceProps {
+    /** Array of selectable options */
+    options: FormChoiceOption[];
+    /** Currently selected value(s) — string for radio, string[] for checkbox */
+    value: string | string[];
+    /** Called when selection changes — returns updated value(s) */
+    onChange: (value: string | string[]) => void;
+    /** Input type: "checkbox" for multi-select, "radio" for single-select */
+    type?: FormChoiceType;
+    /** Shared name attribute for radio groups */
+    name?: string;
+    /** Layout direction: "inline" (default wrapping pills), "stacked" (full-width vertical), or "split" (equal-width side by side, stacks on mobile) */
+    layout?: "inline" | "stacked" | "split";
+    /** Additional className on the wrapper */
+    className?: string;
+}
+
+declare type FormChoiceType = "checkbox" | "radio";
+
 export declare function IconButton({ variant, size, shape, className, icon, label, ...props }: IconButtonProps): JSX.Element;
 
 declare interface IconButtonProps extends default_2.ButtonHTMLAttributes<HTMLButtonElement> {

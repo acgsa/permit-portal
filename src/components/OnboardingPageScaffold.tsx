@@ -19,7 +19,7 @@ export function OnboardingPageScaffold({
     <>
       <Navigation />
       <main className="new-page-main">
-        <div className={`page-card-stack w-full ${maxWidthClassName}`}>{children}</div>
+        <div className={`page-card-stack mx-auto w-full ${maxWidthClassName}`}>{children}</div>
       </main>
       <Footer />
     </>

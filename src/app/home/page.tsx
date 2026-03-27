@@ -62,7 +62,7 @@ export default function HomePage() {
                   size="lg"
                   className="px-6 font-semibold"
                   leadingIcon={<PlusIcon size={16} />}
-                  onClick={() => router.push('/pre-screener')}
+                  onClick={() => router.push('/screener')}
                 >
                   <span>Start New Application</span>
                 </Button>
