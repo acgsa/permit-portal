@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
+import { getToken, isTokenValid } from '@/lib/auth';
 
 const PORTAL_THEME_STORAGE_KEY = 'permit.portal.theme';
 
@@ -33,6 +34,13 @@ export function ThemeRouteScope() {
 
   useEffect(() => {
     const htmlElement = document.documentElement;
+    const isLoggedIn = isTokenValid(getToken());
+
+    // Logged-out experience should always remain dark, including any portal route.
+    if (!isLoggedIn) {
+      htmlElement.setAttribute('data-theme', 'dark');
+      return;
+    }
 
     if (isPortalRoute(pathname)) {
       const savedTheme = window.localStorage.getItem(PORTAL_THEME_STORAGE_KEY);
