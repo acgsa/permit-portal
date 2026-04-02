@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
+import { useTheme } from 'next-themes';
 import { getToken, isTokenValid } from '@/lib/auth';
 
 const PORTAL_THEME_STORAGE_KEY = 'permit.portal.theme';
@@ -31,6 +32,7 @@ function isPortalRoute(pathname: string): boolean {
 
 export function ThemeRouteScope() {
   const pathname = usePathname();
+  const { setTheme } = useTheme();
 
   useEffect(() => {
     const htmlElement = document.documentElement;
@@ -38,6 +40,7 @@ export function ThemeRouteScope() {
 
     // Logged-out experience should always remain dark, including any portal route.
     if (!isLoggedIn) {
+      setTheme('dark');
       htmlElement.setAttribute('data-theme', 'dark');
       return;
     }
@@ -45,13 +48,15 @@ export function ThemeRouteScope() {
     if (isPortalRoute(pathname)) {
       const savedTheme = window.localStorage.getItem(PORTAL_THEME_STORAGE_KEY);
       const nextTheme = savedTheme === 'light' ? 'light' : 'dark';
+      setTheme(nextTheme);
       htmlElement.setAttribute('data-theme', nextTheme);
       return;
     }
 
     // Keep logged-out and screener flows in dark mode regardless of portal preference.
+    setTheme('dark');
     htmlElement.setAttribute('data-theme', 'dark');
-  }, [pathname]);
+  }, [pathname, setTheme]);
 
   return null;
 }

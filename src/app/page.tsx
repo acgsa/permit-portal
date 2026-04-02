@@ -24,13 +24,13 @@ export default function Home() {
             <CyclingHeadline
               words={['Build', 'Mine', 'Drill', 'Extract', 'Produce']}
               staticText="the Future of America"
-              className="mb-8 whitespace-normal md:whitespace-nowrap font-[var(--font-primary)] !text-[clamp(2.35rem,6.4vw,5.9rem)] !font-normal !leading-[1.05] text-[var(--color-text)]"
+              className="mb-8 whitespace-normal md:whitespace-nowrap font-[var(--font-primary)] !text-[clamp(2.35rem,6.4vw,5.9rem)] !font-normal !leading-[1.05] text-white"
             />
           </div>
         </div>
       </section>
 
-      <section className="flex justify-center bg-black text-[var(--color-text)] px-2 sm:px-6 lg:px-8" style={{ paddingTop: 'var(--space-2xl)', paddingBottom: 'var(--space-3xl)' }}>
+      <section className="flex justify-center bg-black text-white px-2 sm:px-6 lg:px-8" style={{ paddingTop: 'var(--space-2xl)', paddingBottom: 'var(--space-3xl)' }}>
         <div className="w-full max-w-7xl flex flex-col items-center gap-8 text-center" style={{ marginLeft: 'clamp(var(--space-sm), 5vw, var(--space-lg))', marginRight: 'clamp(var(--space-sm), 5vw, var(--space-lg))' }}>
           <div className="flex justify-center">
             <div className="w-full max-w-sm">
@@ -50,7 +50,7 @@ export default function Home() {
             <ArrowDownIcon size={24} aria-hidden="true" />
           </div>
 
-          <h2 className="type-heading-h3 max-w-3xl text-[var(--color-text)]">
+          <h2 className="type-heading-h3 max-w-3xl text-white">
             We've revolutionized the permitting process with one secure, digital platform.
           </h2>
           <div style={{ marginBottom: 'var(--space-xl)' }} />
@@ -58,11 +58,11 @@ export default function Home() {
       </section>
 
       {/* Use Cases Section */}
-      <section className="flex justify-center bg-black text-[var(--color-text)] px-2 sm:px-6 lg:px-8" style={{ paddingTop: 'var(--space-3xl)', paddingBottom: 'var(--space-3xl)' }}>
+      <section className="flex justify-center bg-black text-white px-2 sm:px-6 lg:px-8" style={{ paddingTop: 'var(--space-3xl)', paddingBottom: 'var(--space-3xl)' }}>
         <div className="w-full max-w-7xl" style={{ marginLeft: 'clamp(var(--space-sm), 5vw, var(--space-lg))', marginRight: 'clamp(var(--space-sm), 5vw, var(--space-lg))' }}>
           <div className="mb-10">
             <p className="type-body-xs uppercase tracking-[0.16em]" style={{ marginBottom: 'var(--space-sm)', color: 'var(--color-text-disabled)' }}>Permit Use Cases</p>
-            <h2 className="type-heading-h3 text-[var(--color-text)]" style={{ marginBottom: 'var(--space-xl)' }}>High-Demand Federal Permits</h2>
+            <h2 className="type-heading-h3 text-white" style={{ marginBottom: 'var(--space-xl)' }}>High-Demand Federal Permits</h2>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -87,15 +87,15 @@ export default function Home() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/68 via-black/20 to-black/6 transition-all duration-500 group-hover:from-black/78 group-hover:via-black/30 group-hover:to-black/14" />
                 <div className="absolute inset-x-0 bottom-0 bg-transparent" style={{ padding: 'var(--space-md)' }}>
-                  <h3 className="type-heading-h6 text-[var(--color-text)]" style={{ marginBottom: 'var(--space-2xs)' }}>{useCase.title}</h3>
+                  <h3 className="type-heading-h6 text-white" style={{ marginBottom: 'var(--space-2xs)' }}>{useCase.title}</h3>
                   <div
                     className="flex max-h-0 translate-y-2 items-center justify-between gap-3 overflow-hidden opacity-0 transition-all duration-300 ease-out group-hover:max-h-24 group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:max-h-24 group-focus-within:translate-y-0 group-focus-within:opacity-100"
                     style={{ marginTop: 'var(--space-2xs)' }}
                   >
-                    <p className="type-body-sm" style={{ marginRight: 'var(--space-sm)', color: 'var(--color-text)' }}>{useCase.subhead}</p>
+                    <p className="type-body-sm text-white" style={{ marginRight: 'var(--space-sm)' }}>{useCase.subhead}</p>
                     <span
                       aria-hidden="true"
-                      className="type-heading-h6 shrink-0 text-[var(--color-text)] transition-transform duration-300 group-hover:translate-x-0.5 group-focus-within:translate-x-0.5"
+                      className="type-heading-h6 shrink-0 text-white transition-transform duration-300 group-hover:translate-x-0.5 group-focus-within:translate-x-0.5"
                       style={{ marginLeft: 'var(--space-sm)' }}
                     >
                       ↗
@@ -109,10 +109,10 @@ export default function Home() {
       </section>
 
       {/* Operations Section */}
-      <section className="flex justify-center bg-[#0a0b0d] text-[var(--color-text)] px-2 sm:px-6 lg:px-8" style={{ paddingTop: 'var(--space-2xl)', paddingBottom: 'var(--space-2xl)' }}>
+      <section className="flex justify-center bg-[#0a0b0d] text-white px-2 sm:px-6 lg:px-8" style={{ paddingTop: 'var(--space-2xl)', paddingBottom: 'var(--space-2xl)' }}>
         <div className="w-full max-w-7xl" style={{ marginLeft: 'clamp(var(--space-sm), 5vw, var(--space-lg))', marginRight: 'clamp(var(--space-sm), 5vw, var(--space-lg))' }}>
           <div className="max-w-6xl">
-            <h3 className="font-[var(--font-primary)] text-[clamp(1.8rem,4.4vw,4rem)] font-normal leading-[1.1] text-[var(--color-text)]" style={{ marginBottom: 'var(--space-xl)' }}>
+            <h3 className="font-[var(--font-primary)] text-[clamp(1.8rem,4.4vw,4rem)] font-normal leading-[1.1] text-white" style={{ marginBottom: 'var(--space-xl)' }}>
               The official federal permit portal means one workflow for applicants and federal review teams,
               with shared milestones, status transparency, and a centralized authoritative record.
             </h3>
