@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { WorkspaceShell } from '@/components/WorkspaceShell';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button, PlusIcon } from 'usds';
@@ -75,7 +75,6 @@ export default function HomePage() {
   const GUIDANCE_SUBMISSION_KEY = 'permit.guidanceRequest.submitted.v1';
   const firstName = 'John Doe';
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { user, token, logout } = useAuth();
   const [workflows, setWorkflows] = useState<api.WorkflowStatus[]>([]);
   const [loadingWorkflows, setLoadingWorkflows] = useState(true);
@@ -92,7 +91,7 @@ export default function HomePage() {
   }, [token]);
 
   useEffect(() => {
-    const fromQuery = searchParams.get('guidance_submitted') === '1';
+    const fromQuery = new URLSearchParams(window.location.search).get('guidance_submitted') === '1';
     const raw = window.localStorage.getItem(GUIDANCE_SUBMISSION_KEY);
 
     if (!raw && !fromQuery) {
@@ -123,7 +122,7 @@ export default function HomePage() {
       window.localStorage.setItem(GUIDANCE_SUBMISSION_KEY, JSON.stringify(payload));
       setGuidanceSubmission(payload);
     }
-  }, [searchParams]);
+  }, []);
 
   useEffect(() => {
     if (user?.role === 'staff' || user?.role === 'admin') {

@@ -55,7 +55,7 @@ export default function ApplicationDetailClient({ applicationId }: Props) {
         router.push('/');
       }}
     >
-      <PortalPageScaffold>
+      <PortalPageScaffold title="Application Details">
         <div className="flex flex-col" style={{ gap: 'var(--space-md, 16px)' }}>
           <div>
             <Link href="/my-applications" className="inline-flex items-center gap-2 type-body-sm text-[var(--color-text-body)] hover:text-[var(--color-text)]">
@@ -66,7 +66,7 @@ export default function ApplicationDetailClient({ applicationId }: Props) {
 
           <div className="flex items-end justify-between gap-[var(--space-sm)]">
             <div className="flex flex-col gap-[var(--space-2xs)]">
-              <h1 className="type-heading-h4 text-[var(--color-text)]">{applicationTitle}</h1>
+              <h2 className="type-heading-h4 text-[var(--color-text)]">{applicationTitle}</h2>
               <p className="type-body-sm text-[var(--color-text-disabled)]">#{applicationId}</p>
             </div>
             <div className="flex items-center gap-[var(--space-sm)] text-[var(--color-text-body)]">

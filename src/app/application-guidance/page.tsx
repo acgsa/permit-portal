@@ -374,7 +374,7 @@ export default function ApplicationGuidancePage() {
           <Select
             options={APPLICANT_TYPE_OPTIONS}
             value={form.applicantType}
-            onChange={(val) => setForm((current) => ({ ...current, applicantType: val as string }))}
+            onChange={(event) => setForm((current) => ({ ...current, applicantType: event.target.value }))}
           />
         </div>
       </Card>
