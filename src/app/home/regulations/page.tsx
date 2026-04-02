@@ -84,7 +84,7 @@ export default function RegulationsPage() {
     >
       <div className="flex w-full flex-col gap-[var(--space-md)] bg-[var(--color-bg)] p-[var(--space-md)]">
         <header className="flex flex-col gap-[var(--space-xs)]">
-          <p className="type-body-xs uppercase tracking-[0.14em] text-[var(--color-text-disabled)]">Applicant Portal</p>
+          <p className="type-body-xs uppercase tracking-[0.14em] text-[var(--color-text-disabled)]">RESOURCES</p>
           <h1 className="type-heading-h4">Regulations</h1>
           <p className="type-body-md max-w-4xl text-[var(--color-text-body)]">
             Mock regulatory summaries to help applicants understand review themes before preparing formal submissions.
@@ -107,7 +107,7 @@ export default function RegulationsPage() {
                 <div className="image-card-content">
                   <div className="image-card-text">
                     <div className="image-card-text-inner">
-                      <div className="image-card-title">{item.title}</div>
+                      <div className="image-card-title type-heading-h5">{item.title}</div>
                       <div className="image-card-subtitle">{item.authority}</div>
                       <p className="type-body-sm mt-[var(--space-xs)] text-[var(--color-text-body)]">{item.summary}</p>
                     </div>
@@ -123,10 +123,10 @@ export default function RegulationsPage() {
 
         <div className="flex flex-wrap gap-[var(--space-sm)]">
           <Link href="/resources">
-            <Button variant="secondary" size="sm">Open Resources</Button>
+            <Button variant="primary" size="sm">Open Resources</Button>
           </Link>
           <Link href="/help-center">
-            <Button variant="outline" size="sm">Contact Help Center</Button>
+            <Button variant="secondary" size="sm">Contact Help Center</Button>
           </Link>
         </div>
       </div>

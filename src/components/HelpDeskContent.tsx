@@ -22,7 +22,7 @@ function HelpImageCard({ title, subtitle, href, gradient }: HelpImageCardProps) 
         <div className="image-card-content">
           <div className="image-card-text">
             <div className="image-card-text-inner">
-              <div className="image-card-title">{title}</div>
+              <div className="image-card-title type-heading-h5">{title}</div>
               <div className="image-card-subtitle">{subtitle}</div>
             </div>
           </div>
@@ -39,14 +39,14 @@ export function HelpDeskContent({ mode = 'public' }: HelpDeskContentProps) {
     return (
       <section className="flex w-full flex-col gap-[var(--space-md)]">
         <header className="flex flex-col gap-[var(--space-xs)]">
-          <p className="type-body-xs uppercase tracking-[0.14em] text-[var(--color-text-disabled)]">Applicant Portal</p>
+          <p className="type-body-xs uppercase tracking-[0.14em] text-[var(--color-text-disabled)]">Resources</p>
           <h1 className="type-heading-h4">Help Center</h1>
           <p className="type-body-md max-w-4xl text-[var(--color-text-body)]">
             Mock support guidance for account access, submissions, document uploads, and workflow coordination.
           </p>
         </header>
 
-        <div className="grid grid-cols-1 items-stretch gap-[var(--space-md)] md:grid-cols-2">
+        <div className="grid grid-cols-1 items-stretch gap-[var(--space-xl)] md:grid-cols-2">
           <HelpImageCard
             title="Application Support"
             subtitle="Applicants: check milestones, respond to information requests, and resolve upload issues."
@@ -62,11 +62,8 @@ export function HelpDeskContent({ mode = 'public' }: HelpDeskContentProps) {
         </div>
 
         <div className="flex flex-wrap gap-[var(--space-sm)]">
-          <Link href="/resources">
-            <Button variant="secondary" size="sm">Open Resources</Button>
-          </Link>
-          <Link href="/regulations">
-            <Button variant="outline" size="sm">Review Regulations</Button>
+          <Link href="/messages">
+            <Button variant="primary" size="sm">Contact Help</Button>
           </Link>
         </div>
       </section>

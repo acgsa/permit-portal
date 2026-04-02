@@ -55,7 +55,7 @@ export function Navigation() {
                 size="md"
                 onClick={() => router.push('/staff')}
               >
-                Federal Portal
+                Federal Employee Login
               </PillButton>
               <PillButton
                 variant="secondary"
@@ -98,7 +98,7 @@ export function Navigation() {
             size="sm"
             onClick={() => { setMobileMenuOpen(false); router.push('/staff'); }}
           >
-            Federal Portal
+            Federal Employee Login
           </PillButton>
           <PillButton
             variant="secondary"

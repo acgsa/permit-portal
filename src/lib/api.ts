@@ -56,6 +56,7 @@ type DemoProcessDef = {
 };
 
 let demoWorkflowSeq = 6;
+let demoPreScreenerDraftSeq = 1;
 
 let demoWorkflows: WorkflowStatus[] = [
   {
@@ -77,6 +78,18 @@ let demoWorkflows: WorkflowStatus[] = [
     updated_at: nowIso(),
   },
 ];
+
+type DemoPreScreenerDraft = {
+  id: number;
+  owner_sub: string;
+  status: string;
+  title: string;
+  payload: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+};
+
+let demoPreScreenerDrafts: DemoPreScreenerDraft[] = [];
 
 const demoDefinitions: Record<string, DemoProcessDef> = {
   permit_process: {
@@ -182,6 +195,111 @@ export function login(username: string, password: string): Promise<TokenResponse
     method: 'POST',
     body: JSON.stringify({ username, password }),
   });
+}
+
+// ── Pre-Screener Drafts ─────────────────────────────────────────────────────
+
+export interface PreScreenerDraftUpsert {
+  id?: number;
+  status: string;
+  title?: string;
+  payload: Record<string, unknown>;
+}
+
+export interface PreScreenerDraftResponse {
+  id: number;
+  owner_sub: string;
+  status: string;
+  title: string;
+  payload: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+}
+
+function getDemoTokenOwner(token: string): string {
+  const payload = token.split('.')[1];
+  if (!payload) return 'demo-user@example.com';
+  try {
+    const padded = payload.padEnd(payload.length + ((4 - (payload.length % 4)) % 4), '=');
+    const decoded = JSON.parse(atob(padded)) as { sub?: string };
+    return decoded.sub ?? 'demo-user@example.com';
+  } catch {
+    return 'demo-user@example.com';
+  }
+}
+
+export function upsertPreScreenerDraft(
+  token: string,
+  body: PreScreenerDraftUpsert,
+): Promise<PreScreenerDraftResponse> {
+  if (IS_DEMO_MODE) {
+    assertToken(token);
+    const ownerSub = getDemoTokenOwner(token);
+    const now = nowIso();
+    const normalizedTitle = (body.title ?? '').trim() || 'Pre-Screener Draft';
+
+    if (typeof body.id === 'number') {
+      const existing = demoPreScreenerDrafts.find((draft) => draft.id === body.id && draft.owner_sub === ownerSub);
+      if (!existing) {
+        return Promise.reject(new Error('Draft not found'));
+      }
+
+      existing.status = body.status;
+      existing.title = normalizedTitle;
+      existing.payload = clone(body.payload);
+      existing.updated_at = now;
+      return Promise.resolve(clone(existing));
+    }
+
+    const created: DemoPreScreenerDraft = {
+      id: demoPreScreenerDraftSeq,
+      owner_sub: ownerSub,
+      status: body.status,
+      title: normalizedTitle,
+      payload: clone(body.payload),
+      created_at: now,
+      updated_at: now,
+    };
+    demoPreScreenerDraftSeq += 1;
+    demoPreScreenerDrafts = [created, ...demoPreScreenerDrafts];
+    return Promise.resolve(clone(created));
+  }
+
+  return request<PreScreenerDraftResponse>('/pre-screener-drafts', {
+    method: 'POST',
+    token,
+    body: JSON.stringify(body),
+  });
+}
+
+export function listPreScreenerDrafts(token: string): Promise<PreScreenerDraftResponse[]> {
+  if (IS_DEMO_MODE) {
+    assertToken(token);
+    const ownerSub = getDemoTokenOwner(token);
+    const drafts = demoPreScreenerDrafts
+      .filter((draft) => draft.owner_sub === ownerSub)
+      .sort((a, b) => (a.updated_at < b.updated_at ? 1 : -1));
+    return Promise.resolve(clone(drafts));
+  }
+
+  return request<PreScreenerDraftResponse[]>('/pre-screener-drafts', { token });
+}
+
+export function getPreScreenerDraft(
+  token: string,
+  draftId: number,
+): Promise<PreScreenerDraftResponse> {
+  if (IS_DEMO_MODE) {
+    assertToken(token);
+    const ownerSub = getDemoTokenOwner(token);
+    const found = demoPreScreenerDrafts.find((draft) => draft.id === draftId && draft.owner_sub === ownerSub);
+    if (!found) {
+      return Promise.reject(new Error('Draft not found'));
+    }
+    return Promise.resolve(clone(found));
+  }
+
+  return request<PreScreenerDraftResponse>(`/pre-screener-drafts/${draftId}`, { token });
 }
 
 // ── Workflows ─────────────────────────────────────────────────────────────────

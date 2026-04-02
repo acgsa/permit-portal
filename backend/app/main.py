@@ -1,10 +1,11 @@
 from pathlib import Path
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 
 from .core import Base, decode_token, engine, settings
 from .routers import auth as auth_router
+from .routers import pre_screener_drafts as pre_screener_drafts_router
 from .routers import process_definitions as process_definitions_router
 from .routers import tasks as tasks_router
 from .routers import workflows as workflows_router
@@ -22,6 +23,7 @@ app.add_middleware(
 )
 
 app.include_router(auth_router.router)
+app.include_router(pre_screener_drafts_router.router)
 app.include_router(process_definitions_router.router)
 app.include_router(workflows_router.router)
 app.include_router(tasks_router.router)
@@ -60,7 +62,7 @@ async def notifications(websocket: WebSocket) -> None:
 
     try:
         claims = decode_token(token)
-    except ValueError:
+    except HTTPException:
         await websocket.close(code=4401)
         return
 

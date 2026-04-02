@@ -20,6 +20,8 @@ type NavItem = {
   href: string;
 };
 
+const PORTAL_THEME_STORAGE_KEY = 'permit.portal.theme';
+
 function getPrimaryNavItems(role?: string): NavItem[] {
   if (role === 'admin') {
     return [
@@ -51,7 +53,7 @@ function getResourceNavItems(): NavItem[] {
   return [
     { label: 'Permit Types', href: '/permit-types' },
     { label: 'Regulations', href: '/regulations' },
-    { label: 'Resources', href: '/resources' },
+    { label: 'Tools', href: '/resources' },
     { label: 'Help Center', href: '/help-center' },
   ];
 }
@@ -145,7 +147,11 @@ function CustomSidebarInner({
 }: CustomSidebarProps) {
   const [isOpen, setIsOpen] = useState(true);
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    if (typeof document === 'undefined') return 'light';
+    if (typeof window === 'undefined') return 'dark';
+    const savedTheme = window.localStorage.getItem(PORTAL_THEME_STORAGE_KEY);
+    if (savedTheme === 'light' || savedTheme === 'dark') {
+      return savedTheme;
+    }
     const currentTheme = document.documentElement.getAttribute('data-theme');
     return currentTheme === 'dark' ? 'dark' : 'light';
   });
@@ -166,6 +172,7 @@ function CustomSidebarInner({
   const toggleTheme = () => {
     const htmlElement = document.documentElement;
     const newTheme = theme === 'light' ? 'dark' : 'light';
+    window.localStorage.setItem(PORTAL_THEME_STORAGE_KEY, newTheme);
     htmlElement.setAttribute('data-theme', newTheme);
     setTheme(newTheme);
   };
@@ -325,8 +332,8 @@ export function WorkspaceShell({ role, userSub, organizationLabel, onSignOut, ch
         resourceMenuItems={resourceMenuItems}
       />
 
-      <main className="workspace-shell-main flex-1 min-w-0 min-h-0 overflow-y-auto">
-        <div className="mx-auto w-full max-w-[1280px]">
+      <main className="workspace-shell-main flex-1 min-w-0 min-h-0 overflow-y-auto" style={{ alignItems: 'center' }}>
+        <div className="workspace-shell-main-frame mx-auto w-full max-w-[1120px]" style={{ padding: 0, gap: 0 }}>
           {children}
         </div>
       </main>

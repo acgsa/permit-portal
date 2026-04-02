@@ -11,6 +11,7 @@ from .process_definition import (
     ProcessDefinitionVersionResponse,
     ProcessTaskSummary,
 )
+from .pre_screener_draft import PreScreenerDraftResponse, PreScreenerDraftUpsert
 from .workflow import WorkflowCreate, WorkflowStatus
 
 __all__ = [
@@ -25,6 +26,8 @@ __all__ = [
     "ProcessDeploymentCreate",
     "ProcessDeploymentResponse",
     "ProcessTaskSummary",
+    "PreScreenerDraftResponse",
+    "PreScreenerDraftUpsert",
     "TokenResponse",
     "WorkflowCreate",
     "WorkflowStatus",

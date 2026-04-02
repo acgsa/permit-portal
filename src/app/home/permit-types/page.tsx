@@ -78,7 +78,7 @@ export default function PermitTypesPage() {
     >
       <div className="flex w-full flex-col gap-[var(--space-md)] bg-[var(--color-bg)] p-[var(--space-md)]">
         <header className="flex flex-col gap-[var(--space-xs)]">
-          <p className="type-body-xs uppercase tracking-[0.14em] text-[var(--color-text-disabled)]">Applicant Portal</p>
+          <p className="type-body-xs uppercase tracking-[0.14em] text-[var(--color-text-disabled)]">RESOURCES</p>
           <h1 className="type-heading-h4">Permit Types</h1>
           <p className="type-body-md max-w-4xl text-[var(--color-text-body)]">
             Placeholder guidance organized around common federal permitting pathways. Content is based on high-level
@@ -88,7 +88,6 @@ export default function PermitTypesPage() {
         </header>
 
         <section>
-          <h2 className="type-heading-h6">Common Federal Project Categories</h2>
           <div className="grid grid-cols-1 gap-[var(--space-xl)] md:grid-cols-2" style={{ marginTop: 'var(--space-lg)' }}>
             {PERMIT_TYPE_ROWS.map((row) => (
               <ImageCardDetail

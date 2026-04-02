@@ -7,7 +7,7 @@ export type ApplicantDisplayRow = {
   id: number;
   title: string;
   permitNumber: string;
-  statusKey: 'in_review' | 'in_progress' | 'rejected' | 'approved';
+  statusKey: 'in_review' | 'in_progress' | 'pending' | 'rejected' | 'approved';
   updatedLabel: string;
 };
 
@@ -20,6 +20,9 @@ function getApplicantStatusMeta(status: string): { label: string; badgeColor: Ba
   }
   if (status === 'in_review' || status === 'running') {
     return { label: 'IN REVIEW', badgeColor: 'gold' };
+  }
+  if (status === 'pending') {
+    return { label: 'PENDING', badgeColor: 'steel' };
   }
   return { label: 'IN PROGRESS', badgeColor: 'steel' };
 }
@@ -69,11 +72,6 @@ export function Table({ rows = [], showMockNotice }: {
           </tbody>
         </table>
       </div>
-      {showMockNotice ? (
-        <p className="type-body-sm" style={{ color: 'var(--color-text-placeholder)' }}>
-          Showing mock data while application data is unavailable.
-        </p>
-      ) : null}
     </div>
   );
 }

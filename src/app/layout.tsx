@@ -6,6 +6,7 @@ import "./globals.css";
 import { ThemeProviderComponent } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { USGRibbonConditional } from "@/components/USGRibbonConditional";
+import { ThemeRouteScope } from "@/components/ThemeRouteScope";
 
 export const metadata: Metadata = {
   title: "PERMIT.GOV - Federal Permit Portal",
@@ -36,6 +37,7 @@ export default function RootLayout({
       </head>
       <body className={`${GeistSans.variable} antialiased bg-black`} style={{ backgroundColor: '#000' }}>
         <ThemeProviderComponent>
+          <ThemeRouteScope />
           <AuthProvider>
             <USGRibbonConditional>
               {children}

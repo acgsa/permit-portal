@@ -6,6 +6,22 @@
 @import "bpmn-js/dist/assets/bpmn-font/css/bpmn.css";
 
 /* ============================================================
+   Search Input Icon (USDS)
+   ============================================================ */
+
+.input-field[type="search"] {
+  background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M11 5.5C7.96243 5.5 5.5 7.96243 5.5 11C5.5 14.0376 7.96243 16.5 11 16.5C12.519 16.5 13.893 15.8852 14.8891 14.8891C15.8852 13.893 16.5 12.519 16.5 11C16.5 7.96243 14.0376 5.5 11 5.5ZM4 11C4 7.13401 7.13401 4 11 4C14.866 4 18 7.13401 18 11C18 12.6625 17.4197 14.1906 16.4517 15.3911L19.7803 18.7197C20.0732 19.0126 20.0732 19.4874 19.7803 19.7803C19.4874 20.0732 19.0126 20.0732 18.7197 19.7803L15.3911 16.4517C14.1906 17.4197 12.6625 18 11 18C7.13401 18 4 14.866 4 11Z' fill='%23606060'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: var(--space-sm) center;
+  background-size: 18px 18px;
+  padding-left: calc(var(--space-sm) + 18px + var(--space-sm));
+}
+
+[data-theme="dark"] .input-field[type="search"] {
+  background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M11 5.5C7.96243 5.5 5.5 7.96243 5.5 11C5.5 14.0376 7.96243 16.5 11 16.5C12.519 16.5 13.893 15.8852 14.8891 14.8891C15.8852 13.893 16.5 12.519 16.5 11C16.5 7.96243 14.0376 5.5 11 5.5ZM4 11C4 7.13401 7.13401 4 11 4C14.866 4 18 7.13401 18 11C18 12.6625 17.4197 14.1906 16.4517 15.3911L19.7803 18.7197C20.0732 19.0126 20.0732 19.4874 19.7803 19.7803C19.4874 20.0732 19.0126 20.0732 18.7197 19.7803L15.3911 16.4517C14.1906 17.4197 12.6625 18 11 18C7.13401 18 4 14.866 4 11Z' fill='%23b9c3d4'/%3E%3C/svg%3E");
+}
+
+/* ============================================================
    ACGSA USDS Tokens
    ============================================================ */
 
@@ -456,7 +472,8 @@ body {
   flex-direction: column;
   gap: var(--space-md);
   padding-inline: var(--space-md);
-  padding-block: var(--space-md);
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-md);
 }
 
 .workspace-shell-main > * {
@@ -475,7 +492,8 @@ body {
 @media (min-width: 1024px) {
   .workspace-shell-main {
     padding-inline: var(--space-md);
-    padding-block: var(--space-md);
+    padding-top: var(--space-xl);
+    padding-bottom: var(--space-md);
   }
 }
 
@@ -604,6 +622,23 @@ p {
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.34);
 }
 
+.screener-start-page .card.card-lg {
+  background: var(--steel-950);
+}
+
+.screener-start-page .screener-start-card {
+  background: var(--steel-900);
+  opacity: 1;
+}
+
+.screener-start-page .screener-start-card:hover {
+  background: var(--steel-800);
+}
+
+.screener-start-page .screener-start-card-stack:hover .screener-start-card:not(:hover) {
+  opacity: 0.6;
+}
+
 .pre-screener-page .pre-screener-intro {
   margin-bottom: var(--space-3xl);
 }
@@ -618,7 +653,7 @@ p {
 
 .pre-screener-page .page-card-body {
   gap: var(--space-xl);
-  text-align: center;
+  text-align: left;
 }
 
 .pre-screener-page .card-lg .card-body {
@@ -641,13 +676,19 @@ p {
 .pre-screener-page .textarea-field {
   border-radius: 4px;
   border: 1px solid color-mix(in srgb, #8f9aaa 22%, transparent);
-  background: #090d13;
+  background: var(--steel-950);
+  background-color: var(--steel-950) !important;
   color: #f4f7fb;
 }
 
 .pre-screener-page .input-field::placeholder,
 .pre-screener-page .textarea-field::placeholder {
   color: color-mix(in srgb, #c5cfdb 48%, transparent);
+}
+
+.pre-screener-page .pre-screener-step-kicker {
+  text-align: left;
+  letter-spacing: 0.14em;
 }
 
 .pre-screener-step-kicker {

@@ -422,9 +422,9 @@ function xe({
     n && /* @__PURE__ */ e("span", { children: n })
   ] });
 }
-function ye({ title: n, children: r, footer: t, size: a = "md" }) {
-  const l = a === "md" ? "" : `card-${a}`;
-  return /* @__PURE__ */ c("div", { className: `card ${l}`, children: [
+function ye({ title: n, children: r, footer: t, size: a = "md", className: l = "" }) {
+  const s = a === "md" ? "" : `card-${a}`;
+  return /* @__PURE__ */ c("div", { className: `card ${s} ${l}`.trim(), children: [
     /* @__PURE__ */ c("div", { className: "card-body", children: [
       n && /* @__PURE__ */ e("div", { className: "card-title", children: n }),
       /* @__PURE__ */ e("div", { className: "card-text", children: r })

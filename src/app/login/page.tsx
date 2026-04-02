@@ -59,7 +59,16 @@ function LoginPageContent() {
 
       <div className="flex justify-center bg-black text-white px-2 sm:px-6 lg:px-8 min-h-[calc(100vh-80px)]" style={{ paddingTop: 'var(--space-3xl)', paddingBottom: 'var(--space-3xl)' }}>
         <div className="w-full max-w-md flex flex-col justify-center">
-          <div className="rounded-sm border border-white/12 bg-white/[0.02]" style={{ padding: 'var(--space-2xl)' }}>
+          <div
+            className="text-center"
+            style={{
+              borderRadius: '14px',
+              border: 0,
+              background: 'var(--steel-900)',
+              boxShadow: '0 18px 50px rgba(0, 0, 0, 0.34)',
+              padding: 'var(--space-2xl)',
+            }}
+          >
             <div style={{ marginBottom: 'var(--space-2xl)' }}>
               <h1 className="type-heading-h3 text-white" style={{ marginBottom: 'var(--space-xs)' }}>Applicant Login</h1>
               <p className="type-body-sm" style={{ color: 'var(--color-text-body)' }}>

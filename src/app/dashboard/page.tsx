@@ -192,16 +192,16 @@ export default function DashboardPage() {
             </div>
           }
         >
-          <section className="grid gap-[var(--space-md)] lg:grid-cols-12">
-            <div className="lg:col-span-4">
-              <Card>
-                <div className="flex flex-col gap-[var(--space-md)]">
+          <section className="grid items-stretch gap-[var(--space-md)] lg:grid-cols-12">
+            <div className="lg:col-span-4 lg:h-full">
+              <Card className="h-full bg-[var(--color-surface-cards)]">
+                <div className="flex h-full flex-col justify-between gap-[var(--space-md)]">
                   <div className="flex items-center gap-[var(--space-xs)] text-[var(--color-text-body)]">
                     <p className="type-body-sm font-semibold text-[var(--color-text)]">Total Permits</p>
                     <span aria-hidden="true">|</span>
                     <p className="type-body-sm">Open Permits</p>
                   </div>
-                  <p className="mt-[var(--space-2xl)] text-[56px] font-semibold leading-none text-[var(--color-text)]">164,821</p>
+                  <p className="type-heading-h1 text-[var(--color-text)]">164,821</p>
                 </div>
               </Card>
             </div>
@@ -220,7 +220,7 @@ export default function DashboardPage() {
                           onClick: () => setAdminBureauFilter(option),
                         }))}
                       />
-                      <Button variant="outline" size="sm">View report</Button>
+                      <Button variant="primary" size="sm">View report</Button>
                     </div>
                   </div>
                   <div className="h-[220px] rounded-[var(--radius-sm)] border border-[var(--color-border)] bg-[var(--color-bg-subtle)] px-[var(--space-md)] py-[var(--space-sm)]">
@@ -259,17 +259,17 @@ export default function DashboardPage() {
 
             <DonutChart title="Permits by Bureau" segments={ADMIN_BUREAU_BREAKDOWN} size={136} />
 
-            <Card>
-              <div className="flex h-full flex-col gap-[var(--space-sm)]">
+            <Card className="bg-[var(--color-surface-cards)]">
+              <div className="flex h-full flex-col justify-between gap-[var(--space-sm)]">
                 <div className="space-y-[var(--space-sm)]">
                   <h3 className="type-body-sm text-[var(--color-text-body)]">Overdue Permits</h3>
                   <p className="type-body-sm text-[var(--color-text-body)]">&gt;200 days in queue</p>
                 </div>
-                <p className="mt-[var(--space-xl)] text-[56px] font-semibold leading-none text-[var(--color-text)]">3,235</p>
+                <p className="type-heading-h1 text-[var(--color-text)]">3,235</p>
               </div>
             </Card>
 
-            <Card>
+            <Card className="bg-[var(--color-surface-cards)]">
               <div className="flex h-full flex-col gap-[var(--space-sm)]">
                 <div className="space-y-[var(--space-sm)]">
                   <h3 className="type-body-sm text-[var(--color-text-body)]">Blockage Meter</h3>
@@ -303,10 +303,10 @@ export default function DashboardPage() {
           </section>
 
           <section className="flex flex-wrap gap-[var(--space-sm)]">
-            <Button variant="outline" size="sm" onClick={() => router.push('/staff/admin-controls')}>
+            <Button variant="primary" size="sm" onClick={() => router.push('/staff/admin-controls')}>
               Open Admin Controls
             </Button>
-            <Button variant="outline" size="sm" onClick={() => router.push('/staff/workflow-manager')}>
+            <Button variant="primary" size="sm" onClick={() => router.push('/staff/workflow-manager')}>
               Workflow Manager
             </Button>
           </section>
@@ -444,7 +444,7 @@ export default function DashboardPage() {
                   header={
                     <TableHeader
                       title="Staff Overview"
-                      dropdown={<Button variant="outline" size="sm">Manage Staff</Button>}
+                      dropdown={<Button variant="primary" size="sm">Manage Staff</Button>}
                     />
                   }
                   columns={[

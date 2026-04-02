@@ -118,6 +118,7 @@ declare interface CardProps {
     children: default_2.ReactNode;
     footer?: default_2.ReactNode;
     size?: CardSize;
+    className?: string;
 }
 
 declare type CardSize = "sm" | "md" | "lg";

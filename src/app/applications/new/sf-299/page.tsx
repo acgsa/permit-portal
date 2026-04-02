@@ -3,7 +3,7 @@
 import { OnboardingPageScaffold } from '@/components/OnboardingPageScaffold';
 import { Card, Input, PillButton, Textarea } from 'usds';
 import { getToken } from '@/lib/auth';
-import { createWorkflow } from '@/lib/api';
+import { createWorkflow, getPreScreenerDraft } from '@/lib/api';
 import {
   getApplicationDraftById,
   upsertApplicationDraft,
@@ -47,6 +47,30 @@ function toFormState(data: Record<string, string>): FormState {
   };
 }
 
+function deriveSf299FormFromPreScreener(payload: Record<string, unknown>): Partial<FormState> {
+  const asString = (value: unknown): string => (typeof value === 'string' ? value : '');
+  const firstName = asString(payload.applicantFirstName).trim();
+  const lastName = asString(payload.applicantLastName).trim();
+  const city = asString(payload.locationCity).trim();
+  const state = asString(payload.locationState).trim().toUpperCase().slice(0, 2);
+  const address = asString(payload.locationAddress).trim();
+  const description = asString(payload.projectDescription).trim();
+  const additional = asString(payload.additionalInfo).trim();
+
+  const contactName = [firstName, lastName].filter(Boolean).join(' ').trim();
+  const projectLocation = address || [city, state].filter(Boolean).join(', ');
+  const mergedDescription = [description, additional].filter(Boolean).join('\n\n');
+
+  return {
+    applicantOrganization: asString(payload.applicantOrganization),
+    contactName,
+    contactEmail: asString(payload.applicantEmail),
+    projectLocation,
+    stateCode: state,
+    projectDescription: mergedDescription,
+  };
+}
+
 export default function Sf299FormPage() {
   return (
     <Suspense fallback={null}>
@@ -59,6 +83,8 @@ function Sf299FormPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const draftId = searchParams.get('draft');
+  const preScreenerDraftIdParam = searchParams.get('pre_screener_draft');
+  const preScreenerDraftId = preScreenerDraftIdParam ? Number(preScreenerDraftIdParam) : NaN;
   const agencyParam = searchParams.get('agency') ?? 'BLM';
   const regionParam = searchParams.get('region') ?? 'Western';
   const stateParam = searchParams.get('state') ?? '';
@@ -71,9 +97,11 @@ function Sf299FormPageContent() {
   useEffect(() => {
     const token = getToken();
     if (!token) {
-      router.replace(`/login?return_to=${encodeURIComponent('/applications/new/sf-299')}`);
+      const query = searchParams.toString();
+      const returnTo = query ? `/applications/new/sf-299?${query}` : '/applications/new/sf-299';
+      router.replace(`/login?return_to=${encodeURIComponent(returnTo)}`);
     }
-  }, [router]);
+  }, [router, searchParams]);
 
   useEffect(() => {
     if (!draftId) return;
@@ -83,6 +111,33 @@ function Sf299FormPageContent() {
     setLocalDraftId(draft.id);
     setFormState(toFormState(draft.data));
   }, [draftId]);
+
+  useEffect(() => {
+    if (!Number.isFinite(preScreenerDraftId) || preScreenerDraftId <= 0) return;
+
+    const token = getToken();
+    if (!token) return;
+
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const preScreenerDraft = await getPreScreenerDraft(token, preScreenerDraftId);
+        if (cancelled) return;
+
+        setFormState((current) => ({
+          ...current,
+          ...deriveSf299FormFromPreScreener(preScreenerDraft.payload),
+        }));
+      } catch {
+        // Keep form editable even if prefill lookup fails.
+      }
+    };
+
+    void load();
+    return () => {
+      cancelled = true;
+    };
+  }, [preScreenerDraftId]);
 
   const canSubmit = useMemo(() => {
     return !!(

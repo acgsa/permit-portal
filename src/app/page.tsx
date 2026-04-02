@@ -34,13 +34,13 @@ export default function Home() {
         <div className="w-full max-w-7xl flex flex-col items-center gap-8 text-center" style={{ marginLeft: 'clamp(var(--space-sm), 5vw, var(--space-lg))', marginRight: 'clamp(var(--space-sm), 5vw, var(--space-lg))' }}>
           <div className="flex justify-center">
             <div className="w-full max-w-sm">
-            <Link href="/screener" className="w-full max-w-xs">
+            <Link href="/application-guidance" className="w-full max-w-xs">
               <PillButton
                 size="lg"
                 variant="secondary"
                 className="w-full !bg-[var(--color-btn-secondary-bg)] !text-[var(--color-btn-secondary-text)] md:!text-[15px] lg:!text-[16px] hover:!bg-[var(--color-btn-secondary-bg-hover)] hover:!text-[var(--color-btn-secondary-text-hover)]"
               >
-                Get Started
+                Start a New Application
               </PillButton>
             </Link>
             </div>

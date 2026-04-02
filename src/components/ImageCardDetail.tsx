@@ -18,7 +18,7 @@ export function ImageCardDetail({ href, image, imageAlt, title, agencies, exampl
         <div className="image-card-content">
           <div className="image-card-text" style={{ alignItems: 'flex-start' }}>
             <div className="image-card-text-inner" style={{ gap: 'var(--space-sm)' }}>
-              <div className="image-card-title">{title}</div>
+              <div className="image-card-title type-heading-h5">{title}</div>
               <p className="type-body-sm text-[var(--color-text-body)]">
                 <span className="type-body-xs uppercase tracking-[0.12em] text-[var(--color-text-disabled)]">Agencies:</span>{' '}
                 {agencies}

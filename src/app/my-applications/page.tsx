@@ -31,7 +31,7 @@ const APPLICANT_MOCK_ROWS: ApplicantDisplayRow[] = [
     id: 3,
     title: '3-200-21: Import of Sport-Hunted Trophies of Argali from Mongolia; 2016',
     permitNumber: 'C710043197',
-    statusKey: 'in_progress',
+    statusKey: 'pending',
     updatedLabel: 'May 12, 2025',
   },
   {
