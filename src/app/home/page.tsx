@@ -194,7 +194,7 @@ export default function HomePage() {
       <div className="min-h-full bg-[var(--color-bg)] p-[var(--space-md)]">
         <div className="mx-auto flex w-full max-w-[1120px] flex-col gap-[var(--space-xl)]">
           <section className="flex flex-col gap-[var(--space-md)]">
-            <p className="text-sm font-medium text-[var(--color-text-placeholder)]">Welcome back</p>
+            <p className="text-sm font-medium text-[var(--color-text-body)]">Welcome back</p>
 
             <div className="flex flex-col gap-[var(--space-sm)] sm:flex-row sm:items-center sm:justify-between">
               <h1 className="text-5xl font-bold tracking-tight text-[var(--color-text)] sm:text-6xl">{firstName}</h1>
@@ -230,7 +230,7 @@ export default function HomePage() {
                       className="pointer-events-none absolute bottom-[var(--space-md)] left-0 top-[var(--space-md)] hidden w-px bg-[var(--color-border)] lg:block"
                     />
                   ) : null}
-                  <p className="text-base font-medium text-[var(--color-text-placeholder)]">{item.label}</p>
+                  <p className="text-base font-medium text-[var(--color-text-body)]">{item.label}</p>
                   <h2 style={{ color: item.color, margin: 0 }} className="type-heading-h2 leading-none">
                     {item.value}
                   </h2>
@@ -248,9 +248,9 @@ export default function HomePage() {
             </div>
 
             {loadingWorkflows ? (
-              <p className="type-body-sm text-[var(--color-text-placeholder)]">Loading tasks...</p>
+              <p className="type-body-sm text-[var(--color-text-body)]">Loading tasks...</p>
             ) : summary.visibleRows.length === 0 ? (
-              <p className="type-body-sm text-[var(--color-text-placeholder)]">
+              <p className="type-body-sm text-[var(--color-text-body)]">
                 No tasks found yet. Start a new application to begin.
               </p>
             ) : (
@@ -283,7 +283,7 @@ export default function HomePage() {
                   >
                     <div className="md:pr-[var(--space-xl)]">
                       <p className="type-body-sm text-[var(--color-text)]">{task.title}</p>
-                      <p className="mt-[var(--space-2xs)] type-body-xs text-[var(--color-text-disabled)]">{task.detail}</p>
+                      <p className="mt-[var(--space-2xs)] type-body-xs text-[var(--color-text-body)]">{task.detail}</p>
                     </div>
 
                     <Button
@@ -306,7 +306,7 @@ export default function HomePage() {
               <p className="type-body-md text-[var(--color-text-body)]">
                 Our team will review the details and contact you soon with the exact federal forms you need (including a pre-filled SF-299 if applicable).
               </p>
-              <p className="type-body-sm text-[var(--color-text-disabled)]">
+              <p className="type-body-sm text-[var(--color-text-body)]">
                 You will receive an email confirmation shortly.
               </p>
 
@@ -315,7 +315,7 @@ export default function HomePage() {
                 style={{ paddingInline: 'var(--space-md)', paddingBlock: 'var(--space-md)' }}
               >
                 <p className="type-body-sm text-[var(--color-text)]">{guidanceSubmission.title} submitted</p>
-                <p className="type-body-xs text-[var(--color-text-disabled)]">
+                <p className="type-body-xs text-[var(--color-text-body)]">
                   Submitted {new Date(guidanceSubmission.submittedAt).toLocaleString()}
                 </p>
               </div>
