@@ -109,7 +109,7 @@ export default function Home() {
       </section>
 
       {/* Operations Section */}
-      <section className="flex justify-center bg-[#0a0b0d] text-white px-2 sm:px-6 lg:px-8" style={{ paddingTop: 'var(--space-2xl)', paddingBottom: 'var(--space-2xl)' }}>
+      <section className="flex justify-center bg-black text-white px-2 sm:px-6 lg:px-8" style={{ paddingTop: 'var(--space-2xl)', paddingBottom: 'var(--space-2xl)' }}>
         <div className="w-full max-w-7xl" style={{ marginLeft: 'clamp(var(--space-sm), 5vw, var(--space-lg))', marginRight: 'clamp(var(--space-sm), 5vw, var(--space-lg))' }}>
           <div className="max-w-6xl">
             <h3 className="font-[var(--font-primary)] text-[clamp(1.8rem,4.4vw,4rem)] font-normal leading-[1.1] text-white" style={{ marginBottom: 'var(--space-xl)' }}>
@@ -133,7 +133,7 @@ export default function Home() {
       </section>
 
       {/* Extra spacer before footer */}
-      <div aria-hidden="true" style={{ height: 'var(--space-3xl)', background: '#0a0b0d', width: '100%' }} />
+      <div aria-hidden="true" style={{ height: 'var(--space-3xl)', background: '#000000', width: '100%' }} />
       <Footer />
     </>
   );

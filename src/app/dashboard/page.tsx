@@ -1,15 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
+import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
-import { BarChart3, ChevronDown, UserPlus } from 'lucide-react';
+import { ArrowUp, BarChart3, ChevronDown, UserPlus } from 'lucide-react';
 import { LucideIcon } from '@/components/LucideIcon';
 import { WorkspaceShell } from '@/components/WorkspaceShell';
 import { PortalPageScaffold } from '@/components/PortalPageScaffold';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   Badge,
-  BarChart,
   Button,
   Card,
   CompletionTracker,
@@ -26,6 +27,7 @@ type QuickAssignStatus = 'NEW' | 'OVERDUE';
 type QuickAssignRow = {
   status: QuickAssignStatus;
   project: string;
+  applicationId: string;
   assignee: string;
 };
 
@@ -41,11 +43,11 @@ type StaffOverviewRow = {
 };
 
 const QUICK_ASSIGN_ROWS: QuickAssignRow[] = [
-  { status: 'NEW', project: 'Right of Way for Lake Mead Parkway', assignee: 'None' },
-  { status: 'NEW', project: 'Pine Valley Reservoir Expansion Project', assignee: 'None' },
-  { status: 'OVERDUE', project: 'Lower Colorado River Pipeline Crossing', assignee: 'Reece Randal' },
-  { status: 'OVERDUE', project: 'Pine Valley Reservoir Expansion Project', assignee: 'Reece Randal' },
-  { status: 'OVERDUE', project: 'Rio Grande Diversion Structure Rehab', assignee: 'Reece Randal' },
+  { status: 'NEW', project: 'Right of Way for Lake Mead Parkway', applicationId: 'C910043198', assignee: 'None' },
+  { status: 'NEW', project: 'Pine Valley Reservoir Expansion Project', applicationId: 'C710043238', assignee: 'None' },
+  { status: 'OVERDUE', project: 'Lower Colorado River Pipeline Crossing', applicationId: 'C710043197', assignee: 'Reece Randal' },
+  { status: 'OVERDUE', project: 'Pine Valley Reservoir Expansion Project', applicationId: 'C510043277', assignee: 'Reece Randal' },
+  { status: 'OVERDUE', project: 'Rio Grande Diversion Structure Rehab', applicationId: 'C210043823', assignee: 'Reece Randal' },
 ];
 
 const STAFF_OVERVIEW_ROWS: StaffOverviewRow[] = [
@@ -70,38 +72,37 @@ const ADMIN_BUREAU_BREAKDOWN = [
 const ADMIN_COMPLETION_STATE = [
   { label: 'Submitted', percent: 12, colorVar: 'var(--steel-300)', hoverColorVar: 'var(--steel-400)', texture: 'stripes' as const },
   { label: 'Overdue', percent: 62, colorVar: 'var(--red-500)', hoverColorVar: 'var(--red-600)', texture: 'crosshatch' as const },
-  { label: 'Awaiting Info', percent: 12, colorVar: 'var(--gold-400)', hoverColorVar: 'var(--gold-500)', texture: 'dots' as const },
+  { label: 'Awaiting Additional Info', percent: 12, colorVar: 'var(--gold-400)', hoverColorVar: 'var(--gold-500)', texture: 'dots' as const },
   { label: 'In Progress', percent: 8, colorVar: 'var(--blue-400)', hoverColorVar: 'var(--blue-500)', texture: 'stripes-alt' as const },
-  { label: 'Approved', percent: 47, colorVar: 'var(--green-500)', hoverColorVar: 'var(--green-600)', texture: 'stripes' as const },
-  { label: 'Rejected', percent: 13, colorVar: 'var(--steel-700)', hoverColorVar: 'var(--steel-800)', texture: 'dots' as const },
 ];
 
-const ADMIN_LINE_POINTS = [
-  { x: 0, y: 170 },
-  { x: 42, y: 170 },
-  { x: 84, y: 168 },
-  { x: 126, y: 44 },
-  { x: 168, y: 152 },
-  { x: 210, y: 138 },
-  { x: 252, y: 122 },
-  { x: 294, y: 150 },
-  { x: 336, y: 68 },
-  { x: 378, y: 150 },
-  { x: 420, y: 168 },
-  { x: 462, y: 146 },
-  { x: 504, y: 166 },
-  { x: 546, y: 152 },
-  { x: 588, y: 150 },
-  { x: 630, y: 149 },
-  { x: 672, y: 148 },
-  { x: 714, y: 88 },
-  { x: 756, y: 150 },
-  { x: 798, y: 152 },
-  { x: 840, y: 168 },
-  { x: 882, y: 150 },
-  { x: 924, y: 150 },
-  { x: 966, y: 96 },
+const OPEN_PERMITS_SERIES = [
+  { year: 1904, permits: 220 },
+  { year: 1911, permits: 220 },
+  { year: 1990, permits: 210 },
+  { year: 1992, permits: 4200 },
+  { year: 1993, permits: 620 },
+  { year: 1995, permits: 920 },
+  { year: 1997, permits: 1250 },
+  { year: 1999, permits: 3214 },
+  { year: 2001, permits: 650 },
+  { year: 2004, permits: 430 },
+  { year: 2005, permits: 760 },
+  { year: 2008, permits: 620 },
+  { year: 2010, permits: 620 },
+  { year: 2016, permits: 2500 },
+  { year: 2018, permits: 600 },
+  { year: 2020, permits: 260 },
+  { year: 2023, permits: 620 },
+  { year: 2026, permits: 620 },
+  { year: 2027, permits: 2300 },
 ];
+const OPEN_PERMITS_Y_AXIS_TICKS = [0, 1000, 2000, 3000, 4000, 5000];
+const OPEN_PERMITS_X_AXIS_TICKS = [1904, 1990, 1995, 2000, 2005, 2010, 2015, 2020, 2025];
+const OPEN_PERMITS_MAX = 5000;
+const OPEN_PERMITS_HIGHLIGHT_YEAR = 1999;
+const OPEN_PERMITS_LEGACY_END_YEAR = 1990;
+const OPEN_PERMITS_LEGACY_WIDTH_RATIO = 0.14;
 
 const ADMIN_AVERAGE_DAYS = [
   { label: 'NEPA', value: 2291 },
@@ -111,8 +112,6 @@ const ADMIN_AVERAGE_DAYS = [
 ];
 
 const ADMIN_DATE_FILTER_OPTIONS = ['July 20-27, 2025'];
-const ADMIN_PERMIT_FILTER_OPTIONS = ['All Permits'];
-const ADMIN_BUREAU_FILTER_OPTIONS = ['All Bureaus'];
 const QUICK_ASSIGN_ASSIGNEE_OPTIONS = ['None', 'Reece Randal', 'Nancy Coleman', 'Jennifer Hoff', 'Clyde Lay'];
 
 function quickAssignStatusColor(status: QuickAssignStatus): BadgeColor {
@@ -129,18 +128,152 @@ function managerFirstName(displayName: string): string {
   return displayName.split(' ')[0] ?? displayName;
 }
 
+function formatPermitsTick(value: number): string {
+  if (value === 0) return '0';
+  return `${Math.round(value / 1000)}K`;
+}
+
+type QuickAssignDropdownProps = {
+  value: string;
+  options: string[];
+  onSelect: (value: string) => void;
+  widthPx?: number;
+};
+
+function getQuickAssignMenuPosition(triggerRect: DOMRect, menuHeight: number, widthPx: number): { top: number; left: number } {
+  const gap = 4;
+  const viewportPadding = 8;
+  let left = triggerRect.right - widthPx;
+  let top = triggerRect.bottom + gap;
+
+  if (typeof window !== 'undefined') {
+    const minLeft = viewportPadding;
+    const maxLeft = window.innerWidth - viewportPadding - widthPx;
+    left = Math.min(Math.max(left, minLeft), Math.max(minLeft, maxLeft));
+
+    const maxBottom = window.innerHeight - viewportPadding;
+    if (menuHeight > 0 && top + menuHeight > maxBottom) {
+      top = Math.max(viewportPadding, triggerRect.top - menuHeight - gap);
+    }
+  }
+
+  return { top, left };
+}
+
+function QuickAssignDropdown({ value, options, onSelect, widthPx = 132 }: QuickAssignDropdownProps) {
+  const [open, setOpen] = useState(false);
+  const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const updatePosition = () => {
+      if (!triggerRef.current) return;
+      const rect = triggerRef.current.getBoundingClientRect();
+      const menuHeight = menuRef.current?.offsetHeight ?? 0;
+      setMenuPos(getQuickAssignMenuPosition(rect, menuHeight, widthPx));
+    };
+
+    updatePosition();
+
+    const handleOutsideClick = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (triggerRef.current?.contains(target)) return;
+      if (menuRef.current?.contains(target)) return;
+      setOpen(false);
+    };
+
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+
+    window.addEventListener('resize', updatePosition);
+    window.addEventListener('scroll', updatePosition, true);
+    document.addEventListener('mousedown', handleOutsideClick);
+    document.addEventListener('keydown', handleEsc);
+
+    return () => {
+      window.removeEventListener('resize', updatePosition);
+      window.removeEventListener('scroll', updatePosition, true);
+      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('keydown', handleEsc);
+    };
+  }, [open, widthPx]);
+
+  return (
+    <>
+      <button
+        ref={triggerRef}
+        type="button"
+        className="dropdown-trigger dropdown-trigger-sm w-full"
+        style={{ justifyContent: 'space-between', gap: 'var(--space-xs)' }}
+        onClick={() => setOpen((current) => !current)}
+        aria-expanded={open}
+        aria-haspopup="listbox"
+      >
+        <span className="block min-w-0 flex-1 truncate text-left">{value}</span>
+        <ChevronDown size={16} aria-hidden="true" />
+      </button>
+
+      {open && typeof document !== 'undefined'
+        ? createPortal(
+            <div
+              ref={menuRef}
+              className="dropdown-menu"
+              style={{
+                position: 'fixed',
+                top: menuPos.top,
+                left: menuPos.left,
+                width: widthPx,
+                minWidth: widthPx,
+                maxWidth: widthPx,
+                zIndex: 300,
+              }}
+              role="listbox"
+            >
+              {options.map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  className="dropdown-item"
+                  title={option}
+                  onClick={() => {
+                    onSelect(option);
+                    setOpen(false);
+                  }}
+                >
+                  <span className="block w-full truncate">{option}</span>
+                </button>
+              ))}
+            </div>,
+            document.body,
+          )
+        : null}
+    </>
+  );
+}
+
 export default function DashboardPage() {
   const { user, token, logout } = useAuth();
   const router = useRouter();
   const isStaffUser = user?.role === 'staff' || user?.role === 'admin';
   const [adminDateFilter, setAdminDateFilter] = useState(ADMIN_DATE_FILTER_OPTIONS[0]);
-  const [adminPermitFilter, setAdminPermitFilter] = useState(ADMIN_PERMIT_FILTER_OPTIONS[0]);
-  const [adminBureauFilter, setAdminBureauFilter] = useState(ADMIN_BUREAU_FILTER_OPTIONS[0]);
+  const [hoveredOpenPermitsPoint, setHoveredOpenPermitsPoint] = useState<(typeof OPEN_PERMITS_SERIES)[number] | null>(null);
+  const [hoveredOpenPermitsCursor, setHoveredOpenPermitsCursor] = useState<{ x: number; y: number } | null>(null);
+  const openPermitsChartRef = useRef<HTMLDivElement>(null);
+  const openPermitsTooltipRef = useRef<HTMLDivElement>(null);
   const [quickAssignAssignees, setQuickAssignAssignees] = useState<string[]>(() =>
     QUICK_ASSIGN_ROWS.map((row) => row.assignee),
   );
 
   useEffect(() => {
+    if (!token) {
+      router.replace('/staff');
+      return;
+    }
+
     if (token && !isStaffUser) {
       router.replace('/home');
     }
@@ -154,7 +287,73 @@ export default function DashboardPage() {
 
   const staffProfile = resolveStaffProfile(user?.sub, user?.role);
   const isAdmin = staffProfile.role === 'admin';
-  const chartPath = ADMIN_LINE_POINTS.map((point) => `${point.x},${point.y}`).join(' ');
+  const chartWidth = 980;
+  const chartHeight = 310;
+  const chartPadding = { top: 8, right: 24, bottom: 46, left: 56 };
+  const openPermitsQuantityLabelX = chartPadding.left - 28;
+  const minYear = OPEN_PERMITS_SERIES[0]?.year ?? 1904;
+  const maxYear = OPEN_PERMITS_SERIES[OPEN_PERMITS_SERIES.length - 1]?.year ?? 2027;
+  const plotWidth = chartWidth - chartPadding.left - chartPadding.right;
+  const plotHeight = chartHeight - chartPadding.top - chartPadding.bottom;
+  const legacyEndYear = Math.min(OPEN_PERMITS_LEGACY_END_YEAR, maxYear);
+  const legacyPlotWidth = plotWidth * OPEN_PERMITS_LEGACY_WIDTH_RATIO;
+  const modernPlotWidth = plotWidth - legacyPlotWidth;
+  const xForYear = (year: number): number => {
+    if (year <= legacyEndYear) {
+      if (legacyEndYear === minYear) return chartPadding.left;
+      return chartPadding.left + ((year - minYear) / (legacyEndYear - minYear)) * legacyPlotWidth;
+    }
+    if (maxYear === legacyEndYear) return chartPadding.left + legacyPlotWidth;
+    return chartPadding.left + legacyPlotWidth + ((year - legacyEndYear) / (maxYear - legacyEndYear)) * modernPlotWidth;
+  };
+  const yForPermits = (permits: number): number => {
+    return chartPadding.top + (1 - permits / OPEN_PERMITS_MAX) * plotHeight;
+  };
+  const openPermitsPath = OPEN_PERMITS_SERIES.map((point) => `${xForYear(point.year)},${yForPermits(point.permits)}`).join(' ');
+  const openPermitsTooltipPosition = (() => {
+    if (!hoveredOpenPermitsPoint || !hoveredOpenPermitsCursor) return null;
+
+    const tooltipGap = 12;
+    const viewportPadding = 8;
+    const tooltipWidth = openPermitsTooltipRef.current?.offsetWidth ?? 188;
+    const tooltipHeight = openPermitsTooltipRef.current?.offsetHeight ?? 88;
+    let left = hoveredOpenPermitsCursor.x + tooltipGap;
+    let top = hoveredOpenPermitsCursor.y - tooltipHeight - tooltipGap;
+
+    if (openPermitsChartRef.current && typeof window !== 'undefined') {
+      const rect = openPermitsChartRef.current.getBoundingClientRect();
+      const minLeft = viewportPadding - rect.left;
+      const maxLeft = window.innerWidth - viewportPadding - rect.left - tooltipWidth;
+      const minTop = viewportPadding - rect.top;
+      const maxTop = window.innerHeight - viewportPadding - rect.top - tooltipHeight;
+      const clamp = (value: number, boundA: number, boundB: number) => {
+        const lower = Math.min(boundA, boundB);
+        const upper = Math.max(boundA, boundB);
+        return Math.min(Math.max(value, lower), upper);
+      };
+
+      if (top < minTop) {
+        top = hoveredOpenPermitsCursor.y + tooltipGap;
+      }
+
+      left = clamp(left, minLeft, maxLeft);
+      top = clamp(top, minTop, maxTop);
+    }
+
+    return { left, top };
+  })();
+
+  const updateOpenPermitsHover = (point: (typeof OPEN_PERMITS_SERIES)[number], event: { clientX: number; clientY: number }) => {
+    if (!openPermitsChartRef.current) return;
+    const rect = openPermitsChartRef.current.getBoundingClientRect();
+    setHoveredOpenPermitsPoint(point);
+    setHoveredOpenPermitsCursor({
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top,
+    });
+  };
+
+  const avgDaysMax = Math.max(...ADMIN_AVERAGE_DAYS.map((item) => item.value), 1);
 
   return (
     <WorkspaceShell
@@ -181,135 +380,213 @@ export default function DashboardPage() {
                   onClick: () => setAdminDateFilter(option),
                 }))}
               />
-              <Dropdown
-                size="sm"
-                label={adminPermitFilter}
-                items={ADMIN_PERMIT_FILTER_OPTIONS.map((option) => ({
-                  label: option,
-                  onClick: () => setAdminPermitFilter(option),
-                }))}
-              />
+              <Button variant="primary" size="sm">View report</Button>
             </div>
           }
         >
+          <div className="federal-admin-dashboard flex flex-col gap-[var(--space-md)]">
           <section className="grid items-stretch gap-[var(--space-md)] lg:grid-cols-12">
             <div className="lg:col-span-4 lg:h-full">
-              <Card className="h-full bg-[var(--color-surface-cards)]">
+              <Card className="h-full bg-[var(--steel-950)]">
                 <div className="flex h-full flex-col justify-between gap-[var(--space-md)]">
-                  <div className="flex items-center gap-[var(--space-xs)] text-[var(--color-text-body)]">
-                    <p className="type-body-sm font-semibold text-[var(--color-text)]">Total Permits</p>
-                    <span aria-hidden="true">|</span>
-                    <p className="type-body-sm">Open Permits</p>
-                  </div>
+                  <p className="chart-card-title" style={{ marginBottom: 0 }}>Total Active Permits</p>
                   <p className="type-heading-h1 text-[var(--color-text)]">164,821</p>
                 </div>
               </Card>
             </div>
 
             <div className="lg:col-span-8">
-              <Card>
+              <Card className="bg-[var(--color-bg-subtle)]">
                 <div className="flex flex-col gap-[var(--space-md)]">
-                  <div className="flex items-center justify-between gap-[var(--space-sm)]">
-                    <h3 className="type-heading-h6 text-[var(--color-text)]">Open Permits by Date</h3>
-                    <div className="flex items-center gap-[var(--space-sm)]">
-                      <Dropdown
-                        size="sm"
-                        label={adminBureauFilter}
-                        items={ADMIN_BUREAU_FILTER_OPTIONS.map((option) => ({
-                          label: option,
-                          onClick: () => setAdminBureauFilter(option),
-                        }))}
-                      />
-                      <Button variant="primary" size="sm">View report</Button>
-                    </div>
+                  <div className="dashboard-open-permits-header">
+                    <div className="chart-card-title" style={{ marginBottom: 0 }}>Open Permits by Date</div>
                   </div>
-                  <div className="h-[220px] rounded-[var(--radius-sm)] border border-[var(--color-border)] bg-[var(--color-bg-subtle)] px-[var(--space-md)] py-[var(--space-sm)]">
-                    <svg viewBox="0 0 980 200" className="h-full w-full" role="img" aria-label="Open permits trend line">
-                      {[0, 1, 2, 3, 4].map((row) => (
-                        <line
-                          key={row}
-                          x1="0"
-                          y1={20 + row * 40}
-                          x2="980"
-                          y2={20 + row * 40}
-                          stroke="var(--color-border)"
-                          strokeWidth="1"
-                        />
-                      ))}
+                  <div
+                    ref={openPermitsChartRef}
+                    className="relative px-[var(--space-sm)] pb-[var(--space-xs)]"
+                    onMouseLeave={() => {
+                      setHoveredOpenPermitsPoint(null);
+                      setHoveredOpenPermitsCursor(null);
+                    }}
+                  >
+                    <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} className="w-full" role="img" aria-label="Open permits by date line chart">
+                      {OPEN_PERMITS_Y_AXIS_TICKS.map((tick) => {
+                        const y = yForPermits(tick);
+                        return (
+                          <g key={`y-${tick}`}>
+                            <text
+                              x={openPermitsQuantityLabelX}
+                              y={y + 5}
+                              textAnchor="end"
+                              className="type-body-sm"
+                              fill="var(--color-text-body)"
+                            >
+                              {formatPermitsTick(tick)}
+                            </text>
+                            <line
+                              x1={chartPadding.left}
+                              y1={y}
+                              x2={chartWidth - chartPadding.right}
+                              y2={y}
+                              stroke="var(--color-border)"
+                              strokeWidth="1"
+                            />
+                          </g>
+                        );
+                      })}
+
                       <polyline
-                        points={chartPath}
+                        points={openPermitsPath}
                         fill="none"
-                        stroke="#243651"
+                        stroke="var(--color-text)"
                         strokeWidth="2"
                         strokeLinejoin="round"
                         strokeLinecap="round"
                       />
-                      {ADMIN_LINE_POINTS.map((point, index) => (
-                        <circle key={`${point.x}-${point.y}-${index}`} cx={point.x} cy={point.y} r="5" fill="#0F3A5A" />
+
+                      {OPEN_PERMITS_SERIES.map((point) => {
+                        const x = xForYear(point.year);
+                        const y = yForPermits(point.permits);
+                        const isHovered = hoveredOpenPermitsPoint?.year === point.year;
+                        return (
+                          <g key={`point-${point.year}`}>
+                            <circle
+                              cx={x}
+                              cy={y}
+                              r={isHovered ? 7 : point.year === OPEN_PERMITS_HIGHLIGHT_YEAR ? 6.5 : 6}
+                              fill="var(--color-text-body-hover)"
+                              stroke="var(--color-bg)"
+                              strokeWidth="1.5"
+                            />
+                            <circle
+                              cx={x}
+                              cy={y}
+                              r="11"
+                              fill="transparent"
+                              onMouseEnter={(event) => updateOpenPermitsHover(point, event)}
+                              onMouseMove={(event) => updateOpenPermitsHover(point, event)}
+                              onMouseLeave={() => {
+                                setHoveredOpenPermitsPoint(null);
+                                setHoveredOpenPermitsCursor(null);
+                              }}
+                            />
+                          </g>
+                        );
+                      })}
+
+                      {OPEN_PERMITS_X_AXIS_TICKS.map((tickYear) => (
+                        <text
+                          key={`x-${tickYear}`}
+                          x={xForYear(tickYear)}
+                          y={chartHeight - 12}
+                          textAnchor="middle"
+                          className="type-body-sm"
+                          fill="var(--color-text-body)"
+                        >
+                          {tickYear}
+                        </text>
                       ))}
                     </svg>
+                    {hoveredOpenPermitsPoint && openPermitsTooltipPosition ? (
+                      <div
+                        ref={openPermitsTooltipRef}
+                        className="absolute z-20 pointer-events-none chart-kpi-card"
+                        style={{
+                          left: openPermitsTooltipPosition.left,
+                          top: openPermitsTooltipPosition.top,
+                        }}
+                      >
+                        <div className="chart-kpi-card-title">Permits Added</div>
+                        <div className="chart-kpi-card-row">
+                          <span
+                            className="chart-kpi-card-bullet"
+                            style={{ background: 'var(--color-text-body-hover)' }}
+                            aria-hidden="true"
+                          />
+                          <span className="chart-kpi-card-label">Total</span>
+                          <span className="chart-kpi-card-value">
+                            {hoveredOpenPermitsPoint.permits.toLocaleString()}
+                          </span>
+                        </div>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               </Card>
             </div>
           </section>
 
-          <section className="grid gap-[var(--space-md)] md:grid-cols-2 xl:grid-cols-4">
-            <BarChart title="Av. Days Since Submission" items={ADMIN_AVERAGE_DAYS} />
-
-            <DonutChart title="Permits by Bureau" segments={ADMIN_BUREAU_BREAKDOWN} size={136} />
-
-            <Card className="bg-[var(--color-surface-cards)]">
-              <div className="flex h-full flex-col justify-between gap-[var(--space-sm)]">
-                <div className="space-y-[var(--space-sm)]">
-                  <h3 className="type-body-sm text-[var(--color-text-body)]">Overdue Permits</h3>
-                  <p className="type-body-sm text-[var(--color-text-body)]">&gt;200 days in queue</p>
-                </div>
-                <p className="type-heading-h1 text-[var(--color-text)]">3,235</p>
-              </div>
-            </Card>
-
-            <Card className="bg-[var(--color-surface-cards)]">
-              <div className="flex h-full flex-col gap-[var(--space-sm)]">
-                <div className="space-y-[var(--space-sm)]">
-                  <h3 className="type-body-sm text-[var(--color-text-body)]">Blockage Meter</h3>
-                  <p className="type-body-sm text-[var(--color-text-body)]">Based on old queued permits</p>
-                </div>
-                <div className="mt-[var(--space-md)] flex justify-center">
-                  <div
-                    aria-hidden="true"
-                    className="relative h-[152px] w-[152px] rounded-full"
-                    style={{
-                      background: 'conic-gradient(from 180deg, #66B548 0deg 110deg, #D9C748 110deg 170deg, #B7315B 170deg 300deg, transparent 300deg 360deg)',
-                    }}
-                  >
-                    <div className="absolute inset-[16px] rounded-full bg-[var(--color-bg)]" />
-                    <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-[var(--color-bg)]" />
+          <section className="grid gap-[var(--space-md)] pr-[var(--space-md)] md:pr-0 md:grid-cols-2 xl:grid-cols-3">
+            <div className="dashboard-av-days-card">
+              <Card className="h-full bg-[var(--color-bg-subtle)]">
+                <div className="flex h-full flex-col">
+                  <div className="space-y-[var(--space-2xs)]">
+                    <div className="chart-card-title" style={{ marginBottom: 0 }}>Av. Days Since Submission</div>
+                    <p className="m-0 type-body-sm text-[var(--color-text-body)]">Target: &lt;180 days</p>
+                  </div>
+                  <div aria-hidden="true" style={{ height: 'var(--space-xl)' }} />
+                  <div className="flex-1 min-h-[180px]" role="img" aria-label="Average days since submission by system">
+                    <div className="h-full w-full flex items-end gap-[var(--space-sm)]">
+                      {ADMIN_AVERAGE_DAYS.map((item) => {
+                        const barPercent = Math.max((item.value / avgDaysMax) * 100, 4);
+                        return (
+                          <div key={item.label} className="flex h-full min-w-0 flex-1 flex-col">
+                            <div className="flex-1 flex items-end pb-[var(--space-md)]">
+                              <div
+                                className="w-full rounded-[var(--radius-sm)] bg-[var(--chart-bar)]"
+                                style={{ height: `${barPercent}%`, minHeight: '6px' }}
+                              />
+                            </div>
+                              <div style={{ paddingTop: 'var(--space-md)' }}>
+                                <p className="m-0 type-body-strong-sm text-center text-[var(--color-text)]">
+                                {item.value.toLocaleString()}
+                              </p>
+                                <p className="m-0 mt-[var(--space-2xs)] type-body-xs text-center text-[var(--color-text-body)]">
+                                {item.label}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
-                <p className="mt-[var(--space-sm)] type-body-strong-sm text-center text-[var(--color-error)]">Blocked</p>
+              </Card>
+            </div>
+
+            <div className="dashboard-bureau-card h-full">
+              <DonutChart title="Permits by Bureau" segments={ADMIN_BUREAU_BREAKDOWN} size={160} ringThickness={40} />
+            </div>
+
+            <Card className="bg-[var(--steel-950)]">
+              <div className="flex h-full flex-col justify-between gap-[var(--space-sm)]">
+                <div className="space-y-[var(--space-sm)]">
+                  <div className="chart-card-title" style={{ marginBottom: 0 }}>Overdue Permits</div>
+                  <p className="type-body-sm text-[var(--color-text-body)]">&gt;200 days in queue</p>
+                </div>
+                <div className="flex items-end justify-between gap-[var(--space-sm)] text-[var(--color-error)]">
+                  <p className="m-0 type-heading-h1">3,235</p>
+                  <div className="flex flex-col items-end gap-[var(--space-2xs)] text-right">
+                    <ArrowUp size={38} aria-hidden="true" />
+                    <p className="m-0 type-body-sm text-[var(--color-error)]">MoM +6.2%</p>
+                  </div>
+                </div>
               </div>
             </Card>
+
           </section>
 
           <section>
             <CompletionTracker
               title="Completion State"
-              actionLabel="View report"
-              description="Distribution of active permits by completion stage."
+              actionLabel=""
+              description="Distribution of active permits by completion stage"
               segments={ADMIN_COMPLETION_STATE}
               totalApplications={164821}
             />
           </section>
 
-          <section className="flex flex-wrap gap-[var(--space-sm)]">
-            <Button variant="primary" size="sm" onClick={() => router.push('/staff/admin-controls')}>
-              Open Admin Controls
-            </Button>
-            <Button variant="primary" size="sm" onClick={() => router.push('/staff/workflow-manager')}>
-              Workflow Manager
-            </Button>
-          </section>
+          </div>
         </PortalPageScaffold>
       ) : (
         <PortalPageScaffold
@@ -317,27 +594,28 @@ export default function DashboardPage() {
           title={`Hello, ${managerFirstName(staffProfile.displayName)}!`}
           subtitle={`${staffProfile.title} · ${staffProfile.agency} · ${staffProfile.region} Region`}
         >
+          <div className="federal-manager-dashboard flex flex-col gap-[var(--space-md)]">
           <section className="grid items-start gap-[var(--space-md)] lg:grid-cols-2">
-            <Card size="lg">
+            <Card size="lg" className="h-full bg-[var(--color-bg-subtle)]">
               <div className="flex flex-col gap-[var(--space-xl)]">
                 <div className="flex items-center gap-[var(--space-sm)]">
-                  <LucideIcon icon={BarChart3} size={24} className="text-[var(--color-icon)]" />
-                  <h3 className="type-heading-h5 text-[var(--color-text)]">Performance Overview</h3>
+                  <LucideIcon icon={BarChart3} size={20} className="text-[var(--color-icon)]" />
+                  <div className="chart-card-title" style={{ marginBottom: 0 }}>Performance Overview</div>
                 </div>
-                <div className="relative grid grid-cols-2 gap-x-[var(--space-2xl)] gap-y-[var(--space-3xl)]">
-                  <div className="space-y-[var(--space-sm)] pr-[var(--space-sm)]">
+                <div className="relative grid grid-cols-1 gap-y-[var(--space-xl)] sm:grid-cols-2 sm:gap-x-[var(--space-2xl)] sm:gap-y-[var(--space-3xl)]">
+                  <div className="space-y-[var(--space-sm)] sm:pr-[var(--space-sm)]">
                     <p className="type-heading-h1 text-[var(--color-text)]">45</p>
                     <p className="type-body-sm text-[var(--color-text-body)]">Applications in Queue</p>
                   </div>
-                  <div className="space-y-[var(--space-sm)] pl-[var(--space-sm)]">
-                    <p className="type-heading-h1 text-[var(--color-text)]">32 days</p>
-                    <p className="type-body-sm text-[var(--color-text-body)]">Average Processing Time</p>
+                  <div className="space-y-[var(--space-sm)] sm:pl-[var(--space-sm)]">
+                    <p className="type-heading-h1 text-[var(--color-text)]">32</p>
+                    <p className="type-body-sm text-[var(--color-text-body)]">Average Days in Processing Time</p>
                   </div>
-                  <div className="space-y-[var(--space-sm)] pr-[var(--space-sm)]">
+                  <div className="space-y-[var(--space-sm)] sm:pr-[var(--space-sm)]">
                     <p className="type-heading-h1 text-[var(--color-text)]">87%</p>
                     <p className="type-body-sm text-[var(--color-text-body)]">Staff Utilization</p>
                   </div>
-                  <div className="space-y-[var(--space-sm)] pl-[var(--space-sm)]">
+                  <div className="space-y-[var(--space-sm)] sm:pl-[var(--space-sm)]">
                     <p className="type-heading-h1 text-[var(--color-error)]">8</p>
                     <p className="type-body-sm text-[var(--color-text-body)]">Overdue Applications</p>
                   </div>
@@ -345,91 +623,79 @@ export default function DashboardPage() {
               </div>
             </Card>
 
-            <Card size="lg">
+            <Card size="lg" className="h-full bg-[var(--color-bg-subtle)] manager-quick-assign-card">
               <div className="flex flex-col gap-[var(--space-lg)]">
                 <div className="flex items-center gap-[var(--space-sm)]">
-                  <LucideIcon icon={UserPlus} size={24} className="text-[var(--color-icon)]" />
-                  <h3 className="type-heading-h5 text-[var(--color-text)]">Quick Assign</h3>
+                  <LucideIcon icon={UserPlus} size={20} className="text-[var(--color-icon)]" />
+                  <div className="chart-card-title" style={{ marginBottom: 0 }}>Quick Assign</div>
                 </div>
 
                 <div className="overflow-x-auto">
-                  <table className="w-full table-fixed border-collapse">
+                  <table className="manager-quick-assign-table w-full table-fixed border-collapse">
                     <colgroup>
-                      <col style={{ width: '130px' }} />
+                          <col style={{ width: '68px' }} />
                       <col style={{ width: 'auto' }} />
-                      <col style={{ width: '340px' }} />
+                            <col style={{ width: '132px' }} />
                     </colgroup>
                     <thead>
                       <tr className="border-b border-[var(--color-border)]">
-                        <th
-                          className="text-left type-heading-h6 text-[var(--color-text)]"
-                          style={{ padding: 'var(--space-sm) 0' }}
-                        >
+                        <th className="manager-quick-assign-th text-left">
                           Status
                         </th>
-                        <th
-                          className="text-left type-heading-h6 text-[var(--color-text)]"
-                          style={{ padding: 'var(--space-sm) 0' }}
-                        >
+                          <th className="manager-quick-assign-th manager-quick-assign-th-project text-left">
                           Project
                         </th>
-                        <th
-                          className="text-left type-heading-h6 text-[var(--color-text)]"
-                          style={{ padding: 'var(--space-sm) 0' }}
-                        >
+                            <th className="manager-quick-assign-th manager-quick-assign-th-assignee text-left">
                           Assignee
                         </th>
                       </tr>
                     </thead>
                     <tbody>
-                      {QUICK_ASSIGN_ROWS.map((row, index) => (
-                        <tr key={`${row.project}-${index}`} className="border-b border-[var(--color-border)]">
+                      {QUICK_ASSIGN_ROWS.map((row, index) => {
+                        const isLastRow = index === QUICK_ASSIGN_ROWS.length - 1;
+                        return (
+                        <tr key={`${row.project}-${index}`}>
                           <td
-                            className="align-middle border-b border-[var(--color-border)]"
-                            style={{ padding: 'var(--space-xs) 0' }}
+                            className={`align-middle ${isLastRow ? '' : 'border-b border-[var(--color-border)]'}`}
+                            style={{ padding: 'var(--space-sm) var(--space-md) var(--space-sm) 0' }}
                           >
                             <Badge color={quickAssignStatusColor(row.status)} size="sm">
                               {row.status}
                             </Badge>
                           </td>
                           <td
-                            className="align-middle border-b border-[var(--color-border)] type-heading-h5 text-[var(--color-text-body)]"
-                            style={{ padding: 'var(--space-xs) 0' }}
+                              className={`align-middle ${isLastRow ? '' : 'border-b border-[var(--color-border)]'}`}
+                              style={{ padding: 'var(--space-sm) var(--space-md) var(--space-sm) var(--space-sm)' }}
                           >
-                            <p className="block w-full truncate">{row.project}</p>
+                              <Link
+                                href={`/applications/${row.applicationId}`}
+                                className="block w-full truncate type-body-md text-[var(--color-text-body)] hover:text-[var(--color-text)] hover:underline focus:underline focus:outline-none"
+                                title={row.project}
+                              >
+                                {row.project}
+                              </Link>
                           </td>
                           <td
-                            className="align-middle border-b border-[var(--color-border)]"
-                            style={{ padding: 'var(--space-xs) 0' }}
+                              className={`align-middle manager-quick-assign-assignee-cell ${isLastRow ? '' : 'border-b border-[var(--color-border)]'}`}
+                              style={{ padding: 'var(--space-sm) 0' }}
                           >
-                            <Dropdown
-                              size="sm"
-                              trigger={
-                                <button
-                                  type="button"
-                                  className="dropdown-trigger dropdown-trigger-sm w-full"
-                                  style={{
-                                    justifyContent: 'space-between',
-                                    gap: 'var(--space-xs)',
-                                  }}
-                                >
-                                  <span>{quickAssignAssignees[index] ?? row.assignee}</span>
-                                  <ChevronDown size={16} aria-hidden="true" />
-                                </button>
-                              }
-                              items={QUICK_ASSIGN_ASSIGNEE_OPTIONS.map((option) => ({
-                                label: option,
-                                onClick: () =>
-                                  setQuickAssignAssignees((current) => {
-                                    const next = [...current];
-                                    next[index] = option;
-                                    return next;
-                                  }),
-                              }))}
-                            />
+                              <div className="manager-quick-assign-assignee-control">
+                                  <QuickAssignDropdown
+                                    value={quickAssignAssignees[index] ?? row.assignee}
+                                    options={QUICK_ASSIGN_ASSIGNEE_OPTIONS}
+                                    onSelect={(option) =>
+                                      setQuickAssignAssignees((current) => {
+                                        const next = [...current];
+                                        next[index] = option;
+                                        return next;
+                                      })
+                                    }
+                                    widthPx={132}
+                                  />
+                              </div>
                           </td>
                         </tr>
-                      ))}
+                      )})}
                     </tbody>
                   </table>
                 </div>
@@ -438,13 +704,21 @@ export default function DashboardPage() {
           </section>
 
           <section>
-            <Card>
-              <div className="flex flex-col gap-[var(--space-md)]">
+            <Card className="bg-[var(--color-bg-subtle)]">
+              <div className="flex flex-col gap-[var(--space-md)] overflow-x-auto">
                 <Table
                   header={
                     <TableHeader
                       title="Staff Overview"
-                      dropdown={<Button variant="primary" size="sm">Manage Staff</Button>}
+                      dropdown={
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          onClick={() => router.push('/staff/staff-manager')}
+                        >
+                          Manage Staff
+                        </Button>
+                      }
                     />
                   }
                   columns={[
@@ -468,6 +742,7 @@ export default function DashboardPage() {
               </div>
             </Card>
           </section>
+          </div>
         </PortalPageScaffold>
       )}
     </WorkspaceShell>

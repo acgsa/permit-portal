@@ -162,12 +162,13 @@ declare interface DividerProps {
     subtle?: boolean;
 }
 
-export declare function DonutChart({ title, segments, size }: DonutChartProps): JSX.Element;
+export declare function DonutChart({ title, segments, size, ringThickness }: DonutChartProps): JSX.Element;
 
 declare interface DonutChartProps {
     title: string;
     segments: DonutSegment[];
     size?: number;
+    ringThickness?: number;
 }
 
 declare interface DonutSegment {

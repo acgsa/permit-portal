@@ -14,8 +14,8 @@ type PortalPageScaffoldProps = {
  */
 export function PortalPageScaffold({ title, subtitle, eyebrow, actions, children }: PortalPageScaffoldProps) {
   return (
-    <div className="flex w-full flex-col gap-[var(--space-xl)] bg-[var(--color-bg)] p-[var(--space-xl)]">
-      <header className="flex flex-wrap items-start justify-between gap-[var(--space-xl)]">
+    <div className="flex w-full flex-col gap-[var(--space-lg)] md:gap-[var(--space-xl)] bg-[var(--color-bg)] p-[var(--space-md)] md:p-[var(--space-xl)]">
+      <header className="flex flex-col gap-[var(--space-md)] sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
         <div className="space-y-[var(--space-md)]">
           {eyebrow ? (
             <p className="type-body-xs uppercase tracking-[0.14em] text-[var(--color-text-disabled)]">{eyebrow}</p>
@@ -25,7 +25,7 @@ export function PortalPageScaffold({ title, subtitle, eyebrow, actions, children
             <p className="type-body-md max-w-4xl text-[var(--color-text-body)]">{subtitle}</p>
           ) : null}
         </div>
-        {actions ? <div className="shrink-0">{actions}</div> : null}
+        {actions ? <div className="shrink-0 sm:self-end">{actions}</div> : null}
       </header>
 
       {children}

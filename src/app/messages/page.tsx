@@ -66,7 +66,7 @@ export default function MessagesPage() {
     >
       <div className="w-full flex flex-col gap-[var(--space-lg)]">
         <h6 className="type-heading-h6">Messages</h6>
-        <div style={{ backgroundColor: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)' }}>
+        <div className="overflow-x-auto" style={{ backgroundColor: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)' }}>
           <table className="table min-w-[760px]">
             <thead>
               <tr>

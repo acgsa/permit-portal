@@ -912,8 +912,8 @@ function ae(n, r, t) {
   }
   return 0;
 }
-function ze({ title: n, segments: r, size: t = 160 }) {
-  const a = r.reduce((b, f) => b + f.value, 0), l = Math.max(24, t * 0.2), s = (t - l) / 2, i = t / 2, h = 2 * Math.PI * s;
+function ze({ title: n, segments: r, size: t = 160, ringThickness: S }) {
+  const a = r.reduce((b, f) => b + f.value, 0), l = S ?? Math.max(24, t * 0.2), s = (t - l) / 2, i = t / 2, h = 2 * Math.PI * s;
   let m = -h / 4;
   const p = r.map((b) => {
     const f = b.value / a * h, N = `${f} ${h - f}`, L = m;
@@ -922,10 +922,15 @@ function ze({ title: n, segments: r, size: t = 160 }) {
     (b) => {
       const f = u.current;
       if (!f) return;
-      const N = f.getBoundingClientRect(), L = (b.clientX - N.left) / N.width, T = (b.clientY - N.top) / N.height, R = 0.5, j = 0.5, D = L - R, z = T - j, H = (450 - Math.atan2(z, D) * 180 / Math.PI) % 360, P = ae(H, r, a);
-      o({ index: P, x: b.clientX - N.left, y: b.clientY - N.top });
+      const N = f.getBoundingClientRect(), L = (b.clientX - N.left) / N.width * t, T = (b.clientY - N.top) / N.height * t, R = L - i, j = T - i, D = Math.hypot(R, j), z = s - l / 2, H = s + l / 2;
+      if (D < z || D > H) {
+        o(null);
+        return;
+      }
+      const P = (450 - Math.atan2(j, R) * 180 / Math.PI) % 360, _ = ae(P, r, a);
+      o({ index: _, x: b.clientX - N.left, y: b.clientY - N.top });
     },
-    [r, a]
+    [i, s, r, t, l, a]
   ), y = x(() => o(null), []);
   return /* @__PURE__ */ c("div", { className: "chart-card chart-card-donut", children: [
     /* @__PURE__ */ e("div", { className: "chart-card-title", children: n }),
@@ -1099,20 +1104,22 @@ function Pe({ label: n, value: r, changePercent: t, trend: a }) {
   ] });
 }
 function Ee({ title: n, description: r, actionLabel: t = "View report", onAction: a, segments: l, totalApplications: s = 15e4 }) {
-  const i = l.reduce((o, d) => o + d.percent, 0) || 1, [h, m] = k(null), p = $(null), v = x(
-    (o, d) => {
+  const i = l.reduce((d, u) => d + u.percent, 0) || 1, [h, m] = k(null), p = $(null), v = $(null), g = x(
+    (d, u) => {
       if (!p.current) return;
-      const u = p.current.getBoundingClientRect();
-      m({ index: d, x: o.clientX - u.left, y: o.clientY - u.top });
+      const y = p.current.getBoundingClientRect();
+      m({ index: u, x: d.clientX - y.left, y: d.clientY - y.top });
     },
     []
   );
   return /* @__PURE__ */ c("div", { className: "chart-card chart-card-tracker", ref: p, children: [
     /* @__PURE__ */ c("div", { className: "completion-tracker-header", children: [
-      /* @__PURE__ */ e("div", { className: "chart-card-title", style: { marginBottom: 0 }, children: n }),
+      /* @__PURE__ */ c("div", { className: "completion-tracker-title-group", children: [
+        /* @__PURE__ */ e("div", { className: "chart-card-title", style: { marginBottom: 0 }, children: n }),
+        r && /* @__PURE__ */ e("p", { className: "completion-tracker-desc", children: r })
+      ] }),
       t && /* @__PURE__ */ e(O, { variant: "primary", size: "sm", onClick: a, children: t })
     ] }),
-    r && /* @__PURE__ */ e("p", { className: "completion-tracker-desc", children: r }),
     /* @__PURE__ */ c("div", { className: "completion-tracker-bar-wrap", children: [
       /* @__PURE__ */ e("div", { className: "completion-tracker-bar", children: l.map((o, d) => /* @__PURE__ */ e(
         "div",
@@ -1122,8 +1129,8 @@ function Ee({ title: n, description: r, actionLabel: t = "View report", onAction
             background: (h == null ? void 0 : h.index) === d && o.hoverColorVar ? o.hoverColorVar : o.colorVar,
             width: `${o.percent / i * 100}%`
           },
-          onMouseEnter: (u) => v(u, d),
-          onMouseMove: (u) => v(u, d),
+          onMouseEnter: (u) => g(u, d),
+          onMouseMove: (u) => g(u, d),
           onMouseLeave: () => m(null),
           children: o.texture && /* @__PURE__ */ e("div", { className: "completion-tracker-segment-texture", "aria-hidden": !0 })
         },
@@ -1134,8 +1141,8 @@ function Ee({ title: n, description: r, actionLabel: t = "View report", onAction
         {
           className: "completion-tracker-label-cell",
           style: { width: `${o.percent / i * 100}%` },
-          onMouseEnter: (u) => v(u, d),
-          onMouseMove: (u) => v(u, d),
+          onMouseEnter: (u) => g(u, d),
+          onMouseMove: (u) => g(u, d),
           onMouseLeave: () => m(null),
           children: [
             /* @__PURE__ */ c("span", { className: "completion-tracker-pct", children: [
@@ -1149,28 +1156,37 @@ function Ee({ title: n, description: r, actionLabel: t = "View report", onAction
       )) })
     ] }),
     h !== null && (() => {
-      const o = l[h.index], d = Math.round(s * o.percent / 100);
+      const d = l[h.index], u = Math.round(s * d.percent / 100), g = 12, y = 8, b = (v.current == null ? void 0 : v.current.offsetWidth) ?? 220, f = (v.current == null ? void 0 : v.current.offsetHeight) ?? 84;
+      let N = h.x + g, L = h.y - f - g;
+      if (p.current && typeof window < "u") {
+        const T = p.current.getBoundingClientRect(), R = y - T.left, j = window.innerWidth - y - T.left - b, D = y - T.top, z = window.innerHeight - y - T.top - f, H = (P, _, A) => {
+          const G = Math.min(_, A), Q = Math.max(_, A);
+          return Math.min(Math.max(P, G), Q);
+        };
+        L < D && (L = h.y + g), N = H(N, R, j), L = H(L, D, z);
+      }
       return /* @__PURE__ */ c(
         "div",
         {
+          ref: v,
           className: "chart-kpi-card",
-          style: { left: h.x + 12, top: h.y + 12 },
+          style: { left: N, top: L },
           children: [
-            /* @__PURE__ */ e("div", { className: "chart-kpi-card-title", children: o.label }),
+            /* @__PURE__ */ e("div", { className: "chart-kpi-card-title", children: d.label }),
             /* @__PURE__ */ c("div", { className: "chart-kpi-card-row", children: [
               /* @__PURE__ */ e(
                 "span",
                 {
                   className: "chart-kpi-card-bullet",
-                  style: { background: o.colorVar }
+                  style: { background: d.colorVar }
                 }
               ),
               /* @__PURE__ */ c("span", { className: "chart-kpi-card-value", children: [
-                d.toLocaleString(),
+                u.toLocaleString(),
                 " applications"
               ] }),
               /* @__PURE__ */ c("span", { className: "chart-kpi-card-value", children: [
-                o.percent,
+                d.percent,
                 "%"
               ] })
             ] })

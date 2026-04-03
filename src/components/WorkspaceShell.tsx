@@ -1,9 +1,10 @@
 
 'use client';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Menu, DrawerButton, Button, Avatar } from 'usds';
+import { MenuIcon, XMarkIcon } from './Icons';
 import fppLogo from '@/logo/FPP2.svg';
 import { resolveStaffProfile } from '@/lib/mockFederalPortalData';
 
@@ -22,7 +23,7 @@ type NavItem = {
 
 const PORTAL_THEME_STORAGE_KEY = 'permit.portal.theme';
 
-function getPrimaryNavItems(role?: string): NavItem[] {
+function getPrimaryNavItems(role?: string, userSub?: string): NavItem[] {
   if (role === 'admin') {
     return [
       { label: 'Dashboard', href: '/dashboard' },
@@ -32,9 +33,12 @@ function getPrimaryNavItems(role?: string): NavItem[] {
   }
 
   if (role === 'staff') {
+    const profile = resolveStaffProfile(userSub, role);
+    const isRegionalManager = profile.title.toLowerCase().includes('regional manager');
     const staffItems: NavItem[] = [
       { label: 'Dashboard', href: '/dashboard' },
       { label: 'Workflow Manager', href: '/staff/workflow-manager' },
+      ...(isRegionalManager ? [{ label: 'Staff Manager', href: '/staff/staff-manager' }] : []),
       { label: 'My Tasks', href: '/my-tasks' },
       { label: 'Messages', href: '/messages' },
     ];
@@ -270,7 +274,7 @@ function CustomSidebarInner({
         </button>
         <div className={`sidebar-nav-user-copy${isOpen ? "" : " sidebar-nav-user-copy-hidden"}`}>
           <div className="sidebar-nav-user-name">{displayName}</div>
-          {organizationLabel && <div className="sidebar-nav-user-org">{organizationLabel}</div>}
+          {organizationLabel && <div className="sidebar-nav-user-org truncate">{organizationLabel}</div>}
         </div>
 
         {userMenuOpen && (
@@ -296,12 +300,27 @@ const CustomSidebar = (props: CustomSidebarProps) => <CustomSidebarInner {...pro
 
 export function WorkspaceShell({ role, userSub, organizationLabel, onSignOut, children }: WorkspaceShellProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const identity = resolveSidebarIdentity(role, userSub, organizationLabel);
   const displayName = identity.displayName;
   const resolvedOrganizationLabel = identity.organizationLabel;
   const initials = getInitials(displayName);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const primaryItems = getPrimaryNavItems(role);
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+      return () => { document.body.style.overflow = ''; };
+    }
+  }, [mobileMenuOpen]);
+
+  const primaryItems = getPrimaryNavItems(role, userSub);
   const resourceItems = getResourceNavItems();
 
   const primaryMenuItems = primaryItems.map((item) => ({
@@ -321,22 +340,121 @@ export function WorkspaceShell({ role, userSub, organizationLabel, onSignOut, ch
   }));
 
   return (
-    <div className="h-screen min-h-0 overflow-hidden bg-[var(--color-bg)] flex flex-col md:flex-row" suppressHydrationWarning>
-      <CustomSidebar
-        role={role}
-        displayName={displayName}
-        initials={initials}
-        organizationLabel={resolvedOrganizationLabel}
-        onSignOut={onSignOut}
-        primaryMenuItems={primaryMenuItems}
-        resourceMenuItems={resourceMenuItems}
-      />
-
-      <main className="workspace-shell-main flex-1 min-w-0 min-h-0 overflow-y-auto" style={{ alignItems: 'center' }}>
-        <div className="workspace-shell-main-frame mx-auto w-full max-w-[1120px]" style={{ padding: 0, gap: 0 }}>
-          {children}
+    <div className="h-screen min-h-0 overflow-hidden bg-[var(--color-bg)] flex flex-col" suppressHydrationWarning>
+      {/* Mobile top bar - visible only on small screens */}
+      <header className="flex md:hidden items-center justify-between h-14 px-4 bg-[var(--color-bg-muted)] border-b border-[var(--color-border)] shrink-0 z-40">
+        <button
+          type="button"
+          onClick={() => setMobileMenuOpen((v) => !v)}
+          className="flex items-center justify-center w-10 h-10 rounded-[var(--radius-sm)]"
+          aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+        >
+          {mobileMenuOpen ? (
+            <XMarkIcon size={24} className="text-[var(--color-text)]" />
+          ) : (
+            <MenuIcon size={24} className="text-[var(--color-text)]" />
+          )}
+        </button>
+        <FPPLogo size={32} />
+        <div className="w-10 h-10 flex items-center justify-center">
+          <Avatar initials={initials} size="sm" shape="square" color={role === 'admin' ? 'green' : role === 'staff' ? 'gold' : 'blue-400'} />
         </div>
-      </main>
+      </header>
+
+      {/* Mobile drawer overlay */}
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 z-50 md:hidden"
+          aria-modal="true"
+          role="dialog"
+        >
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          <aside
+            className="absolute left-0 top-0 bottom-0 w-[260px] bg-[var(--color-bg-muted)] overflow-y-auto flex flex-col animate-slide-in-left"
+            aria-label="Mobile navigation"
+          >
+            <div className="flex items-center justify-between px-4 h-14 border-b border-[var(--color-border)] shrink-0">
+              <FPPLogo size={32} />
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-center w-10 h-10"
+                aria-label="Close menu"
+              >
+                <XMarkIcon size={24} className="text-[var(--color-text)]" />
+              </button>
+            </div>
+
+            <div className="flex-1 px-2 py-4 flex flex-col gap-[var(--space-sm)]">
+              <Button
+                type="button"
+                variant="secondary"
+                size="md"
+                className="sidebar-nav-new-app w-full"
+              >
+                <span className="sidebar-nav-plus" aria-hidden="true">+</span>
+                <span className="sidebar-nav-new-app-text">New Application</span>
+              </Button>
+
+              <div className="sidebar-nav-menu-wrap">
+                <Menu size="sm" items={primaryMenuItems} />
+              </div>
+
+              <div className="sidebar-nav-heading">Resources</div>
+              <div className="sidebar-nav-menu-wrap">
+                <Menu size="sm" items={resourceMenuItems} />
+              </div>
+            </div>
+
+            <div className="px-4 py-3 border-t border-[var(--color-border)] flex items-center gap-[var(--space-xs)]">
+              <Avatar initials={initials} size="md" shape="square" color={role === 'admin' ? 'green' : role === 'staff' ? 'gold' : 'blue-400'} />
+              <div className="min-w-0 flex-1">
+                <div className="sidebar-nav-user-name truncate">{displayName}</div>
+                {resolvedOrganizationLabel && <div className="sidebar-nav-user-org truncate">{resolvedOrganizationLabel}</div>}
+              </div>
+            </div>
+
+            <div className="px-4 pb-4">
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                className="w-full"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onSignOut();
+                }}
+              >
+                Sign Out
+              </Button>
+            </div>
+          </aside>
+        </div>
+      )}
+
+      <div className="flex-1 min-h-0 flex flex-row overflow-hidden">
+        {/* Desktop sidebar - hidden on mobile */}
+        <div className="hidden md:flex">
+          <CustomSidebar
+            role={role}
+            displayName={displayName}
+            initials={initials}
+            organizationLabel={resolvedOrganizationLabel}
+            onSignOut={onSignOut}
+            primaryMenuItems={primaryMenuItems}
+            resourceMenuItems={resourceMenuItems}
+          />
+        </div>
+
+        <main className="workspace-shell-main flex-1 min-w-0 min-h-0 overflow-y-auto" style={{ alignItems: 'center' }}>
+          <div className="workspace-shell-main-frame mx-auto w-full max-w-[1120px]" style={{ padding: 0, gap: 0 }}>
+            {children}
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

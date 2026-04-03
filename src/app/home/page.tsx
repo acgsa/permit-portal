@@ -197,7 +197,7 @@ export default function HomePage() {
             <p className="text-sm font-medium text-[var(--color-text-body)]">Welcome back</p>
 
             <div className="flex flex-col gap-[var(--space-sm)] sm:flex-row sm:items-center sm:justify-between">
-              <h1 className="text-5xl font-bold tracking-tight text-[var(--color-text)] sm:text-6xl">{firstName}</h1>
+              <h1 className="text-4xl font-bold tracking-tight text-[var(--color-text)] sm:text-5xl md:text-6xl">{firstName}</h1>
 
               <div className="sm:shrink-0">
                 <Button
@@ -221,7 +221,7 @@ export default function HomePage() {
               {summary.cards.map((item, index) => (
                 <div
                   key={item.label}
-                  className="relative flex min-h-[148px] flex-col justify-between rounded-[var(--radius-sm)] lg:rounded-none"
+                  className="relative flex min-h-[100px] sm:min-h-[148px] flex-col justify-between rounded-[var(--radius-sm)] lg:rounded-none"
                   style={{ padding: 'var(--space-md) var(--space-lg)' }}
                 >
                   {index > 0 ? (
