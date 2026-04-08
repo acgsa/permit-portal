@@ -42,7 +42,7 @@ export default function UseCasesPage() {
             understand what approvals your project requires and how to get started.
           </p>
           <div>
-            <Link href="/login">
+            <Link href="/project-intake">
               <PillButton
                 size="lg"
                 variant="secondary"
@@ -136,7 +136,7 @@ export default function UseCasesPage() {
           <h2 className="type-heading-h3 text-[var(--color-text-body)] text-left">
             Ready to move your project forward?
           </h2>
-          <Link href="/login" className="w-full sm:w-auto text-left">
+          <Link href="/project-intake" className="w-full sm:w-auto text-left">
             <PillButton
               variant="secondary"
               size="lg"
