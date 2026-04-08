@@ -763,8 +763,8 @@ export default function ProjectDetailClient({ projectId }: Props) {
     ...CASE_EVENTS.filter((e) => e.status !== 'pending').map((e) => ({
       date: e.datetime,
       title: e.name,
-      detail: e.description,
-      actor: e.assigned_entity,
+      detail: e.description ?? '',
+      actor: e.assigned_entity ?? '',
       kind: 'milestone' as const,
       status: deriveStepState(e),
     })),
@@ -778,7 +778,7 @@ export default function ProjectDetailClient({ projectId }: Props) {
     })),
     ...FORMS_REVIEWS.filter((f) => f.start_date || f.complete_date).map((f) => ({
       date: (f.complete_date ?? f.start_date)!,
-      title: f.description,
+      title: f.description ?? '',
       detail: `${f.type} · ${f.lead_agency}`,
       actor: f.lead_agency,
       kind: 'form' as const,
