@@ -78,7 +78,10 @@ export function Navigation() {
       </div>
       {/* Mobile menu overlay */}
       {mobileMenuOpen && (
-        <div className="site-nav-mobile md:hidden absolute left-0 right-0 top-full bg-black/95 backdrop-blur-xl z-50 shadow-lg animate-fade-in flex flex-col items-center py-6 gap-6">
+        <div
+          className="site-nav-mobile md:hidden absolute left-0 right-0 top-full bg-black/95 backdrop-blur-xl z-50 shadow-lg animate-fade-in flex flex-col items-center"
+          style={{ padding: '2rem 1.5rem', gap: '2rem' }}
+        >
           <Link
             href="/use-cases"
             className="type-body-lg text-[color:var(--color-text-body)/0.9] hover:text-[var(--color-text-body)]"
@@ -93,20 +96,22 @@ export function Navigation() {
           >
             About
           </Link>
-          <PillButton
-            variant="primary"
-            size="sm"
-            onClick={() => { setMobileMenuOpen(false); router.push('/staff'); }}
-          >
-            Federal Employee Login
-          </PillButton>
-          <PillButton
-            variant="secondary"
-            size="sm"
-            onClick={() => { setMobileMenuOpen(false); router.push('/login'); }}
-          >
-            Applicant Login
-          </PillButton>
+          <div className="flex w-full flex-col items-stretch gap-4 pt-2">
+            <PillButton
+              variant="primary"
+              size="lg"
+              onClick={() => { setMobileMenuOpen(false); router.push('/staff'); }}
+            >
+              Federal Employee Login
+            </PillButton>
+            <PillButton
+              variant="secondary"
+              size="lg"
+              onClick={() => { setMobileMenuOpen(false); router.push('/login'); }}
+            >
+              Applicant Login
+            </PillButton>
+          </div>
         </div>
       )}
     </nav>

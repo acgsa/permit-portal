@@ -396,12 +396,12 @@ This is an intake request only - our team will review it and contact you (usuall
 
           {submitError ? <p className="type-body-sm text-[var(--color-error)]">{submitError}</p> : null}
 
-          <div aria-hidden="true" style={{ height: 'var(--space-3xl)' }} />
-          <div className="flex w-full items-center justify-between gap-[var(--space-md)]">
+          <div aria-hidden="true" className="hidden sm:block" style={{ height: 'var(--space-3xl)' }} />
+          <div className="flex w-full flex-col items-stretch gap-[var(--space-md)] sm:flex-row sm:items-center sm:justify-between">
             <PillButton variant="primary" size="lg" onClick={() => router.push(token ? '/home' : '/')}>
               Back to Home
             </PillButton>
-            <div className="flex items-center gap-[var(--space-sm)]">
+            <div className="flex flex-col items-stretch gap-[var(--space-sm)] sm:flex-row sm:items-center">
               <PillButton variant="primary" size="lg" onClick={() => {
                 const now = new Date().toISOString();
                 window.localStorage.setItem(INTAKE_DRAFT_KEY, JSON.stringify({ ...form, lastSavedAt: now }));

@@ -673,6 +673,33 @@ p {
   padding: var(--space-xl) var(--space-3xl) var(--space-3xl);
 }
 
+@media (max-width: 640px) {
+  .pre-screener-page .card-lg .card-body {
+    padding: var(--space-lg) var(--space-md) var(--space-xl);
+  }
+
+  .pre-screener-page .page-card-body {
+    gap: var(--space-lg);
+  }
+
+  .pre-screener-page .pre-screener-intro {
+    margin-bottom: var(--space-xl);
+  }
+
+  .pre-screener-page .card + .card {
+    margin-top: var(--space-xl);
+  }
+
+  .page-form-question-block {
+    padding-top: var(--space-xl);
+  }
+
+  .page-form-question-tight {
+    margin-top: var(--space-md);
+    padding-top: var(--space-xl);
+  }
+}
+
 /* Collapse the gap between headline and descriptor from space-xl to space-sm */
 .pre-screener-page .page-card-body > h2 + p:not(.pre-screener-step-kicker) {
   margin-top: calc(var(--space-sm) - var(--space-xl));

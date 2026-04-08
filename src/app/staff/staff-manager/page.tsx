@@ -23,7 +23,17 @@ export default function StaffManagerPage() {
   if (!isStaff) return null;
 
   const currentProfile = resolveStaffProfile(user?.sub, user?.role);
-  const staffRows = STAFF_DEMO_USERS.filter((profile) => profile.role === 'staff');
+
+  const regionalStaff = [
+    { displayName: 'Sarah Chen', title: 'Regional Manager', office: 'Regional Office', expertise: 'Regional Manager', email: 'sarah.chen@usbr.gov', projects: 45, availability: 'BUSY' as const },
+    { displayName: 'Karen Mitchell', title: 'Realty Specialist', office: 'Bend Field Office', expertise: 'Realty Specialist', email: 'k.mitchell@usbr.gov', projects: 8, availability: 'BUSY' as const },
+    { displayName: 'Laura Bennett', title: 'Realty Specialist', office: 'Columbia-Cascades Area Office', expertise: 'Realty Specialist', email: 'l.bennett@usbr.gov', projects: 4, availability: 'AVAILABLE' as const },
+    { displayName: 'Robert Hayes', title: 'Deputy Field Office Manager', office: 'Ephrata Field Office', expertise: 'Deputy Field Office Manager', email: 'r.hayes@usbr.gov', projects: 0, availability: 'AVAILABLE' as const },
+    { displayName: 'Maria Santos', title: 'Realty Specialist', office: 'Grand Coulee Dam', expertise: 'Realty Specialist', email: 'm.santos@usbr.gov', projects: 23, availability: 'OVERLOADED' as const },
+    { displayName: 'Tanya Brooks', title: 'Realty Specialist', office: 'Middle Snake Field Office', expertise: 'Realty Specialist', email: 't.brooks@usbr.gov', projects: 11, availability: 'BUSY' as const },
+    { displayName: 'Derek Walsh', title: 'Realty Specialist', office: 'Snake River Area Office', expertise: 'Realty Specialist', email: 'd.walsh@usbr.gov', projects: 17, availability: 'OVERLOADED' as const },
+    { displayName: 'Brian Foster', title: 'Realty Specialist', office: 'Upper Snake Field Office', expertise: 'Realty Specialist', email: 'b.foster@usbr.gov', projects: 7, availability: 'AVAILABLE' as const },
+  ];
 
   return (
     <WorkspaceShell
@@ -44,7 +54,7 @@ export default function StaffManagerPage() {
           <Card>
             <div className="flex flex-col gap-[var(--space-xs)]">
               <p className="type-body-sm text-[var(--color-text-body)]">Regional Staff</p>
-              <p className="type-heading-h4 text-[var(--color-text)]">{staffRows.length}</p>
+              <p className="type-heading-h4 text-[var(--color-text)]">{regionalStaff.length}</p>
             </div>
           </Card>
           <Card>
@@ -67,26 +77,26 @@ export default function StaffManagerPage() {
             columns={[
               { key: 'displayName', header: 'Name' },
               { key: 'title', header: 'Title' },
-              { key: 'agency', header: 'Agency' },
-              { key: 'region', header: 'Region' },
+              { key: 'office', header: 'Office' },
+              { key: 'projects', header: 'Projects' },
               {
-                key: 'role',
-                header: 'Role',
-                render: () => (
-                  <Badge color="gold" size="sm">
-                    Regional Manager
-                  </Badge>
-                ),
+                key: 'availability',
+                header: 'Availability',
+                render: (value: unknown) => {
+                  const v = String(value);
+                  const color = v === 'AVAILABLE' ? 'green' : v === 'BUSY' ? 'gold' : 'red';
+                  return <Badge color={color} size="sm">{v}</Badge>;
+                },
               },
               { key: 'email', header: 'Email' },
             ]}
-            data={staffRows.map((profile) => ({
-              displayName: profile.displayName,
-              title: profile.title,
-              agency: profile.agency,
-              region: profile.region,
-              role: profile.role,
-              email: profile.email,
+            data={regionalStaff.map((s) => ({
+              displayName: s.displayName,
+              title: s.title,
+              office: s.office,
+              projects: s.projects,
+              availability: s.availability,
+              email: s.email,
             }))}
           />
         </section>

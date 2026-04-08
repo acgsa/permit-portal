@@ -42,8 +42,8 @@ const PROJECT: Project = {
   other: {
     formType: 'SF-299',
     applicantOrganization: 'Rocky Mountain Gas Gathering LLC',
-    contactName: 'David Chen',
-    contactEmail: 'dchen@rmgathering.com',
+    contactName: 'James Parker',
+    contactEmail: 'jparker@rmgathering.com',
     corridorLengthMiles: '28',
     stateCode: 'WY',
     legalAuthority: '43 CFR 2800 – Rights-of-Way',

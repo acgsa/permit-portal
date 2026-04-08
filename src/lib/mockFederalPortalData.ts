@@ -24,18 +24,18 @@ export type FederalApplicationRecord = {
 
 export const STAFF_DEMO_USERS: ReadonlyArray<StaffProfile> = [
   {
-    id: 'doug-burgum',
-    displayName: 'Doug Burgum',
-    email: 'doug.burgum@doi.gov',
+    id: 'doug-smith',
+    displayName: 'Doug Smith',
+    email: 'doug.smith@doi.gov',
     role: 'admin',
     title: 'Secretary of the Interior',
     agency: 'Department of the Interior',
     region: 'All Regions',
   },
   {
-    id: 'harmony-munro',
-    displayName: 'Harmony Munro',
-    email: 'harmony.munro@usbr.gov',
+    id: 'sarah-chen',
+    displayName: 'Sarah Chen',
+    email: 'sarah.chen@usbr.gov',
     role: 'staff',
     title: 'Regional Manager',
     agency: 'Bureau of Reclamation',
@@ -51,7 +51,7 @@ export const FEDERAL_APPLICATION_MOCK_DATA: ReadonlyArray<FederalApplicationReco
     agency: 'Bureau of Reclamation',
     region: 'Upper Colorado',
     status: 'In Review',
-    assignedReviewer: 'Harmony Munro',
+    assignedReviewer: 'Sarah Chen',
     submittedDate: '2026-02-04',
     updatedDate: '2026-03-21',
   },
@@ -62,7 +62,7 @@ export const FEDERAL_APPLICATION_MOCK_DATA: ReadonlyArray<FederalApplicationReco
     agency: 'Bureau of Reclamation',
     region: 'Upper Colorado',
     status: 'Pending Interagency',
-    assignedReviewer: 'Harmony Munro',
+    assignedReviewer: 'Sarah Chen',
     submittedDate: '2026-02-18',
     updatedDate: '2026-03-19',
   },
@@ -73,7 +73,7 @@ export const FEDERAL_APPLICATION_MOCK_DATA: ReadonlyArray<FederalApplicationReco
     agency: 'Bureau of Reclamation',
     region: 'Upper Colorado',
     status: 'Submitted',
-    assignedReviewer: 'Harmony Munro',
+    assignedReviewer: 'Sarah Chen',
     submittedDate: '2026-03-10',
     updatedDate: '2026-03-20',
   },
@@ -84,7 +84,7 @@ export const FEDERAL_APPLICATION_MOCK_DATA: ReadonlyArray<FederalApplicationReco
     agency: 'Bureau of Land Management',
     region: 'Pacific Northwest',
     status: 'In Review',
-    assignedReviewer: 'Avery Ellis',
+    assignedReviewer: 'Michael Torres',
     submittedDate: '2026-01-28',
     updatedDate: '2026-03-18',
   },
@@ -95,7 +95,7 @@ export const FEDERAL_APPLICATION_MOCK_DATA: ReadonlyArray<FederalApplicationReco
     agency: 'Fish and Wildlife Service',
     region: 'Southwest',
     status: 'Pending Interagency',
-    assignedReviewer: 'J. Patel',
+    assignedReviewer: 'J. Williams',
     submittedDate: '2026-02-11',
     updatedDate: '2026-03-22',
   },
@@ -106,7 +106,7 @@ export const FEDERAL_APPLICATION_MOCK_DATA: ReadonlyArray<FederalApplicationReco
     agency: 'Bureau of Indian Affairs',
     region: 'Great Plains',
     status: 'Approved',
-    assignedReviewer: 'R. Chavez',
+    assignedReviewer: 'R. Anderson',
     submittedDate: '2026-01-15',
     updatedDate: '2026-03-08',
   },
@@ -114,14 +114,14 @@ export const FEDERAL_APPLICATION_MOCK_DATA: ReadonlyArray<FederalApplicationReco
 
 export function resolveStaffProfile(userSub?: string, role?: string): StaffProfile {
   const normalized = (userSub ?? '').toLowerCase();
-  const harmony = STAFF_DEMO_USERS.find((user) => user.id === 'harmony-munro');
-  const doug = STAFF_DEMO_USERS.find((user) => user.id === 'doug-burgum');
+  const sarah = STAFF_DEMO_USERS.find((user) => user.id === 'sarah-chen');
+  const doug = STAFF_DEMO_USERS.find((user) => user.id === 'doug-smith');
 
-  if (normalized.includes('harmony.munro') && harmony) {
-    return harmony;
+  if (normalized.includes('sarah.chen') && sarah) {
+    return sarah;
   }
 
-  if (normalized.includes('doug.burgum') && doug) {
+  if (normalized.includes('doug.smith') && doug) {
     return doug;
   }
 
@@ -129,7 +129,7 @@ export function resolveStaffProfile(userSub?: string, role?: string): StaffProfi
     return doug;
   }
 
-  return harmony ?? STAFF_DEMO_USERS[0];
+  return sarah ?? STAFF_DEMO_USERS[0];
 }
 
 export function getVisibleFederalApplications(profile: StaffProfile): FederalApplicationRecord[] {

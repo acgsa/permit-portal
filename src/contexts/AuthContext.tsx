@@ -56,9 +56,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const normalizedSub = sub.toLowerCase();
 
     // Keep pilot staff personas in staff portal flow even when non-demo auth returns applicant role.
-    if (normalizedSub.includes('doug.burgum')) {
+    if (normalizedSub.includes('doug.smith')) {
       role = 'admin';
-    } else if (normalizedSub.includes('harmony.munro')) {
+    } else if (normalizedSub.includes('sarah.chen')) {
       role = 'staff';
     }
 

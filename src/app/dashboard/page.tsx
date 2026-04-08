@@ -46,20 +46,20 @@ type StaffOverviewRow = {
 const QUICK_ASSIGN_ROWS: QuickAssignRow[] = [
   { status: 'NEW', project: 'Right of Way for Lake Mead Parkway', applicationId: 'C910043198', assignee: 'None' },
   { status: 'NEW', project: 'Pine Valley Reservoir Expansion Project', applicationId: 'C710043238', assignee: 'None' },
-  { status: 'OVERDUE', project: 'Lower Colorado River Pipeline Crossing', applicationId: 'C710043197', assignee: 'Reece Randal' },
-  { status: 'OVERDUE', project: 'Pine Valley Reservoir Expansion Project', applicationId: 'C510043277', assignee: 'Reece Randal' },
-  { status: 'OVERDUE', project: 'Rio Grande Diversion Structure Rehab', applicationId: 'C210043823', assignee: 'Reece Randal' },
+  { status: 'OVERDUE', project: 'Lower Colorado River Pipeline Crossing', applicationId: 'C710043197', assignee: 'Derek Walsh' },
+  { status: 'OVERDUE', project: 'Pine Valley Reservoir Expansion Project', applicationId: 'C510043277', assignee: 'Derek Walsh' },
+  { status: 'OVERDUE', project: 'Rio Grande Diversion Structure Rehab', applicationId: 'C210043823', assignee: 'Derek Walsh' },
 ];
 
 const STAFF_OVERVIEW_ROWS: StaffOverviewRow[] = [
-  { name: 'Nancy Coleman', office: 'Bend Field Office', expertise: 'Realty Specialist', role: 'Land Appraisal', projects: 8, availability: 'BUSY' },
-  { name: 'Jennifer Hoff', office: 'Columbia-Cascades Area Office', expertise: 'Realty Specialist', role: 'Land Appraisal', projects: 2, availability: 'AVAILABLE' },
-  { name: 'Clyde Lay', office: 'Ephrata Field Office', expertise: 'Deputy Field Office Manager', role: 'Land Appraisal', projects: 0, availability: 'AVAILABLE' },
-  { name: 'Nasha Flores', office: 'Grand Coulee Dam', expertise: 'Realty Specialist', role: 'Land Appraisal', projects: 23, availability: 'OVERLOADED' },
-  { name: 'Malyn Abney', office: 'Middle Snake Field Office', expertise: 'Realty Specialist', role: 'Land Appraisal', projects: 11, availability: 'BUSY' },
-  { name: 'Reece Randal', office: 'Snake River Area Office', expertise: 'Realty Specialist', role: 'Land Appraisal', projects: 17, availability: 'OVERLOADED' },
-  { name: 'Jason Brunk', office: 'Upper Snake Field Office', expertise: 'Realty Specialist', role: 'Land Appraisal', projects: 7, availability: 'AVAILABLE' },
-  { name: 'Jennifer Hoff', office: 'Yakima Field Office', expertise: 'Realty Specialist', role: 'Land Appraisal', projects: 2, availability: 'AVAILABLE' },
+  { name: 'Karen Mitchell', office: 'Bend Field Office', expertise: 'Realty Specialist', role: 'Land Appraisal', projects: 8, availability: 'BUSY' },
+  { name: 'Laura Bennett', office: 'Columbia-Cascades Area Office', expertise: 'Realty Specialist', role: 'Land Appraisal', projects: 2, availability: 'AVAILABLE' },
+  { name: 'Robert Hayes', office: 'Ephrata Field Office', expertise: 'Deputy Field Office Manager', role: 'Land Appraisal', projects: 0, availability: 'AVAILABLE' },
+  { name: 'Maria Santos', office: 'Grand Coulee Dam', expertise: 'Realty Specialist', role: 'Land Appraisal', projects: 23, availability: 'OVERLOADED' },
+  { name: 'Tanya Brooks', office: 'Middle Snake Field Office', expertise: 'Realty Specialist', role: 'Land Appraisal', projects: 11, availability: 'BUSY' },
+  { name: 'Derek Walsh', office: 'Snake River Area Office', expertise: 'Realty Specialist', role: 'Land Appraisal', projects: 17, availability: 'OVERLOADED' },
+  { name: 'Brian Foster', office: 'Upper Snake Field Office', expertise: 'Realty Specialist', role: 'Land Appraisal', projects: 7, availability: 'AVAILABLE' },
+  { name: 'Laura Bennett', office: 'Yakima Field Office', expertise: 'Realty Specialist', role: 'Land Appraisal', projects: 2, availability: 'AVAILABLE' },
   { name: 'Vacant', office: 'Umatilla Field Office', expertise: 'Realty Specialist', role: 'Land Appraisal', projects: 0, availability: 'AVAILABLE' },
 ];
 
@@ -113,7 +113,7 @@ const ADMIN_AVERAGE_DAYS = [
 ];
 
 const ADMIN_DATE_FILTER_OPTIONS = ['July 20-27, 2025'];
-const QUICK_ASSIGN_ASSIGNEE_OPTIONS = ['None', 'Reece Randal', 'Nancy Coleman', 'Jennifer Hoff', 'Clyde Lay'];
+const QUICK_ASSIGN_ASSIGNEE_OPTIONS = ['None', 'Derek Walsh', 'Karen Mitchell', 'Laura Bennett', 'Robert Hayes'];
 
 function quickAssignStatusColor(status: QuickAssignStatus): BadgeColor {
   return status === 'NEW' ? 'blue' : 'red';
@@ -597,15 +597,15 @@ export default function DashboardPage() {
           subtitle={`${staffProfile.title} · ${staffProfile.agency} · ${staffProfile.region} Region`}
         >
           <div className="federal-manager-dashboard flex flex-col gap-[var(--space-md)]">
-          <StaggerContainer className="grid items-start gap-[var(--space-md)] lg:grid-cols-2">
+          <StaggerContainer className="grid items-stretch gap-[var(--space-md)] lg:grid-cols-2">
             <AnimatedCard>
               <Card size="lg" className="h-full bg-[var(--color-bg-subtle)]">
-              <div className="flex flex-col gap-[var(--space-xl)]">
+              <div className="flex h-full flex-col gap-[var(--space-xl)]">
                 <div className="flex items-center gap-[var(--space-sm)]">
                   <LucideIcon icon={BarChart3} size={20} className="text-[var(--color-icon)]" />
                   <div className="chart-card-title" style={{ marginBottom: 0 }}>Performance Overview</div>
                 </div>
-                <div className="relative grid grid-cols-1 gap-y-[var(--space-xl)] sm:grid-cols-2 sm:gap-x-[var(--space-2xl)] sm:gap-y-[var(--space-3xl)]">
+                <div className="relative grid flex-1 grid-cols-1 items-end gap-y-[var(--space-xl)] sm:grid-cols-2 sm:gap-x-[var(--space-2xl)] sm:gap-y-[var(--space-3xl)]">
                   <div className="space-y-[var(--space-sm)] sm:pr-[var(--space-sm)]">
                     <p className="type-heading-h1 text-[var(--color-text)]">45</p>
                     <p className="type-body-sm text-[var(--color-text-body)]">Applications in Queue</p>
