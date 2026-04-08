@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Menu, DrawerButton, Button, Avatar } from 'usds';
 import { MenuIcon, XMarkIcon } from './Icons';
-import fppLogo from '@/logo/FPP2.svg';
+import ceqSeal from '@/logo/US-CouncilOnEnvironmentalQuality-Seal.svg';
 import { resolveStaffProfile } from '@/lib/mockFederalPortalData';
 
 type WorkspaceShellProps = {
@@ -47,7 +47,7 @@ function getPrimaryNavItems(role?: string, userSub?: string): NavItem[] {
 
   return [
     { label: 'Home', href: '/home' },
-    { label: 'My Applications', href: '/my-applications' },
+    { label: 'My Projects', href: '/my-projects' },
     { label: 'My Tasks', href: '/my-tasks' },
     { label: 'Messages', href: '/messages' },
   ];
@@ -119,7 +119,7 @@ function getInitials(displayName: string): string {
 }
 
 const FPPLogo = ({ size = 40 }: { size?: number }) => (
-  <Image src={fppLogo} alt="Federal Permit Portal logo" width={size} height={size} className="object-contain" priority />
+  <Image src={ceqSeal} alt="Council on Environmental Quality seal" width={size} height={size} className="object-contain" priority />
 );
 
 interface MenuItem {
@@ -149,6 +149,7 @@ function CustomSidebarInner({
   primaryMenuItems,
   resourceMenuItems,
 }: CustomSidebarProps) {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(true);
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     if (typeof window === 'undefined') return 'dark';
@@ -237,9 +238,10 @@ function CustomSidebarInner({
         variant="secondary"
         size="md"
         className={`sidebar-nav-new-app${!isOpen ? " sidebar-nav-new-app-collapsed" : ""}`}
+        onClick={() => router.push('/project-intake')}
       >
         <span className="sidebar-nav-plus" aria-hidden="true">+</span>
-        <span className="sidebar-nav-new-app-text">New Application</span>
+        <span className="sidebar-nav-new-app-text">New Project</span>
       </Button>
 
       <div className={`sidebar-nav-menus${isOpen ? "" : " sidebar-nav-menus-hidden"} flex-1`}>
@@ -394,9 +396,10 @@ export function WorkspaceShell({ role, userSub, organizationLabel, onSignOut, ch
                 variant="secondary"
                 size="md"
                 className="sidebar-nav-new-app w-full"
+                onClick={() => router.push('/project-intake')}
               >
                 <span className="sidebar-nav-plus" aria-hidden="true">+</span>
-                <span className="sidebar-nav-new-app-text">New Application</span>
+                <span className="sidebar-nav-new-app-text">New Project</span>
               </Button>
 
               <div className="sidebar-nav-menu-wrap">

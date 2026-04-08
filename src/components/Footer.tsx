@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import usappLogo from '@/logo/USAPP.svg';
+import ceqSeal from '@/logo/US-CouncilOnEnvironmentalQuality-Seal.svg';
 
 export function Footer() {
   return (
-    <footer className="flex justify-center border-t border-white/10 bg-[#0a0b0d] text-white px-2 sm:px-6 lg:px-8" style={{ marginTop: '120px', paddingTop: 'var(--space-3xl)', paddingBottom: 'var(--space-3xl)' }}>
+    <footer className="site-footer flex justify-center border-t border-white/10 bg-[#0a0b0d] text-white px-2 sm:px-6 lg:px-8" style={{ marginTop: '120px', paddingTop: 'var(--space-3xl)', paddingBottom: 'var(--space-3xl)' }}>
       <div className="w-full max-w-7xl" style={{ marginLeft: 'clamp(var(--space-sm), 5vw, var(--space-lg))', marginRight: 'clamp(var(--space-sm), 5vw, var(--space-lg))' }}>
         {/* Brand and links section */}
         <div className="grid gap-12 lg:gap-16 lg:grid-cols-[auto_1fr]" style={{ marginBottom: 'var(--space-3xl)' }}>
@@ -15,7 +15,7 @@ export function Footer() {
               <p className="type-body-sm" style={{ color: 'var(--color-text-body)' }}>Official Permit Portal of the United States of America</p>
             </div>
             <div style={{ marginTop: 'var(--space-md)', marginBottom: 'var(--space-md)' }}>
-              <Image src={usappLogo} alt="US Application Portal logo" width={80} height={80} className="h-[80px] w-[80px] object-contain" priority />
+              <Image src={ceqSeal} alt="Council on Environmental Quality seal" width={80} height={80} className="h-[80px] w-[80px] object-contain" priority />
             </div>
           </div>
 

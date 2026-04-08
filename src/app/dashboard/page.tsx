@@ -6,6 +6,7 @@ import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { ArrowUp, BarChart3, ChevronDown, UserPlus } from 'lucide-react';
 import { LucideIcon } from '@/components/LucideIcon';
+import { AnimatedCard, StaggerContainer } from '@/components/motion';
 import { WorkspaceShell } from '@/components/WorkspaceShell';
 import { PortalPageScaffold } from '@/components/PortalPageScaffold';
 import { useAuth } from '@/contexts/AuthContext';
@@ -385,17 +386,17 @@ export default function DashboardPage() {
           }
         >
           <div className="federal-admin-dashboard flex flex-col gap-[var(--space-md)]">
-          <section className="grid items-stretch gap-[var(--space-md)] lg:grid-cols-12">
-            <div className="lg:col-span-4 lg:h-full">
+          <StaggerContainer className="grid items-stretch gap-[var(--space-md)] lg:grid-cols-12">
+            <AnimatedCard className="lg:col-span-4 lg:h-full">
               <Card className="h-full bg-[var(--steel-950)]">
                 <div className="flex h-full flex-col justify-between gap-[var(--space-md)]">
                   <p className="chart-card-title" style={{ marginBottom: 0 }}>Total Active Permits</p>
                   <p className="type-heading-h1 text-[var(--color-text)]">164,821</p>
                 </div>
               </Card>
-            </div>
+            </AnimatedCard>
 
-            <div className="lg:col-span-8">
+            <AnimatedCard className="lg:col-span-8" delay={0.08}>
               <Card className="bg-[var(--color-bg-subtle)]">
                 <div className="flex flex-col gap-[var(--space-md)]">
                   <div className="dashboard-open-permits-header">
@@ -513,11 +514,11 @@ export default function DashboardPage() {
                   </div>
                 </div>
               </Card>
-            </div>
-          </section>
+            </AnimatedCard>
+          </StaggerContainer>
 
-          <section className="grid gap-[var(--space-md)] pr-[var(--space-md)] md:pr-0 md:grid-cols-2 xl:grid-cols-3">
-            <div className="dashboard-av-days-card">
+          <StaggerContainer className="grid gap-[var(--space-md)] pr-[var(--space-md)] md:pr-0 md:grid-cols-2">
+            <AnimatedCard className="dashboard-av-days-card">
               <Card className="h-full bg-[var(--color-bg-subtle)]">
                 <div className="flex h-full flex-col">
                   <div className="space-y-[var(--space-2xs)]">
@@ -552,29 +553,30 @@ export default function DashboardPage() {
                   </div>
                 </div>
               </Card>
-            </div>
+            </AnimatedCard>
 
-            <div className="dashboard-bureau-card h-full">
+            <AnimatedCard className="dashboard-bureau-card h-full" delay={0.08}>
               <DonutChart title="Permits by Bureau" segments={ADMIN_BUREAU_BREAKDOWN} size={160} ringThickness={40} />
-            </div>
+            </AnimatedCard>
+          </StaggerContainer>
 
-            <Card className="bg-[var(--steel-950)]">
-              <div className="flex h-full flex-col justify-between gap-[var(--space-sm)]">
-                <div className="space-y-[var(--space-sm)]">
-                  <div className="chart-card-title" style={{ marginBottom: 0 }}>Overdue Permits</div>
-                  <p className="type-body-sm text-[var(--color-text-body)]">&gt;200 days in queue</p>
-                </div>
-                <div className="flex items-end justify-between gap-[var(--space-sm)] text-[var(--color-error)]">
-                  <p className="m-0 type-heading-h1">3,235</p>
-                  <div className="flex flex-col items-end gap-[var(--space-2xs)] text-right">
-                    <ArrowUp size={38} aria-hidden="true" />
-                    <p className="m-0 type-body-sm text-[var(--color-error)]">MoM +6.2%</p>
+          <AnimatedCard>
+            <Card className="bg-[var(--color-bg-subtle)]">
+              <div className="flex items-end justify-between gap-[var(--space-md)]">
+                <div className="flex flex-col gap-[var(--space-md)]">
+                  <div>
+                    <div className="chart-card-title" style={{ marginBottom: 0 }}>Overdue Permits</div>
+                    <p className="m-0 type-body-sm text-[var(--color-text-body)]">&gt;200 days in queue</p>
                   </div>
+                  <p className="m-0 type-heading-h1 text-[var(--color-error)]">3,235</p>
+                </div>
+                <div className="flex flex-col items-end gap-[var(--space-2xs)] text-[var(--color-error)] self-end">
+                  <ArrowUp size={38} aria-hidden="true" />
+                  <p className="m-0 type-body-sm">MoM +6.2%</p>
                 </div>
               </div>
             </Card>
-
-          </section>
+          </AnimatedCard>
 
           <section>
             <CompletionTracker
@@ -595,8 +597,9 @@ export default function DashboardPage() {
           subtitle={`${staffProfile.title} · ${staffProfile.agency} · ${staffProfile.region} Region`}
         >
           <div className="federal-manager-dashboard flex flex-col gap-[var(--space-md)]">
-          <section className="grid items-start gap-[var(--space-md)] lg:grid-cols-2">
-            <Card size="lg" className="h-full bg-[var(--color-bg-subtle)]">
+          <StaggerContainer className="grid items-start gap-[var(--space-md)] lg:grid-cols-2">
+            <AnimatedCard>
+              <Card size="lg" className="h-full bg-[var(--color-bg-subtle)]">
               <div className="flex flex-col gap-[var(--space-xl)]">
                 <div className="flex items-center gap-[var(--space-sm)]">
                   <LucideIcon icon={BarChart3} size={20} className="text-[var(--color-icon)]" />
@@ -622,7 +625,9 @@ export default function DashboardPage() {
                 </div>
               </div>
             </Card>
+            </AnimatedCard>
 
+            <AnimatedCard delay={0.08}>
             <Card size="lg" className="h-full bg-[var(--color-bg-subtle)] manager-quick-assign-card">
               <div className="flex flex-col gap-[var(--space-lg)]">
                 <div className="flex items-center gap-[var(--space-sm)]">
@@ -701,7 +706,8 @@ export default function DashboardPage() {
                 </div>
               </div>
             </Card>
-          </section>
+            </AnimatedCard>
+          </StaggerContainer>
 
           <section>
             <Card className="bg-[var(--color-bg-subtle)]">

@@ -1,0 +1,320 @@
+{
+  "total": 2105,
+  "agencyUnitCount": 78,
+  "lastFetched": "2026-04-08",
+  "source": "https://ce.permitting.innovation.gov/data/exclusions.json",
+  "agencies": {
+    "DOE": {
+      "longName": "Department of Energy",
+      "count": 107
+    },
+    "DOT - FAA": {
+      "longName": "Federal Aviation Administration",
+      "count": 94
+    },
+    "DOD - DA": {
+      "longName": "U.S. Army",
+      "count": 82
+    },
+    "USDA": {
+      "longName": "Department of Agriculture",
+      "count": 81
+    },
+    "DOI - BLM": {
+      "longName": "Bureau of Land Management",
+      "count": 79
+    },
+    "DHS": {
+      "longName": "Department of Homeland Security",
+      "count": 67
+    },
+    "DOI - NPS": {
+      "longName": "National Park Service",
+      "count": 66
+    },
+    "DHS - USCG": {
+      "longName": "U.S. Coast Guard",
+      "count": 64
+    },
+    "HHS - FDA": {
+      "longName": "Food and Drug Administration",
+      "count": 62
+    },
+    "DOC - NOAA": {
+      "longName": "National Oceanic and Atmospheric Administration",
+      "count": 52
+    },
+    "DOT - FMCSA": {
+      "longName": "Federal Motor Carrier Safety Administration",
+      "count": 51
+    },
+    "DOI - BIA": {
+      "longName": "Bureau of Indian Affairs",
+      "count": 50
+    },
+    "DOD - DON": {
+      "longName": "U.S. Navy",
+      "count": 49
+    },
+    "TVA": {
+      "longName": "Tennessee Valley Authority",
+      "count": 49
+    },
+    "DOD - DLA": {
+      "longName": "Defense Logistics Agency",
+      "count": 44
+    },
+    "USPS": {
+      "longName": "U.S. Postal Service",
+      "count": 42
+    },
+    "DOT - FHWA": {
+      "longName": "Federal Highway Administration",
+      "count": 40
+    },
+    "DOD - DAF": {
+      "longName": "U.S. Air Force",
+      "count": 38
+    },
+    "FERC": {
+      "longName": "Federal Energy Regulatory Commission",
+      "count": 36
+    },
+    "GSA": {
+      "longName": "General Services Administration",
+      "count": 36
+    },
+    "HUD": {
+      "longName": "Department of Housing and Urban Development",
+      "count": 36
+    },
+    "PRESIDIO": {
+      "longName": "Presidio Trust",
+      "count": 36
+    },
+    "TREAS": {
+      "longName": "Department of the Treasury",
+      "count": 35
+    },
+    "DOI - OSM": {
+      "longName": "Office of Surface Mining Reclamation and Enforcement",
+      "count": 33
+    },
+    "NASA": {
+      "longName": "National Aeronautics and Space Administration",
+      "count": 32
+    },
+    "DOC - NTIA": {
+      "longName": "National Telecommunications and Information Administration",
+      "count": 30
+    },
+    "FMC": {
+      "longName": "Federal Maritime Commission",
+      "count": 30
+    },
+    "DOC - NIST": {
+      "longName": "National Institute of Standards and Technology",
+      "count": 29
+    },
+    "DOI - BOR": {
+      "longName": "Bureau of Reclamation",
+      "count": 29
+    },
+    "DOI - USFWS": {
+      "longName": "U.S. Fish and Wildlife Service",
+      "count": 29
+    },
+    "DOJ - FBI": {
+      "longName": "Federal Bureau of Investigation",
+      "count": 27
+    },
+    "DOI - BOEM": {
+      "longName": "Bureau of Ocean Energy Management",
+      "count": 25
+    },
+    "NRC": {
+      "longName": "Nuclear Regulatory Commission",
+      "count": 25
+    },
+    "HHS - NIH": {
+      "longName": "National Institutes of Health",
+      "count": 24
+    },
+    "DOD - USACE": {
+      "longName": "U.S. Army Corps of Engineers",
+      "count": 23
+    },
+    "DOT - FTA": {
+      "longName": "Federal Transit Administration",
+      "count": 23
+    },
+    "DOD - DTRA": {
+      "longName": "Defense Threat Reduction Agency",
+      "count": 22
+    },
+    "DOT - FRA": {
+      "longName": "Federal Railroad Administration",
+      "count": 22
+    },
+    "DOD - MDA": {
+      "longName": "Missile Defense Agency",
+      "count": 21
+    },
+    "DHS - FEMA": {
+      "longName": "Federal Emergency Management Agency",
+      "count": 20
+    },
+    "AFRH": {
+      "longName": "Armed Forces Retirement Home",
+      "count": 19
+    },
+    "DOC - FirstNet": {
+      "longName": "First Responder Network Authority",
+      "count": 19
+    },
+    "DOT": {
+      "longName": "Department of Transportation",
+      "count": 19
+    },
+    "DOI - USGS": {
+      "longName": "U.S. Geological Survey",
+      "count": 16
+    },
+    "DC": {
+      "longName": "Denali Commission",
+      "count": 15
+    },
+    "EPA": {
+      "longName": "Environmental Protection Agency",
+      "count": 15
+    },
+    "HHS": {
+      "longName": "Department of Health and Human Services",
+      "count": 15
+    },
+    "HHS - CDC": {
+      "longName": "Centers for Disease Control and Prevention",
+      "count": 15
+    },
+    "USAID": {
+      "longName": "U.S. Agency for International Development",
+      "count": 15
+    },
+    "SBA": {
+      "longName": "Small Business Administration",
+      "count": 14
+    },
+    "DOT - SLSDC": {
+      "longName": "Saint Lawrence Seaway Development Corporation",
+      "count": 13
+    },
+    "HUD - HUD(RE)": {
+      "longName": "Department of Housing and Urban Development - Responsible Entities",
+      "count": 13
+    },
+    "IBWC": {
+      "longName": "International Boundary & Water Commission",
+      "count": 13
+    },
+    "NCPC": {
+      "longName": "National Capital Planning Commission",
+      "count": 13
+    },
+    "VA": {
+      "longName": "Department of Veterans Affairs",
+      "count": 13
+    },
+    "DOC - EDA": {
+      "longName": "Economic Development Administration",
+      "count": 12
+    },
+    "DOC": {
+      "longName": "Department of Commerce",
+      "count": 11
+    },
+    "DOJ - USMS": {
+      "longName": "U.S. Marshals Service",
+      "count": 11
+    },
+    "NEH": {
+      "longName": "National Endowment for the Humanities",
+      "count": 11
+    },
+    "RESTORE": {
+      "longName": "Gulf Coast Ecosystem Restoration Council",
+      "count": 11
+    },
+    "DOI": {
+      "longName": "Department of the Interior",
+      "count": 10
+    },
+    "DOL": {
+      "longName": "Department of Labor",
+      "count": 10
+    },
+    "DOT - MARAD": {
+      "longName": "Maritime Administration",
+      "count": 10
+    },
+    "HHS - IHS": {
+      "longName": "Indian Health Service",
+      "count": 10
+    },
+    "CPSC": {
+      "longName": "Consumer Product Safety Commission",
+      "count": 7
+    },
+    "DOJ - DEA": {
+      "longName": "Drug Enforcement Administration",
+      "count": 5
+    },
+    "DOS": {
+      "longName": "Department of State",
+      "count": 5
+    },
+    "DOT - PHMSA": {
+      "longName": "Pipeline and Hazardous Materials Safety Administration",
+      "count": 5
+    },
+    "DHS - CBP": {
+      "longName": "Customs and Border Protection",
+      "count": 3
+    },
+    "DHS - FLETC": {
+      "longName": "Federal Law Enforcement Training Center",
+      "count": 3
+    },
+    "DOJ - BOP": {
+      "longName": "Federal Bureau of Prisons",
+      "count": 3
+    },
+    "DHS - TSA": {
+      "longName": "Transportation Security Administration",
+      "count": 2
+    },
+    "DOJ - INS": {
+      "longName": "Immigration and Naturalization Service",
+      "count": 2
+    },
+    "DOJ - OJARS": {
+      "longName": "Office of Justice Assistance, Research, and Statistics",
+      "count": 2
+    },
+    "FCC": {
+      "longName": "Federal Communications Commission",
+      "count": 2
+    },
+    "DOI - ONHR": {
+      "longName": "Office of Native Hawaiian Relations",
+      "count": 1
+    },
+    "FDIC": {
+      "longName": "Federal Deposit Insurance Corporation",
+      "count": 1
+    },
+    "NSF": {
+      "longName": "National Science Foundation",
+      "count": 1
+    }
+  }
+}

@@ -31,16 +31,16 @@ export default function AboutPage() {
 
       <section className="flex justify-center bg-[#060708] text-white px-2 sm:px-6 lg:px-8" style={{ paddingTop: 'var(--space-3xl)', paddingBottom: 'var(--space-3xl)' }}>
         <div className="w-full max-w-7xl grid gap-12 lg:grid-cols-3" style={{ marginLeft: 'clamp(var(--space-sm), 5vw, var(--space-lg))', marginRight: 'clamp(var(--space-sm), 5vw, var(--space-lg))' }}>
-          <article className="rounded-sm border border-white/12 bg-white/[0.02]" style={{ padding: 'var(--space-lg)' }}>
+          <article className="rounded-[var(--radius-md)] border border-white/12 bg-[var(--steel-950)]" style={{ padding: 'var(--space-lg)' }}>
             <p className="type-body-xs uppercase tracking-[0.14em]" style={{ color: 'var(--color-text-disabled)', marginBottom: 'var(--space-md)' }}>Mission</p>
-            <h2 className="type-heading-h6 text-white" style={{ marginBottom: 'var(--space-md)' }}>Modernize Permitting Delivery</h2>
+            <h2 className="type-heading-h6 text-white" style={{ marginBottom: 'var(--space-md)' }}>Modernize Permitting</h2>
             <p className="type-body-sm leading-relaxed" style={{ color: 'var(--color-text-body)' }}>
               Reduce uncertainty and duplication by giving project teams one source of truth for submission
               status, agency actions, and cross-agency milestones.
             </p>
           </article>
 
-          <article className="rounded-sm border border-white/12 bg-white/[0.02]" style={{ padding: 'var(--space-lg)' }}>
+          <article className="rounded-[var(--radius-md)] border border-white/12 bg-[var(--steel-950)]" style={{ padding: 'var(--space-lg)' }}>
             <p className="type-body-xs uppercase tracking-[0.14em]" style={{ color: 'var(--color-text-disabled)', marginBottom: 'var(--space-md)' }}>For Applicants</p>
             <h2 className="type-heading-h6 text-white" style={{ marginBottom: 'var(--space-md)' }}>Predictable Project Progress</h2>
             <p className="type-body-sm leading-relaxed" style={{ color: 'var(--color-text-body)' }}>
@@ -49,7 +49,7 @@ export default function AboutPage() {
             </p>
           </article>
 
-          <article className="rounded-sm border border-white/12 bg-white/[0.02]" style={{ padding: 'var(--space-lg)' }}>
+          <article className="rounded-[var(--radius-md)] border border-white/12 bg-[var(--steel-950)]" style={{ padding: 'var(--space-lg)' }}>
             <p className="type-body-xs uppercase tracking-[0.14em]" style={{ color: 'var(--color-text-disabled)', marginBottom: 'var(--space-md)' }}>For Federal Teams</p>
             <h2 className="type-heading-h6 text-white" style={{ marginBottom: 'var(--space-md)' }}>Coordinated Interagency Execution</h2>
             <p className="type-body-sm leading-relaxed" style={{ color: 'var(--color-text-body)' }}>

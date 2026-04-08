@@ -16,7 +16,7 @@ type ImpactField = {
   details: string;
 };
 
-type GuidanceFormState = {
+type IntakeFormState = {
   projectCategories: string[];
   projectDescription: string;
   locationStreetOrLandmark: string;
@@ -36,10 +36,10 @@ type GuidanceFormState = {
   applicantType: string;
 };
 
-const GUIDANCE_DRAFT_KEY = 'permit.applicationGuidance.v1';
-const GUIDANCE_SUBMISSION_KEY = 'permit.guidanceRequest.submitted.v1';
+const INTAKE_DRAFT_KEY = 'permit.projectIntake.v1';
+const INTAKE_SUBMISSION_KEY = 'permit.projectIntake.submitted.v1';
 
-const DEFAULT_FORM: GuidanceFormState = {
+const DEFAULT_FORM: IntakeFormState = {
   projectCategories: [],
   projectDescription: '',
   locationStreetOrLandmark: '',
@@ -88,29 +88,32 @@ function loginRedirectPath(targetPath: string): string {
   return `/login?return_to=${encodeURIComponent(targetPath)}`;
 }
 
-export default function ApplicationGuidancePage() {
+export default function ProjectIntakePage() {
   const router = useRouter();
   const { token, user, logout } = useAuth();
-  const [form, setForm] = useState<GuidanceFormState>(DEFAULT_FORM);
+  const [form, setForm] = useState<IntakeFormState>(DEFAULT_FORM);
   const [submitError, setSubmitError] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [mapFileNames, setMapFileNames] = useState<string[]>([]);
+  const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
 
   useEffect(() => {
-    const raw = window.localStorage.getItem(GUIDANCE_DRAFT_KEY);
+    const raw = window.localStorage.getItem(INTAKE_DRAFT_KEY);
     if (!raw) return;
 
     try {
-      const parsed = JSON.parse(raw) as Partial<GuidanceFormState>;
+      const parsed = JSON.parse(raw) as Partial<IntakeFormState>;
       setForm((current) => ({ ...current, ...parsed }));
     } catch {
-      window.localStorage.removeItem(GUIDANCE_DRAFT_KEY);
+      window.localStorage.removeItem(INTAKE_DRAFT_KEY);
     }
   }, []);
 
   useEffect(() => {
     if (submitted) return;
-    window.localStorage.setItem(GUIDANCE_DRAFT_KEY, JSON.stringify(form));
+    const now = new Date().toISOString();
+    window.localStorage.setItem(INTAKE_DRAFT_KEY, JSON.stringify({ ...form, lastSavedAt: now }));
+    setLastSavedAt(now);
   }, [form, submitted]);
 
   const updateImpact = (key: typeof IMPACT_QUESTIONS[number]['key'], value: Partial<ImpactField>) => {
@@ -136,13 +139,13 @@ export default function ApplicationGuidancePage() {
     return '';
   };
 
-  const recordGuidanceSubmission = () => {
+  const recordIntakeSubmission = () => {
     const payload = {
       submittedAt: new Date().toISOString(),
-      title: 'Application Guidance Request',
+      title: 'Project Intake',
       status: 'submitted',
     };
-    window.localStorage.setItem(GUIDANCE_SUBMISSION_KEY, JSON.stringify(payload));
+    window.localStorage.setItem(INTAKE_SUBMISSION_KEY, JSON.stringify(payload));
   };
 
   const handleSubmit = () => {
@@ -153,29 +156,29 @@ export default function ApplicationGuidancePage() {
     }
 
     setSubmitError('');
-    recordGuidanceSubmission();
-    window.localStorage.removeItem(GUIDANCE_DRAFT_KEY);
+    recordIntakeSubmission();
+    window.localStorage.removeItem(INTAKE_DRAFT_KEY);
     setSubmitted(true);
   };
 
   const handleLogin = () => {
-    router.push(loginRedirectPath('/home?guidance_submitted=1'));
+    router.push(loginRedirectPath('/home?intake_submitted=1'));
   };
 
   const handlePortalHome = () => {
-    router.push('/home?guidance_submitted=1');
+    router.push('/home?intake_submitted=1');
   };
 
-  const guidanceContent = submitted ? (
+  const intakeContent = submitted ? (
     <section className="pre-screener-page mx-auto w-full max-w-[700px] pb-[var(--space-2xl)]">
       <Card size="lg">
         <div className="page-card-body">
-          <h1 className="type-heading-h4 text-white">Thank you!</h1>
-          <p className="type-body-md text-[var(--color-text-body)]">Your Project Application Guidance Request has been received.</p>
+          <h1 className="type-heading-h4 text-[var(--color-text)]">Thank you!</h1>
+          <p className="type-body-md text-[var(--color-text-body)]">Your Project Intake request has been received.</p>
 
           {!token ? (
             <PillButton variant="primary" size="lg" onClick={handleLogin}>
-              Log In to process the guidance request
+              Log In to view your intake request
             </PillButton>
           ) : null}
 
@@ -192,14 +195,14 @@ export default function ApplicationGuidancePage() {
     </section>
   ) : (
     <section className="pre-screener-page mx-auto w-full max-w-[700px] pb-[var(--space-2xl)]">
-      <div className="pre-screener-intro space-y-[var(--space-md)] text-center text-white">
-        <h1 className="type-heading-h3 text-white">Let's get started</h1>
+      <div className="pre-screener-intro space-y-[var(--space-md)] text-center text-[var(--color-text)]">
+        <h1 className="type-heading-h3 text-[var(--color-text)]">Let's get started</h1>
       </div>
 
       <Card size="lg">
         <div className="page-card-body">
           <p className="pre-screener-step-kicker type-body-xs uppercase tracking-[0.16em] text-[var(--color-text-disabled)]">Step 1 of 5</p>
-          <h2 className="type-heading-h5 text-white">Which best describes your project?</h2>
+          <h2 className="type-heading-h5 text-[var(--color-text)]">Which best describes your project?</h2>
           <p className="type-body-md text-[var(--color-text-body)]">Choose all that apply.*</p>
 
           <FormChoice
@@ -212,7 +215,7 @@ export default function ApplicationGuidancePage() {
 
           <div aria-hidden="true" style={{ height: 'var(--space-4xl)' }} />
           <div className="space-y-[var(--space-2xs)]">
-            <h3 className="type-heading-h6 text-white">Brief but detailed description of your project*</h3>
+            <h3 className="type-heading-h6 text-[var(--color-text)]">Brief but detailed description of your project*</h3>
             <p className="type-body-sm text-[var(--color-text-body)]">
               Include general purpose, type of system/facility, related structures, physical specifications (length, width, height, grading, etc.), term of years needed, expected construction timeline, time of year for construction, and any temporary work areas.
             </p>
@@ -229,7 +232,7 @@ export default function ApplicationGuidancePage() {
       <Card size="lg">
         <div className="page-card-body">
           <p className="pre-screener-step-kicker type-body-xs uppercase tracking-[0.16em] text-[var(--color-text-disabled)]">Step 2 of 5</p>
-          <h2 className="type-heading-h5 text-white">Project Location</h2>
+          <h2 className="type-heading-h5 text-[var(--color-text)]">Project Location</h2>
           <p className="type-body-md text-[var(--color-text-body)]">Where is your project located?*</p>
 
           <Input
@@ -255,11 +258,11 @@ export default function ApplicationGuidancePage() {
             <p className="type-body-sm text-[var(--color-text-body)]">Attach or describe any maps or coordinates you have</p>
             <div aria-hidden="true" style={{ height: 'var(--space-lg)' }} />
             <div className="flex flex-wrap items-center gap-[var(--space-sm)]">
-              <label htmlFor="guidance-map-upload">
+              <label htmlFor="intake-map-upload">
                 <Button variant="primary" size="sm" style={{ minWidth: '7.5rem' }}>Upload</Button>
               </label>
               <input
-                id="guidance-map-upload"
+                id="intake-map-upload"
                 type="file"
                 multiple
                 className="sr-only"
@@ -290,7 +293,7 @@ export default function ApplicationGuidancePage() {
       <Card size="lg">
         <div className="page-card-body">
           <p className="pre-screener-step-kicker type-body-xs uppercase tracking-[0.16em] text-[var(--color-text-disabled)]">Step 3 of 5</p>
-          <h2 className="type-heading-h5 text-white">Potential Impact</h2>
+          <h2 className="type-heading-h5 text-[var(--color-text)]">Potential Impact</h2>
           <p className="type-body-md text-[var(--color-text-body)]">Does your project involve any of the following?</p>
 
           <div className="space-y-[var(--space-md)]">
@@ -339,7 +342,7 @@ export default function ApplicationGuidancePage() {
       <Card size="lg">
         <div className="page-card-body">
           <p className="pre-screener-step-kicker type-body-xs uppercase tracking-[0.16em] text-[var(--color-text-disabled)]">Step 4 of 5</p>
-          <h2 className="type-heading-h5 text-white">Applicant Information</h2>
+          <h2 className="type-heading-h5 text-[var(--color-text)]">Applicant Information</h2>
 
           <Input
             inputSize="lg"
@@ -382,10 +385,10 @@ export default function ApplicationGuidancePage() {
       <Card size="lg">
         <div className="page-card-body">
           <p className="pre-screener-step-kicker type-body-xs uppercase tracking-[0.16em] text-[var(--color-text-disabled)]">Step 5 of 5</p>
-          <h2 className="type-heading-h5 text-white">Review & Submit</h2>
+          <h2 className="type-heading-h5 text-[var(--color-text)]">Review & Submit</h2>
           <p className="type-body-md text-[var(--color-text-body)]">Review the information you provided.</p>
           <p className="type-body-md text-[var(--color-text-body)]">
-            This is a guidance request only - our team will review it and contact you (usually within a few business days) with the exact forms you need and next steps.
+This is an intake request only - our team will review it and contact you (usually within a few business days) with the exact forms you need and next steps.
           </p>
           <p className="type-body-md text-[var(--color-text-body)]">
             If SF-299 is required, we will pre-fill it with the details you just entered.
@@ -395,13 +398,28 @@ export default function ApplicationGuidancePage() {
 
           <div aria-hidden="true" style={{ height: 'var(--space-3xl)' }} />
           <div className="flex w-full items-center justify-between gap-[var(--space-md)]">
-            <PillButton variant="outline" size="lg" onClick={() => router.push(token ? '/home' : '/')}>
+            <PillButton variant="primary" size="lg" onClick={() => router.push(token ? '/home' : '/')}>
               Back to Home
             </PillButton>
-            <PillButton variant="secondary" size="lg" onClick={handleSubmit}>
-              Submit for Review
-            </PillButton>
+            <div className="flex items-center gap-[var(--space-sm)]">
+              <PillButton variant="primary" size="lg" onClick={() => {
+                const now = new Date().toISOString();
+                window.localStorage.setItem(INTAKE_DRAFT_KEY, JSON.stringify({ ...form, lastSavedAt: now }));
+                setLastSavedAt(now);
+                router.push(token ? '/home' : '/');
+              }}>
+                Save & Exit
+              </PillButton>
+              <PillButton variant="secondary" size="lg" onClick={handleSubmit}>
+                Submit for Review
+              </PillButton>
+            </div>
           </div>
+          {lastSavedAt && (
+            <p className="type-body-xs text-center text-[var(--color-text-disabled)]" style={{ paddingTop: 'var(--space-xs)' }}>
+              Draft auto-saved at {new Date(lastSavedAt).toLocaleTimeString()}
+            </p>
+          )}
         </div>
       </Card>
     </section>
@@ -417,10 +435,10 @@ export default function ApplicationGuidancePage() {
           router.push('/');
         }}
       >
-        <div className="min-h-full bg-[var(--color-bg)] p-[var(--space-md)]">{guidanceContent}</div>
+        <div className="mx-auto w-full max-w-[700px] py-[var(--space-lg)] px-[var(--space-md)]">{intakeContent}</div>
       </WorkspaceShell>
     );
   }
 
-  return <OnboardingPageScaffold maxWidthClassName="max-w-[700px]">{guidanceContent}</OnboardingPageScaffold>;
+  return <OnboardingPageScaffold maxWidthClassName="max-w-[700px]">{intakeContent}</OnboardingPageScaffold>;
 }

@@ -547,6 +547,12 @@ p {
   padding-bottom: var(--space-3xl);
 }
 
+/* Project intake uses light mode — override the hardcoded dark bg/color */
+[data-theme="light"] .new-page-main {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
 @media (min-width: 640px) {
   .new-page-main {
     padding-left: var(--space-md);
@@ -808,6 +814,71 @@ p {
   padding: 10px;
 }
 
+/* ── Light-mode overrides for project-intake (only active when data-theme="light") ── */
+[data-theme="light"] .pre-screener-page .card {
+  background: var(--color-white);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .pre-screener-page .input-label,
+[data-theme="light"] .pre-screener-page .type-body-sm,
+[data-theme="light"] .pre-screener-page .type-body-xs {
+  color: var(--color-text-body);
+}
+
+[data-theme="light"] .pre-screener-page .input-field,
+[data-theme="light"] .pre-screener-page .select-field,
+[data-theme="light"] .pre-screener-page .textarea-field {
+  border: 1px solid var(--color-border);
+  background: var(--color-white) !important;
+  background-color: var(--color-white) !important;
+  color: var(--color-text);
+}
+
+[data-theme="light"] .pre-screener-page .input-field::placeholder,
+[data-theme="light"] .pre-screener-page .textarea-field::placeholder {
+  color: var(--color-text-disabled);
+}
+
+[data-theme="light"] .pre-screener-page input[type="file"] {
+  border: 1px solid var(--color-border);
+  background: var(--color-white);
+}
+
+/* ---------- Light-mode Navigation ---------- */
+[data-theme="light"] .site-nav {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border-bottom: 1px solid var(--color-border);
+}
+
+[data-theme="light"] .site-nav-mobile {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-top: 1px solid var(--color-border);
+}
+
+/* ---------- Light-mode Footer ---------- */
+[data-theme="light"] .site-footer {
+  background: #f1f3f6 !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+}
+
+[data-theme="light"] .site-footer a {
+  color: var(--color-text-body) !important;
+}
+
+[data-theme="light"] .site-footer a:hover {
+  color: var(--color-text) !important;
+}
+
+[data-theme="light"] .site-footer p {
+  color: var(--color-text-body) !important;
+}
+
+[data-theme="light"] .site-footer .border-t {
+  border-color: var(--color-border) !important;
+}
+
 /* Show required marker through USDS field labels when inputs/selects are required. */
 .input-wrapper:has(.input-field[required]) .input-label::after,
 .input-wrapper:has(.select-field[required]) .input-label::after {
@@ -912,6 +983,10 @@ a:hover {
   height: 100%;
 }
 
+.current-status-progress .progress-fill {
+  background: var(--blue-500);
+}
+
 .federal-admin-dashboard .dashboard-bureau-card .chart-card {
   height: 100%;
   display: flex;
@@ -924,9 +999,15 @@ a:hover {
 
 .federal-admin-dashboard .dashboard-bureau-card .chart-donut-wrap {
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: var(--space-md);
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
+}
+
+.federal-admin-dashboard .dashboard-bureau-card .chart-donut {
+  width: 100%;
+  height: auto;
+  max-width: 160px;
 }
 
 .federal-admin-dashboard .dashboard-bureau-card .chart-legend {

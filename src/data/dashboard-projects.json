@@ -1,0 +1,423 @@
+{
+  "totalProjects": 1692,
+  "sectorCount": 15,
+  "lastFetched": "2026-04-08",
+  "source": "https://data.permits.performance.gov/resource/mcm3-xbid.json",
+  "sectors": {
+    "Surface Transportation": {
+      "count": 1061,
+      "sectorTypes": [
+        "Highways"
+      ],
+      "examples": [
+        {
+          "title": "0113000125 - Mendocino County, US1 -Replace & Upgrade Bridge Rails",
+          "status": "Complete",
+          "leadAgency": "California"
+        },
+        {
+          "title": "0123000202 - Del Norte STAA Improvements",
+          "status": "Complete",
+          "leadAgency": "California"
+        },
+        {
+          "title": "0217000010 - Shasta County - I-5 - Bonnyview Interchange (Exit 675) Improvements",
+          "status": "Cancelled",
+          "leadAgency": "California"
+        },
+        {
+          "title": "0220000119 - Trinity County SR299 - Poison Pond 2 Disposal Site",
+          "status": "Complete",
+          "leadAgency": "California"
+        },
+        {
+          "title": "0221000128 - Trinity Dam Pavement",
+          "status": "In Progress",
+          "leadAgency": "California"
+        }
+      ]
+    },
+    "Aviation": {
+      "count": 433,
+      "sectorTypes": [
+        "Airport Development Projects (Aviation programs, commerce and safety, airport development and noise, financing, public airports)"
+      ],
+      "examples": [
+        {
+          "title": "Abraham Lincoln Capital Airport",
+          "status": "In Progress",
+          "leadAgency": "Department of Transportation"
+        },
+        {
+          "title": "Airport Traffic Control Tower Replacement Program, Programmatic EA",
+          "status": "Complete",
+          "leadAgency": "Department of Transportation"
+        },
+        {
+          "title": "Alaska Cargo and Cold Storage EA",
+          "status": "Complete",
+          "leadAgency": "Department of Transportation"
+        },
+        {
+          "title": "Albany Intl. Airport (ALB) New Runway 1 Airport Service Road",
+          "status": "Complete",
+          "leadAgency": "Department of Transportation"
+        },
+        {
+          "title": "Albert J Ellis Airport Runway Extension Environmental Assessment",
+          "status": "Complete",
+          "leadAgency": "Department of Transportation"
+        }
+      ]
+    },
+    "Mining": {
+      "count": 55,
+      "sectorTypes": [
+        "Mining"
+      ],
+      "examples": [
+        {
+          "title": "3PL Railroad Valley Exploration Project",
+          "status": "Complete",
+          "leadAgency": "Department of the Interior"
+        },
+        {
+          "title": "Amelia A&B",
+          "status": "Complete",
+          "leadAgency": "Department of the Army"
+        },
+        {
+          "title": "Angel Island",
+          "status": "In Progress",
+          "leadAgency": "Department of the Interior"
+        },
+        {
+          "title": "Antimony Ridge Mine Project",
+          "status": "Planned",
+          "leadAgency": "Department of Agriculture"
+        },
+        {
+          "title": "Antler Copper Project",
+          "status": "In Progress",
+          "leadAgency": "Department of the Interior"
+        }
+      ]
+    },
+    "Renewable Energy Production": {
+      "count": 55,
+      "sectorTypes": [
+        "Solar",
+        "Wind: Federal Offshore"
+      ],
+      "examples": [
+        {
+          "title": "Aiya Solar Project (Moapa)",
+          "status": "Cancelled",
+          "leadAgency": "Department of the Interior"
+        },
+        {
+          "title": "Arrow Canyon Solar Project",
+          "status": "Complete",
+          "leadAgency": "Department of the Interior"
+        },
+        {
+          "title": "Atlantic Shores North",
+          "status": "Paused",
+          "leadAgency": "Department of the Interior"
+        },
+        {
+          "title": "Atlantic Shores South",
+          "status": "Complete",
+          "leadAgency": "Department of the Interior"
+        },
+        {
+          "title": "Attentive Energy Two Offshore Wind Project",
+          "status": "In Progress",
+          "leadAgency": "Department of the Interior"
+        }
+      ]
+    },
+    "Water Resources": {
+      "count": 28,
+      "sectorTypes": [
+        "Irrigation and related water supply projects",
+        "Other Water Resource Projects (incl. Waste/Storm-water Infrastructure; Flood Risk Management; Navigation; Restoration activities associated with non-Bureau of Reclamation infrastructure)"
+      ],
+      "examples": [
+        {
+          "title": "Alkali Creek Reservoir Project",
+          "status": "Complete",
+          "leadAgency": "Department of the Interior"
+        },
+        {
+          "title": "Amite River and Tributaries-East of the Mississippi River, Louisiana, Flood Risk Management Feasibility Study",
+          "status": "Class of Action Changed",
+          "leadAgency": "Department of the Army"
+        },
+        {
+          "title": "Boise River Basin Feasibility Study",
+          "status": "In Progress",
+          "leadAgency": "Department of the Interior"
+        },
+        {
+          "title": "Buffalo Bayou and Tributaries, Texas Resiliency Study",
+          "status": "Paused",
+          "leadAgency": "Department of the Army"
+        },
+        {
+          "title": "Charleston Peninsula Coastal Flood Risk Management Study",
+          "status": "Complete",
+          "leadAgency": "Department of the Army"
+        }
+      ]
+    },
+    "Pipelines": {
+      "count": 21,
+      "sectorTypes": [
+        "Interstate Natural Gas Pipelines",
+        "Land-based Oil & Gas - Production/Extraction",
+        "Liquefied Natural Gas Terminal Facilities (Onshore or in State Water), and associated Natural Gas Pipelines"
+      ],
+      "examples": [
+        {
+          "title": "Alaska LNG Project",
+          "status": "Complete",
+          "leadAgency": "Federal Energy Regulatory Commission"
+        },
+        {
+          "title": "Atlantic Coast Pipeline, Atlantic Coast Pipeline Amendment, Supply Header, and ACP-Piedmont Lease",
+          "status": "Complete",
+          "leadAgency": "Federal Energy Regulatory Commission"
+        },
+        {
+          "title": "Atlantic Sunrise",
+          "status": "Complete",
+          "leadAgency": "Federal Energy Regulatory Commission"
+        },
+        {
+          "title": "Cobra Master Development Plan",
+          "status": "In Progress",
+          "leadAgency": "Department of Agriculture"
+        },
+        {
+          "title": "Commonwealth LNG Project",
+          "status": "Complete",
+          "leadAgency": "Federal Energy Regulatory Commission"
+        }
+      ]
+    },
+    "Electricity Transmission": {
+      "count": 15,
+      "sectorTypes": [
+        "Electricity Transmission",
+        "Electricity Transmission (all)",
+        "Rural Transmission"
+      ],
+      "examples": [
+        {
+          "title": "Boardman to Hemingway Transmission Line",
+          "status": "Complete",
+          "leadAgency": "Department of the Interior"
+        },
+        {
+          "title": "Cardinal-Hickory Creek 345 kV Transmission Line Project",
+          "status": "Complete",
+          "leadAgency": "Department of Agriculture"
+        },
+        {
+          "title": "Energy Gateway South Transmission Project",
+          "status": "Complete",
+          "leadAgency": "Department of the Interior"
+        },
+        {
+          "title": "Gateway West Segments 8 & 9 ",
+          "status": "Complete",
+          "leadAgency": "Department of the Interior"
+        },
+        {
+          "title": "Grain Belt Express Transmission - Phase 1",
+          "status": "In Progress",
+          "leadAgency": "Department of the Army"
+        }
+      ]
+    },
+    "Broadband": {
+      "count": 6,
+      "sectorTypes": [
+        "Broadband",
+        "Rural Broadband infrastructure"
+      ],
+      "examples": [
+        {
+          "title": "Alaska FiberOptic Project Segment 1",
+          "status": "Complete",
+          "leadAgency": "Department of Commerce"
+        },
+        {
+          "title": "NANA Regional Broadband Network (NRBN)",
+          "status": "In Progress",
+          "leadAgency": "Department of Commerce"
+        },
+        {
+          "title": "Navajo Nation Department of Education E-Rate Funded Broadband Project",
+          "status": "In Progress",
+          "leadAgency": "Department of the Interior"
+        },
+        {
+          "title": "Navajo Nation Gallup McKinley County Schools E-Rate Funded Broadband Project",
+          "status": "In Progress",
+          "leadAgency": "Department of the Interior"
+        },
+        {
+          "title": "Santa Fe Indian School Broadband",
+          "status": "In Progress",
+          "leadAgency": "Department of Commerce"
+        }
+      ]
+    },
+    "Conventional Energy Production": {
+      "count": 6,
+      "sectorTypes": [
+        "Land-based Oil & Gas - Production/Extraction",
+        "Nuclear Power Plant - Combined (construction and operating) license",
+        "Offshore Oil & Gas"
+      ],
+      "examples": [
+        {
+          "title": "Black Bear Natural Gas Development",
+          "status": "In Progress",
+          "leadAgency": "Department of Agriculture"
+        },
+        {
+          "title": "Levy Nuclear Plant Units 1 and 2",
+          "status": "Complete",
+          "leadAgency": "Nuclear Regulatory Commission"
+        },
+        {
+          "title": "Liberty Development and Production Plan",
+          "status": "Cancelled",
+          "leadAgency": "Department of the Interior"
+        },
+        {
+          "title": "North Anna Power Station, Unit 3",
+          "status": "Complete",
+          "leadAgency": "Nuclear Regulatory Commission"
+        },
+        {
+          "title": "Turkey Point, Units 6 and 7",
+          "status": "Complete",
+          "leadAgency": "Nuclear Regulatory Commission"
+        }
+      ]
+    },
+    "Ports and Waterways": {
+      "count": 5,
+      "sectorTypes": [
+        "Port expansion or improvement undertakings or projects",
+        "Ports and Waterways"
+      ],
+      "examples": [
+        {
+          "title": "Coos Bay, Oregon Section 408/204(f) Channel Modification",
+          "status": "Cancelled",
+          "leadAgency": "Department of the Army"
+        },
+        {
+          "title": "Pier B On-Dock Rail Support Facility",
+          "status": "In Progress",
+          "leadAgency": "Department of Transportation"
+        },
+        {
+          "title": "Port of Adak Pier Five Improvements Project",
+          "status": "In Progress",
+          "leadAgency": "Department of Transportation"
+        },
+        {
+          "title": "Port of Corpus Christi Authority Channel Deepening Project",
+          "status": "Complete",
+          "leadAgency": "Department of the Army"
+        },
+        {
+          "title": "Sparrows Point Container Terminal",
+          "status": "Complete",
+          "leadAgency": "Department of the Army"
+        }
+      ]
+    },
+    "Carbon Capture and Sequestration": {
+      "count": 2,
+      "sectorTypes": [
+        "Carbon Capture and Sequestration"
+      ],
+      "examples": [
+        {
+          "title": "Central Louisiana Regional Carbon Storage Hub - Vernon Parish One CCS Site",
+          "status": "Cancelled",
+          "leadAgency": "Environmental Protection Agency"
+        },
+        {
+          "title": "Pelican Carbon Sequestration Hub",
+          "status": "Planned",
+          "leadAgency": "Department of Energy"
+        }
+      ]
+    },
+    "Energy Storage": {
+      "count": 2,
+      "sectorTypes": [
+        "Energy Storage"
+      ],
+      "examples": [
+        {
+          "title": "Seminoe Pumped Storage Project",
+          "status": "In Progress",
+          "leadAgency": "Federal Energy Regulatory Commission"
+        },
+        {
+          "title": "White Pine Pumped Storage",
+          "status": "In Progress",
+          "leadAgency": "Federal Energy Regulatory Commission"
+        }
+      ]
+    },
+    "Data Storage and Data Management": {
+      "count": 1,
+      "sectorTypes": [
+        "Data Storage and Data Management"
+      ],
+      "examples": [
+        {
+          "title": "QTS Richmond Technology Park Data Center 5 (RIC5)",
+          "status": "Planned",
+          "leadAgency": "Department of the Army"
+        }
+      ]
+    },
+    "Manufacturing": {
+      "count": 1,
+      "sectorTypes": [
+        "Manufacturing"
+      ],
+      "examples": [
+        {
+          "title": "Riverview East Stack Extension",
+          "status": "In Progress",
+          "leadAgency": "Department of the Army"
+        }
+      ]
+    },
+    "Other": {
+      "count": 1,
+      "sectorTypes": [
+        "Other"
+      ],
+      "examples": [
+        {
+          "title": "Stibnite Gold Project",
+          "status": "In Progress",
+          "leadAgency": "Department of Agriculture"
+        }
+      ]
+    }
+  }
+}

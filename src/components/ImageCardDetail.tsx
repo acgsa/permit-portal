@@ -6,9 +6,11 @@ type ImageCardDetailProps = {
   agencies: string;
   examples: string;
   reviews: string[];
+  dashboardProjects?: number;
+  categoricalExclusions?: number;
 };
 
-export function ImageCardDetail({ href, image, imageAlt, title, agencies, examples, reviews }: ImageCardDetailProps) {
+export function ImageCardDetail({ href, image, imageAlt, title, agencies, examples, reviews, dashboardProjects, categoricalExclusions }: ImageCardDetailProps) {
   return (
     <a href={href} className="image-card-link">
       <div className="image-card rounded-[var(--radius-md)] shadow-[var(--shadow-sm)]">
@@ -40,6 +42,20 @@ export function ImageCardDetail({ href, image, imageAlt, title, agencies, exampl
                   ))}
                 </ul>
               </div>
+              {(dashboardProjects != null || categoricalExclusions != null) && (
+                <div className="flex flex-wrap gap-[var(--space-xs)]" style={{ marginTop: 'var(--space-xs)' }}>
+                  {dashboardProjects != null && (
+                    <span className="inline-flex items-center rounded-full px-2 py-0.5 type-body-xs" style={{ background: 'var(--color-bg-info)', color: 'var(--color-text)' }}>
+                      {dashboardProjects.toLocaleString()} dashboard projects
+                    </span>
+                  )}
+                  {categoricalExclusions != null && (
+                    <span className="inline-flex items-center rounded-full px-2 py-0.5 type-body-xs" style={{ background: 'var(--color-bg-info)', color: 'var(--color-text)' }}>
+                      {categoricalExclusions.toLocaleString()} categorical exclusions
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>

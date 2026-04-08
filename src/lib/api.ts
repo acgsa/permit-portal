@@ -693,3 +693,96 @@ export function deployProcessDefinitionVersion(
     body: JSON.stringify({ version, notes }),
   });
 }
+
+// ── PIC v1 API ────────────────────────────────────────────────────────────────
+// Typed CRUD client for all 13 PIC NEPA entities via /api/v1/.
+
+import type {
+  Project,
+  ProcessInstance,
+  Document as PICDocument,
+  Comment as PICComment,
+  CaseEvent,
+  Engagement,
+  GisData,
+  GisDataElement,
+  LegalStructure,
+  ProcessModel,
+  DecisionElement,
+  ProcessDecisionPayload,
+  UserRole,
+} from '@/types/pic';
+
+export type {
+  Project,
+  ProcessInstance,
+  PICDocument,
+  PICComment,
+  CaseEvent,
+  Engagement,
+  GisData,
+  GisDataElement,
+  LegalStructure,
+  ProcessModel,
+  DecisionElement,
+  ProcessDecisionPayload,
+  UserRole,
+};
+
+export interface PaginationParams {
+  skip?: number;
+  limit?: number;
+}
+
+function qs(params: PaginationParams): string {
+  const parts: string[] = [];
+  if (params.skip != null) parts.push(`skip=${params.skip}`);
+  if (params.limit != null) parts.push(`limit=${params.limit}`);
+  return parts.length ? `?${parts.join('&')}` : '';
+}
+
+// Generic CRUD factory for a PIC entity
+function picCrud<T>(segment: string) {
+  return {
+    list(token: string, params: PaginationParams = {}): Promise<T[]> {
+      return request<T[]>(`/api/v1/${segment}${qs(params)}`, { token });
+    },
+    get(token: string, id: number): Promise<T> {
+      return request<T>(`/api/v1/${segment}/${id}`, { token });
+    },
+    create(token: string, body: Partial<T>): Promise<T> {
+      return request<T>(`/api/v1/${segment}`, {
+        method: 'POST',
+        token,
+        body: JSON.stringify(body),
+      });
+    },
+    update(token: string, id: number, body: Partial<T>): Promise<T> {
+      return request<T>(`/api/v1/${segment}/${id}`, {
+        method: 'PATCH',
+        token,
+        body: JSON.stringify(body),
+      });
+    },
+    remove(token: string, id: number): Promise<void> {
+      return request<void>(`/api/v1/${segment}/${id}`, {
+        method: 'DELETE',
+        token,
+      });
+    },
+  };
+}
+
+export const picProjects = picCrud<Project>('projects');
+export const picProcessInstances = picCrud<ProcessInstance>('process-instances');
+export const picDocuments = picCrud<PICDocument>('documents');
+export const picComments = picCrud<PICComment>('comments');
+export const picCaseEvents = picCrud<CaseEvent>('case-events');
+export const picEngagements = picCrud<Engagement>('engagements');
+export const picGisData = picCrud<GisData>('gis-data');
+export const picGisDataElements = picCrud<GisDataElement>('gis-data-elements');
+export const picLegalStructures = picCrud<LegalStructure>('legal-structures');
+export const picProcessModels = picCrud<ProcessModel>('process-models');
+export const picDecisionElements = picCrud<DecisionElement>('decision-elements');
+export const picProcessDecisionPayloads = picCrud<ProcessDecisionPayload>('process-decision-payloads');
+export const picUserRoles = picCrud<UserRole>('user-roles');

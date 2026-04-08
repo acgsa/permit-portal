@@ -10,6 +10,7 @@ import { WorkspaceShell } from '@/components/WorkspaceShell';
 import { ImageCardDetail } from '@/components/ImageCardDetail';
 import { Button } from 'usds';
 import { useAuth } from '@/contexts/AuthContext';
+import { getPermitTypeDashboardStats, getPermitTypeCEStats, getAggregateStats } from '@/lib/federalData';
 
 const PERMIT_TYPE_ROWS = [
   {
@@ -60,6 +61,7 @@ function parseList(value: string): string[] {
 export default function PermitTypesPage() {
   const { user, token, logout } = useAuth();
   const router = useRouter();
+  const agg = getAggregateStats();
 
   useEffect(() => {
     if (!token) router.replace('/login');
@@ -85,11 +87,30 @@ export default function PermitTypesPage() {
             patterns in public federal sources and should be treated as planning support only until agency-specific
             requirements are confirmed for your project.
           </p>
+
+          {/* Aggregate stats bar */}
+          <div className="flex flex-wrap gap-[var(--space-lg)]" style={{ marginTop: 'var(--space-md)' }}>
+            <div className="flex items-baseline gap-[var(--space-2xs)]">
+              <span className="type-heading-h5">{agg.totalProjects.toLocaleString()}</span>
+              <span className="type-body-xs text-[var(--color-text-disabled)]">projects on Federal Permitting Dashboard</span>
+            </div>
+            <div className="flex items-baseline gap-[var(--space-2xs)]">
+              <span className="type-heading-h5">{agg.totalCEs.toLocaleString()}+</span>
+              <span className="type-body-xs text-[var(--color-text-disabled)]">categorical exclusions cataloged</span>
+            </div>
+            <div className="flex items-baseline gap-[var(--space-2xs)]">
+              <span className="type-heading-h5">{agg.totalAgencyUnits}</span>
+              <span className="type-body-xs text-[var(--color-text-disabled)]">agency NEPA units</span>
+            </div>
+          </div>
         </header>
 
         <section>
           <div className="grid grid-cols-1 gap-[var(--space-xl)] md:grid-cols-2" style={{ marginTop: 'var(--space-lg)' }}>
-            {PERMIT_TYPE_ROWS.map((row) => (
+            {PERMIT_TYPE_ROWS.map((row) => {
+              const dash = getPermitTypeDashboardStats(row.slug);
+              const ce = getPermitTypeCEStats(row.slug);
+              return (
               <ImageCardDetail
                 key={row.name}
                 href={`/use-cases#${row.slug}`}
@@ -99,8 +120,11 @@ export default function PermitTypesPage() {
                 agencies={row.agencies}
                 examples={row.examples}
                 reviews={parseList(row.reviews)}
+                dashboardProjects={dash.projectCount > 0 ? dash.projectCount : undefined}
+                categoricalExclusions={ce.totalCEs > 0 ? ce.totalCEs : undefined}
               />
-            ))}
+              );
+            })}
           </div>
         </section>
 

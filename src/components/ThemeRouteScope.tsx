@@ -25,6 +25,8 @@ function isPortalRoute(pathname: string): boolean {
     '/dashboard',
     '/staff',
     '/applications',
+    '/my-projects',
+    '/projects',
   ];
 
   return portalPrefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
@@ -38,6 +40,27 @@ export function ThemeRouteScope() {
     const htmlElement = document.documentElement;
     const isLoggedIn = isTokenValid(getToken());
 
+    const isProjectIntake = pathname === '/project-intake' || pathname.startsWith('/project-intake/');
+
+    // Logged-out project intake is forced to light mode.
+    if (isProjectIntake && !isLoggedIn) {
+      setTheme('light');
+      htmlElement.setAttribute('data-theme', 'light');
+      htmlElement.style.backgroundColor = '';
+      htmlElement.classList.remove('bg-black');
+      document.body.style.backgroundColor = '';
+      document.body.classList.remove('bg-black');
+      return;
+    }
+
+    // Restore dark bg classes for all other logged-out routes.
+    if (!isLoggedIn) {
+      htmlElement.style.backgroundColor = '#000';
+      if (!htmlElement.classList.contains('bg-black')) htmlElement.classList.add('bg-black');
+      document.body.style.backgroundColor = '#000';
+      if (!document.body.classList.contains('bg-black')) document.body.classList.add('bg-black');
+    }
+
     // Logged-out experience should always remain dark, including any portal route.
     if (!isLoggedIn) {
       setTheme('dark');
@@ -45,7 +68,7 @@ export function ThemeRouteScope() {
       return;
     }
 
-    if (isPortalRoute(pathname)) {
+    if (isPortalRoute(pathname) || (isLoggedIn && isProjectIntake)) {
       const savedTheme = window.localStorage.getItem(PORTAL_THEME_STORAGE_KEY);
       const nextTheme = savedTheme === 'light' ? 'light' : 'dark';
       setTheme(nextTheme);

@@ -1,14 +1,18 @@
 from pathlib import Path
 
+from alembic import command as alembic_command
+from alembic.config import Config as AlembicConfig
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 
 from .core import Base, decode_token, engine, settings
+from .middleware import PICComplianceMiddleware
 from .routers import auth as auth_router
 from .routers import pre_screener_drafts as pre_screener_drafts_router
 from .routers import process_definitions as process_definitions_router
 from .routers import tasks as tasks_router
 from .routers import workflows as workflows_router
+from .routers.v1 import router as v1_router
 from .services import ConnectionManager, registry
 
 app = FastAPI(title="PERMIT.GOV Pilot API", version="0.1.0")
@@ -22,6 +26,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# PIC schema compliance middleware (validates /api/v1/ responses)
+if settings.pic_schema_validate_responses:
+    app.add_middleware(PICComplianceMiddleware)
+
+# PIC v1 API
+app.include_router(v1_router)
+
+# Legacy routers
 app.include_router(auth_router.router)
 app.include_router(pre_screener_drafts_router.router)
 app.include_router(process_definitions_router.router)
@@ -29,15 +41,54 @@ app.include_router(workflows_router.router)
 app.include_router(tasks_router.router)
 manager = ConnectionManager()
 
+_BACKEND_DIR = Path(__file__).resolve().parents[1]
+
+
+def _run_alembic_upgrade() -> None:
+    """Run alembic upgrade head to ensure DB schema is current."""
+    if settings.database_url.startswith("sqlite"):
+        Base.metadata.create_all(bind=engine)
+        return
+
+    alembic_cfg = AlembicConfig(str(_BACKEND_DIR / "alembic.ini"))
+    alembic_cfg.set_main_option("script_location", str(_BACKEND_DIR / "alembic"))
+    alembic_cfg.set_main_option("sqlalchemy.url", settings.database_url)
+    alembic_command.upgrade(alembic_cfg, "head")
+
+
+def _seed_pic_data(db) -> None:  # noqa: ANN001
+    """Seed PIC sample data from the submodule if SEED_PIC_DATA=true."""
+    from sqlalchemy import text
+
+    seed_path = _BACKEND_DIR / "pic-standards" / "src" / "database" / "seed-v1.2.0.sql"
+    if not seed_path.exists():
+        return
+
+    # Only seed if project table is empty
+    count = db.execute(text("SELECT COUNT(*) FROM project")).scalar()
+    if count > 0:
+        return
+
+    sql = seed_path.read_text()
+    db.execute(text(sql))
+    db.commit()
+
 
 @app.on_event("startup")
 def startup() -> None:
-    Base.metadata.create_all(bind=engine)
+    # Run Alembic migrations (creates PIC + custom tables)
+    _run_alembic_upgrade()
+
     from .core import SessionLocal
 
-    seed_path = Path(__file__).resolve().parent / "bpmn" / "permit_process.bpmn"
     db = SessionLocal()
     try:
+        # Seed PIC sample data if enabled
+        if settings.seed_pic_data:
+            _seed_pic_data(db)
+
+        # Seed BPMN process definition
+        seed_path = Path(__file__).resolve().parent / "bpmn" / "permit_process.bpmn"
         registry.ensure_seeded_definition(
             db=db,
             definition_key="permit_process",

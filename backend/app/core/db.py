@@ -8,10 +8,7 @@ class Base(DeclarativeBase):
     pass
 
 
-is_sqlite = settings.database_url.startswith("sqlite")
-connect_args = {"check_same_thread": False} if is_sqlite else {}
-
-engine = create_engine(settings.database_url, connect_args=connect_args)
+engine = create_engine(settings.database_url, pool_pre_ping=True)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
 

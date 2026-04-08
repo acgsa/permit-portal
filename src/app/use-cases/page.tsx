@@ -48,7 +48,7 @@ export default function UseCasesPage() {
                 variant="secondary"
                 className="mt-6 !bg-[var(--color-btn-secondary-bg)] !text-[var(--color-btn-secondary-text)] hover:!bg-[var(--color-btn-secondary-bg-hover)] hover:!text-[var(--color-btn-secondary-text-hover)]"
               >
-                Start a New Application
+                Start a New Project
               </PillButton>
             </Link>
           </div>
@@ -142,7 +142,7 @@ export default function UseCasesPage() {
               size="lg"
               className="w-full sm:w-auto !bg-[var(--color-btn-secondary-bg)] !text-[var(--color-btn-secondary-text)] hover:!bg-[var(--color-btn-secondary-bg-hover)] hover:!text-[var(--color-btn-secondary-text-hover)]"
             >
-              Start a New Application
+              Start a New Project
             </PillButton>
           </Link>
         </div>

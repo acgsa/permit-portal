@@ -5,6 +5,7 @@ import "./globals.css";
 
 import { ThemeProviderComponent } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { QueryProvider } from "@/contexts/QueryProvider";
 import { USGRibbonConditional } from "@/components/USGRibbonConditional";
 import { ThemeRouteScope } from "@/components/ThemeRouteScope";
 
@@ -38,11 +39,13 @@ export default function RootLayout({
       <body className={`${GeistSans.variable} antialiased bg-black`} style={{ backgroundColor: '#000' }}>
         <ThemeProviderComponent>
           <ThemeRouteScope />
-          <AuthProvider>
-            <USGRibbonConditional>
-              {children}
-            </USGRibbonConditional>
-          </AuthProvider>
+          <QueryProvider>
+            <AuthProvider>
+              <USGRibbonConditional>
+                {children}
+              </USGRibbonConditional>
+            </AuthProvider>
+          </QueryProvider>
         </ThemeProviderComponent>
       </body>
     </html>

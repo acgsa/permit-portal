@@ -1,60 +1,92 @@
 // My Tasks page with mock table content
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Table } from '@/components/Table';
-import { Badge, type BadgeColor } from 'usds';
+import Link from 'next/link';
+import { Badge, type BadgeColor, Button } from 'usds';
 import { WorkspaceShell } from '@/components/WorkspaceShell';
+import { AnimatedCard, AnimatedTableRow } from '@/components/motion';
 import { useAuth } from '@/contexts/AuthContext';
 
 export type TaskDisplayRow = {
   id: number;
   taskName: string;
   permitNumber: string;
-  statusKey: 'pending' | 'completed' | 'rejected';
+  projectId: number;
+  projectTitle: string;
+  statusKey: 'in-progress' | 'not-started' | 'complete' | 'overdue';
   updatedLabel: string;
 };
 
 const TASK_MOCK_ROWS: TaskDisplayRow[] = [
   {
     id: 1,
-    taskName: 'Review Application Documents',
-    permitNumber: 'C910043198',
-    statusKey: 'pending',
-    updatedLabel: 'Mar 12, 2026', // Static string
+    taskName: 'Upload Cultural Resource Survey',
+    permitNumber: 'C910-04-3198',
+    projectId: 1,
+    projectTitle: 'Elk Basin Natural Gas Pipeline Right-of-Way',
+    statusKey: 'in-progress',
+    updatedLabel: 'Mar 12, 2026',
   },
   {
     id: 2,
-    taskName: 'Approve Permit',
-    permitNumber: 'C710043238',
-    statusKey: 'completed',
-    updatedLabel: 'Mar 10, 2026', // Static string
+    taskName: 'Submit Mining Plan of Operations',
+    permitNumber: 'C710-04-3238',
+    projectId: 2,
+    projectTitle: 'Copper Ridge Mining Access Road',
+    statusKey: 'overdue',
+    updatedLabel: 'Mar 10, 2026',
   },
   {
     id: 3,
-    taskName: 'Send Notification',
-    permitNumber: 'C710043197',
-    statusKey: 'rejected',
-    updatedLabel: 'Mar 8, 2026', // Static string
+    taskName: 'Submit SF-299 Application',
+    permitNumber: 'C910-04-3198',
+    projectId: 1,
+    projectTitle: 'Elk Basin Natural Gas Pipeline Right-of-Way',
+    statusKey: 'complete',
+    updatedLabel: 'Feb 18, 2026',
+  },
+  {
+    id: 4,
+    taskName: 'Upload Biological Survey Report',
+    permitNumber: 'C910-04-3198',
+    projectId: 1,
+    projectTitle: 'Elk Basin Natural Gas Pipeline Right-of-Way',
+    statusKey: 'complete',
+    updatedLabel: 'Mar 2, 2026',
   },
 ];
 
+type FilterKey = 'all' | 'in-progress' | 'not-started' | 'complete' | 'overdue';
+
+const FILTERS: { key: FilterKey; label: string }[] = [
+  { key: 'all', label: 'All' },
+  { key: 'in-progress', label: 'In Progress' },
+  { key: 'not-started', label: 'Not Started' },
+  { key: 'complete', label: 'Complete' },
+  { key: 'overdue', label: 'Overdue' },
+];
+
 function getTaskStatusMeta(status: string): { label: string; badgeColor: BadgeColor } {
-  if (status === 'completed') return { label: 'COMPLETED', badgeColor: 'green' };
-  if (status === 'rejected') return { label: 'REJECTED', badgeColor: 'red' };
-  return { label: 'PENDING', badgeColor: 'blue' };
+  if (status === 'complete') return { label: 'COMPLETE', badgeColor: 'green' };
+  if (status === 'in-progress') return { label: 'IN PROGRESS', badgeColor: 'blue' };
+  if (status === 'overdue') return { label: 'OVERDUE', badgeColor: 'red' };
+  return { label: 'NOT STARTED', badgeColor: 'steel' };
 }
 
 export default function MyTasksPage() {
   const { user, token, logout } = useAuth();
   const router = useRouter();
+  const [filter, setFilter] = useState<FilterKey>('all');
 
   useEffect(() => {
     if (!token) router.replace('/login');
   }, [token, router]);
 
   if (!token) return null;
+
+  const filtered = filter === 'all' ? TASK_MOCK_ROWS : TASK_MOCK_ROWS.filter((r) => r.statusKey === filter);
 
   return (
     <WorkspaceShell
@@ -67,40 +99,115 @@ export default function MyTasksPage() {
     >
       <div className="w-full flex flex-col gap-[var(--space-lg)]">
         <h6 className="type-heading-h6">My Tasks</h6>
-        <div className="overflow-x-auto" style={{ backgroundColor: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)' }}>
-          <table className="table min-w-[760px]">
-            <thead>
-              <tr>
-                <th className="w-auto">TASK NAME</th>
-                <th className="w-32">PERMIT #</th>
-                <th className="w-32">STATUS</th>
-                <th className="w-32">UPDATED</th>
-              </tr>
-            </thead>
-            <tbody>
-              {TASK_MOCK_ROWS.map((row) => (
-                <tr key={row.id}>
-                  <td>{row.taskName}</td>
-                  <td>{row.permitNumber}</td>
-                  <td>
-                    {(() => {
+
+        {/* ── Filter pills ── */}
+        <div className="flex items-center gap-[var(--space-xs)]">
+          {FILTERS.map((f) => (
+            <button
+              key={f.key}
+              type="button"
+              onClick={() => setFilter(f.key)}
+              className={`inline-flex items-center rounded-full type-body-xs font-semibold transition-colors ${
+                filter === f.key
+                  ? 'bg-[var(--color-text)] text-[var(--color-bg)]'
+                  : 'bg-[var(--color-bg-subtle)] text-[var(--color-text-body)] hover:bg-[var(--color-border)]'
+              }`}
+              style={{ paddingInline: 'var(--space-sm)', paddingBlock: 'var(--space-2xs)' }}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+
+        <AnimatedCard>
+          {/* ── Desktop table ── */}
+          <div className="hidden md:block">
+            <section className="overflow-hidden rounded-[var(--radius-sm)] border border-[var(--color-border)]" style={{ background: 'var(--color-bg)' }}>
+              <div className="overflow-x-auto">
+                <table className="table min-w-[760px]">
+                  <thead>
+                    <tr>
+                      <th className="w-auto">TASK NAME</th>
+                      <th className="w-36">PROJECT</th>
+                      <th className="w-32">STATUS</th>
+                      <th className="w-32">UPDATED</th>
+                      <th className="w-28">ACTION</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filtered.map((row, idx) => {
                       const statusMeta = getTaskStatusMeta(row.statusKey);
                       return (
-                        <Badge color={statusMeta.badgeColor} size="sm">
-                          {statusMeta.label}
-                        </Badge>
+                        <AnimatedTableRow key={row.id} index={idx}>
+                          <td className="type-body-sm">
+                            <Link
+                              href={`/projects/${row.projectId}`}
+                              className="text-[var(--color-text-link)] hover:text-[var(--color-text-link-hover)] hover:underline focus:underline focus:outline-none"
+                            >
+                              {row.taskName}
+                            </Link>
+                            <p className="type-body-xs text-[var(--color-text-disabled)]">{row.permitNumber}</p>
+                          </td>
+                          <td className="type-body-xs text-[var(--color-text-body)]">{row.projectTitle}</td>
+                          <td>
+                            <Badge color={statusMeta.badgeColor} size="sm">{statusMeta.label}</Badge>
+                          </td>
+                          <td className="type-body-sm">{row.updatedLabel}</td>
+                          <td>
+                            {(row.statusKey === 'in-progress' || row.statusKey === 'overdue') && (
+                              <Button variant="primary" size="sm" onClick={() => router.push(`/projects/${row.projectId}`)}>
+                                Continue
+                              </Button>
+                            )}
+                          </td>
+                        </AnimatedTableRow>
                       );
-                    })()}
-                  </td>
-                  <td>{row.updatedLabel}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+
+          {/* ── Mobile cards ── */}
+          <div className="flex flex-col gap-[var(--space-sm)] md:hidden">
+            {filtered.map((row) => {
+              const statusMeta = getTaskStatusMeta(row.statusKey);
+              return (
+                <div
+                  key={row.id}
+                  className="flex flex-col gap-[var(--space-sm)] rounded-[var(--radius-sm)] border border-[var(--color-border)] bg-[var(--color-bg)]"
+                  style={{ padding: 'var(--space-md)' }}
+                >
+                  <div className="flex items-start justify-between gap-[var(--space-sm)]">
+                    <div className="flex-1">
+                      <Link
+                        href={`/projects/${row.projectId}`}
+                        className="type-body-sm font-medium text-[var(--color-text-link)] hover:underline"
+                      >
+                        {row.taskName}
+                      </Link>
+                      <p className="type-body-xs text-[var(--color-text-disabled)]">{row.permitNumber} · {row.projectTitle}</p>
+                    </div>
+                    <Badge color={statusMeta.badgeColor} size="sm">{statusMeta.label}</Badge>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <p className="type-body-xs text-[var(--color-text-disabled)]">{row.updatedLabel}</p>
+                    {(row.statusKey === 'in-progress' || row.statusKey === 'overdue') && (
+                      <Button variant="primary" size="sm" onClick={() => router.push(`/projects/${row.projectId}`)}>
+                        Continue
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </AnimatedCard>
+
+        <div className="type-body-xs text-[var(--color-text-disabled)]" style={{ paddingTop: 'var(--space-sm, 8px)' }}>
+          Showing {filtered.length} of {TASK_MOCK_ROWS.length} tasks
         </div>
-        <p className="type-body-sm" style={{ color: 'var(--color-text-placeholder)' }}>
-          Showing mock data for tasks.
-        </p>
       </div>
     </WorkspaceShell>
   );
