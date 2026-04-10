@@ -1,5 +1,6 @@
 from .process_definition import ProcessDefinition, ProcessDefinitionVersion, ProcessDeployment
 from .pre_screener_draft import PreScreenerDraft
+from .routing_rules import AgencyApiKey, AgencyRoutingRule
 from .user import User
 from .workflow import WorkflowRun
 from .pic import (
@@ -20,6 +21,8 @@ from .pic import (
 
 __all__ = [
 	# Existing
+	"AgencyApiKey",
+	"AgencyRoutingRule",
 	"ProcessDefinition",
 	"ProcessDefinitionVersion",
 	"ProcessDeployment",

@@ -8,8 +8,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from .core import Base, decode_token, engine, settings
 from .middleware import PICComplianceMiddleware
 from .routers import auth as auth_router
+from .routers import interagency as interagency_router
 from .routers import pre_screener_drafts as pre_screener_drafts_router
 from .routers import process_definitions as process_definitions_router
+from .routers import synopsis as synopsis_router
 from .routers import tasks as tasks_router
 from .routers import workflows as workflows_router
 from .routers.v1 import router as v1_router
@@ -39,6 +41,12 @@ app.include_router(pre_screener_drafts_router.router)
 app.include_router(process_definitions_router.router)
 app.include_router(workflows_router.router)
 app.include_router(tasks_router.router)
+
+# Synopsis & submission
+app.include_router(synopsis_router.router)
+
+# Inter-agency API
+app.include_router(interagency_router.router)
 manager = ConnectionManager()
 
 _BACKEND_DIR = Path(__file__).resolve().parents[1]
@@ -95,6 +103,11 @@ def startup() -> None:
             bpmn_path=str(seed_path),
             description="Seeded BPMN process for the permit application pilot",
         )
+
+        # Seed agency routing rules
+        from .services.synopsis import seed_routing_rules
+
+        seed_routing_rules(db)
     finally:
         db.close()
 

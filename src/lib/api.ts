@@ -197,6 +197,95 @@ export function login(username: string, password: string): Promise<TokenResponse
   });
 }
 
+// ── Login.gov OIDC ────────────────────────────────────────────────────────────
+
+export function redirectToLoginGov(): void {
+  window.location.href = `${BASE_URL}/auth/logingov`;
+}
+
+// ── User Profile & Settings ───────────────────────────────────────────────────
+
+export interface UserProfileResponse {
+  username: string;
+  email: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  phone: string | null;
+  address_street: string | null;
+  address_city: string | null;
+  address_state: string | null;
+  address_zip: string | null;
+  verified_at: string | null;
+  entity_type: string | null;
+  organization: string | null;
+  role: string;
+  needs_profile_completion: boolean;
+}
+
+export function fetchProfile(token: string): Promise<import('@/contexts/AuthContext').UserProfile> {
+  if (IS_DEMO_MODE) {
+    return Promise.resolve({
+      username: 'applicant-demo@example.com',
+      email: 'applicant-demo@example.com',
+      firstName: 'Demo',
+      lastName: 'Applicant',
+      phone: null,
+      addressStreet: null,
+      addressCity: null,
+      addressState: null,
+      addressZip: null,
+      entityType: 'individual',
+      organization: null,
+      needsProfileCompletion: false,
+    });
+  }
+
+  return request<UserProfileResponse>('/auth/profile', { token }).then((r) => ({
+    username: r.username,
+    email: r.email,
+    firstName: r.first_name,
+    lastName: r.last_name,
+    phone: r.phone,
+    addressStreet: r.address_street,
+    addressCity: r.address_city,
+    addressState: r.address_state,
+    addressZip: r.address_zip,
+    entityType: r.entity_type,
+    organization: r.organization,
+    needsProfileCompletion: r.needs_profile_completion,
+  }));
+}
+
+export function updateSettings(
+  token: string,
+  settings: { entity_type?: string; organization?: string },
+): Promise<UserProfileResponse> {
+  if (IS_DEMO_MODE) {
+    return Promise.resolve({
+      username: 'applicant-demo@example.com',
+      email: 'applicant-demo@example.com',
+      first_name: 'Demo',
+      last_name: 'Applicant',
+      phone: null,
+      address_street: null,
+      address_city: null,
+      address_state: null,
+      address_zip: null,
+      verified_at: null,
+      entity_type: settings.entity_type ?? 'individual',
+      organization: settings.organization ?? null,
+      role: 'applicant',
+      needs_profile_completion: false,
+    });
+  }
+
+  return request<UserProfileResponse>('/auth/settings', {
+    method: 'PUT',
+    token,
+    body: JSON.stringify(settings),
+  });
+}
+
 // ── Pre-Screener Drafts ─────────────────────────────────────────────────────
 
 export interface PreScreenerDraftUpsert {
@@ -696,6 +785,222 @@ export function deployProcessDefinitionVersion(
 
 // ── PIC v1 API ────────────────────────────────────────────────────────────────
 // Typed CRUD client for all 13 PIC NEPA entities via /api/v1/.
+
+import type { SynopsisResult, IntakeSubmissionResponse } from '@/types/synopsis';
+export type { SynopsisResult, IntakeSubmissionResponse };
+
+// ── Synopsis & Submission ─────────────────────────────────────────────────────
+
+type IntakeFormPayload = Record<string, unknown>;
+
+const DEMO_SYNOPSIS: SynopsisResult = {
+  nepa_level: 'Environmental Assessment',
+  nepa_explanation:
+    'Your project may affect one or more environmental resources. An Environmental Assessment (EA) will be prepared to determine whether the impacts are significant enough to require a full EIS.',
+  required_reviews: [
+    {
+      name: 'Clean Water Act Section 404 Permit',
+      authority: '33 U.S.C. § 1344',
+      agency_code: 'USACE',
+      agency_name: 'U.S. Army Corps of Engineers',
+      description:
+        'Permit required for discharge of dredged or fill material into waters of the United States, including wetlands.',
+      estimated_days: 120,
+      trigger: 'impactsWaterBodies',
+    },
+    {
+      name: 'Endangered Species Act Section 7 Consultation',
+      authority: '16 U.S.C. § 1536',
+      agency_code: 'USFWS',
+      agency_name: 'U.S. Fish and Wildlife Service',
+      description:
+        'Formal consultation required when a project may affect listed or proposed endangered/threatened species or designated critical habitat.',
+      estimated_days: 135,
+      trigger: 'impactsSpeciesHabitat',
+    },
+  ],
+  required_forms: [
+    {
+      form_id: 'SF-299',
+      title:
+        'Application for Transportation and Utility Systems and Facilities on Federal Lands',
+      agency_code: 'DOI-BLM',
+    },
+  ],
+  lead_agency: {
+    code: 'DOI-BLM',
+    name: 'Bureau of Land Management',
+    role: 'lead',
+  },
+  cooperating_agencies: [
+    {
+      code: 'USACE',
+      name: 'U.S. Army Corps of Engineers',
+      role: 'cooperating',
+    },
+    {
+      code: 'USFWS',
+      name: 'U.S. Fish and Wildlife Service',
+      role: 'consulting',
+    },
+  ],
+  estimated_timeline_days: 180,
+  summary: '',
+};
+
+function buildDemoSynopsis(payload: IntakeFormPayload): SynopsisResult {
+  const categories = (payload.projectCategories ?? []) as string[];
+  const description = ((payload.projectDescription ?? '') as string).toLowerCase();
+  const location = ((payload.projectLocation ?? '') as string).toLowerCase();
+
+  // Determine lead agency from category
+  const categoryAgencyMap: Record<string, { code: string; name: string }> = {
+    'energy-utility': { code: 'DOI-BLM', name: 'Bureau of Land Management' },
+    'transportation-road': { code: 'DOT-FHWA', name: 'Federal Highway Administration' },
+    'communications-telecommunications': { code: 'FCC', name: 'Federal Communications Commission' },
+    'water-canal-irrigation': { code: 'USACE', name: 'U.S. Army Corps of Engineers' },
+    other: { code: 'DOI-BLM', name: 'Bureau of Land Management' },
+  };
+
+  const firstCat = categories[0] ?? 'other';
+  const lead = categoryAgencyMap[firstCat] ?? categoryAgencyMap['other'];
+
+  // Derive reviews from description keywords + categories
+  type ReviewEntry = { name: string; authority: string; agency_code: string; agency_name: string; description: string; estimated_days: number; trigger: string };
+  const reviews: ReviewEntry[] = [];
+
+  const waterKeywords = ['wetland', 'stream', 'river', 'creek', 'marsh', 'flood', 'water', 'lake', 'pond', 'drainage', 'shore'];
+  const speciesKeywords = ['habitat', 'species', 'wildlife', 'endangered', 'bird', 'fish', 'nest', 'migration', 'ecological', 'forest'];
+  const historicKeywords = ['historic', 'cultural', 'archaeological', 'heritage', 'tribal', 'monument', 'preservation'];
+  const airKeywords = ['emission', 'air quality', 'pollution', 'exhaust', 'smoke', 'dust', 'combustion', 'generator', 'power plant'];
+  const navKeywords = ['navigable', 'harbor', 'port', 'channel', 'dock', 'pier', 'bridge', 'dam', 'waterway'];
+
+  const matchesAny = (text: string, keywords: string[]) => keywords.some((kw) => text.includes(kw));
+
+  // Category-based triggers
+  const isWaterProject = categories.includes('water-canal-irrigation');
+  const isTransportation = categories.includes('transportation-road');
+  const isEnergy = categories.includes('energy-utility');
+
+  if (matchesAny(description, waterKeywords) || matchesAny(location, waterKeywords) || isWaterProject) {
+    reviews.push({ name: 'Clean Water Act Section 404 Permit', authority: '33 U.S.C. § 1344', agency_code: 'USACE', agency_name: 'U.S. Army Corps of Engineers', description: 'Permit required for discharge of dredged or fill material into waters of the United States.', estimated_days: 120, trigger: 'water' });
+  }
+  if (matchesAny(description, speciesKeywords) || matchesAny(location, speciesKeywords)) {
+    reviews.push({ name: 'Endangered Species Act Section 7 Consultation', authority: '16 U.S.C. § 1536', agency_code: 'USFWS', agency_name: 'U.S. Fish and Wildlife Service', description: 'Consultation required when a project may affect listed endangered/threatened species.', estimated_days: 135, trigger: 'species' });
+  }
+  if (matchesAny(description, historicKeywords) || matchesAny(location, historicKeywords)) {
+    reviews.push({ name: 'NHPA Section 106 Review', authority: '54 U.S.C. § 306108', agency_code: 'ACHP', agency_name: 'Advisory Council on Historic Preservation', description: 'Review to assess effects on historic properties.', estimated_days: 90, trigger: 'historic' });
+  }
+  if (matchesAny(description, airKeywords) || isEnergy) {
+    reviews.push({ name: 'Clean Air Act Conformity Determination', authority: '42 U.S.C. § 7506(c)', agency_code: 'EPA', agency_name: 'Environmental Protection Agency', description: 'Determination that the project conforms to the applicable State Implementation Plan.', estimated_days: 60, trigger: 'air' });
+  }
+  if (matchesAny(description, navKeywords) || matchesAny(location, navKeywords) || isWaterProject) {
+    reviews.push({ name: 'Rivers and Harbors Act Section 10 Permit', authority: '33 U.S.C. § 403', agency_code: 'USACE', agency_name: 'U.S. Army Corps of Engineers', description: 'Permit required for work in navigable waters.', estimated_days: 90, trigger: 'navigable' });
+  }
+  // Transportation projects often need Section 4(f) evaluation
+  if (isTransportation) {
+    reviews.push({ name: 'Section 4(f) Evaluation', authority: '49 U.S.C. § 303', agency_code: 'DOT-FHWA', agency_name: 'Federal Highway Administration', description: 'Evaluation required when a transportation project may use publicly owned parks, recreation areas, wildlife refuges, or historic sites.', estimated_days: 90, trigger: 'transportation' });
+  }
+
+  // If no keywords matched, add a baseline review based on category
+  if (reviews.length === 0 && isEnergy) {
+    reviews.push({ name: 'National Environmental Policy Act Review', authority: '42 U.S.C. § 4321', agency_code: lead.code, agency_name: lead.name, description: 'General NEPA review for energy and utility projects on federal lands.', estimated_days: 90, trigger: 'nepa-general' });
+  }
+  if (reviews.length === 0) {
+    reviews.push({ name: 'National Environmental Policy Act Review', authority: '42 U.S.C. § 4321', agency_code: lead.code, agency_name: lead.name, description: 'NEPA review to evaluate potential environmental effects.', estimated_days: 60, trigger: 'nepa-general' });
+  }
+
+  // Build cooperating agencies
+  const seenAgencies = new Set<string>();
+  const cooperating = reviews
+    .filter((r) => {
+      if (r.agency_code === lead.code || seenAgencies.has(r.agency_code)) return false;
+      seenAgencies.add(r.agency_code);
+      return true;
+    })
+    .map((r) => ({ code: r.agency_code, name: r.agency_name, role: 'cooperating' as const }));
+
+  // Determine NEPA level from number and severity of reviews
+  const nepaLevel =
+    reviews.length >= 4
+      ? 'Environmental Impact Statement'
+      : reviews.length >= 2
+        ? 'Environmental Assessment'
+        : 'Categorical Exclusion';
+
+  const nepaExplanation =
+    nepaLevel === 'Environmental Impact Statement'
+      ? 'Your project involves multiple significant environmental considerations. An EIS is likely required for comprehensive review.'
+      : nepaLevel === 'Environmental Assessment'
+        ? 'Your project may affect environmental resources. An EA will determine whether a full EIS is needed.'
+        : 'Based on the information provided, your project may qualify for a Categorical Exclusion, streamlining the review process.';
+
+  const baseDays = nepaLevel === 'Categorical Exclusion' ? 30 : nepaLevel === 'Environmental Assessment' ? 180 : 365;
+  const maxReviewDays = Math.max(0, ...reviews.map((r) => r.estimated_days));
+  const timeline = Math.max(baseDays, maxReviewDays);
+
+  const categoryLabel = categories.map((c) => {
+    const opt = [
+      { value: 'energy-utility', label: 'Energy / Utility' },
+      { value: 'transportation-road', label: 'Transportation / Road' },
+      { value: 'communications-telecommunications', label: 'Communications / Telecommunications' },
+      { value: 'water-canal-irrigation', label: 'Water / Canal / Irrigation' },
+      { value: 'other', label: 'Other' },
+    ].find((o) => o.value === c);
+    return opt?.label ?? c;
+  }).join(', ') || 'unspecified';
+
+  const summary = `Based on your project (${categoryLabel}), the lead agency is ${lead.name}. The anticipated NEPA level is ${nepaLevel}. ${reviews.length} review(s) identified. Estimated processing: ~${timeline} days.`;
+
+  return {
+    nepa_level: nepaLevel,
+    nepa_explanation: nepaExplanation,
+    required_reviews: reviews,
+    required_forms: [{ form_id: 'SF-299', title: 'Application for Transportation and Utility Systems on Federal Lands', agency_code: lead.code }],
+    lead_agency: { code: lead.code, name: lead.name, role: 'lead' },
+    cooperating_agencies: cooperating,
+    estimated_timeline_days: timeline,
+    summary,
+  };
+}
+
+export function evaluateSynopsis(
+  data: IntakeFormPayload,
+): Promise<SynopsisResult> {
+  if (IS_DEMO_MODE) {
+    return Promise.resolve(buildDemoSynopsis(data));
+  }
+
+  return request<SynopsisResult>('/synopsis/evaluate', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+export function submitIntakeProject(
+  token: string,
+  intake: IntakeFormPayload,
+  synopsis: SynopsisResult,
+): Promise<IntakeSubmissionResponse> {
+  if (IS_DEMO_MODE) {
+    assertToken(token);
+    return Promise.resolve({
+      project_id: Math.floor(Math.random() * 9000) + 1000,
+      workflow_id: demoWorkflowSeq++,
+      lead_agency: synopsis.lead_agency,
+      cooperating_agencies: synopsis.cooperating_agencies,
+      message: `Project submitted. Routed to ${synopsis.lead_agency.name} for ${synopsis.nepa_level} review.`,
+    });
+  }
+
+  return request<IntakeSubmissionResponse>('/synopsis/submit', {
+    method: 'POST',
+    token,
+    body: JSON.stringify({ intake, synopsis }),
+  });
+}
+
+// ── PIC v1 typed CRUD ─────────────────────────────────────────────────────────
 
 import type {
   Project,

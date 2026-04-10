@@ -60,8 +60,8 @@ export function AnchorNav({ sections }: AnchorNavProps) {
   return (
     <div className="sticky top-14 z-30" style={{ background: 'none', border: 'none' }}>
       <div className="flex justify-center px-2 sm:px-6 lg:px-8">
-        <div className="w-full overflow-x-auto use-cases-anchor-scroll" style={{ marginLeft: 'clamp(var(--space-sm), 5vw, var(--space-lg))', marginRight: 'clamp(var(--space-sm), 5vw, var(--space-lg))' }}>
-          <nav className="flex" aria-label="Jump to use case">
+        <div className="w-full overflow-x-auto project-types-anchor-scroll" style={{ marginLeft: 'clamp(var(--space-sm), 5vw, var(--space-lg))', marginRight: 'clamp(var(--space-sm), 5vw, var(--space-lg))' }}>
+          <nav className="flex" aria-label="Jump to project type">
           {sections.map((s) => (
             <a
               key={s.slug}

@@ -1,7 +1,7 @@
 
 'use client';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Menu, DrawerButton, Button, Avatar } from 'usds';
 import { MenuIcon, XMarkIcon } from './Icons';
@@ -161,7 +161,25 @@ function CustomSidebarInner({
     return currentTheme === 'dark' ? 'dark' : 'light';
   });
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [menuPos, setMenuPos] = useState<{ bottom: number; left: number }>({ bottom: 60, left: 8 });
+  const avatarRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+
+  // Close menu on outside click
+  useEffect(() => {
+    if (!userMenuOpen) return;
+    const handleClick = (e: MouseEvent) => {
+      if (
+        menuRef.current && !menuRef.current.contains(e.target as Node) &&
+        avatarRef.current && !avatarRef.current.contains(e.target as Node)
+      ) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [userMenuOpen]);
 
   const currentPath = pathname.endsWith('/') && pathname !== '/' ? pathname.slice(0, -1) : pathname;
 
@@ -185,6 +203,16 @@ function CustomSidebarInner({
   const userMenuItems: MenuItem[] = [
     {
       type: 'subtext',
+      label: 'Settings',
+      subtext: '',
+      href: '/settings',
+      onClick: () => {
+        setUserMenuOpen(false);
+        router.push('/settings');
+      },
+    },
+    {
+      type: 'subtext',
       label: `Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`,
       subtext: '',
       href: '#',
@@ -206,7 +234,7 @@ function CustomSidebarInner({
   ];
 
   return (
-    <aside className={`sidebar-nav-panel${isOpen ? "" : " sidebar-nav-panel-closed"}`} aria-label="Sidebar navigation panel" style={{ width: isOpen ? 200 : 66, border: 'none', borderRadius: '0', display: 'flex', flexDirection: 'column', height: '100vh' }} suppressHydrationWarning>
+    <aside className={`sidebar-nav-panel${isOpen ? "" : " sidebar-nav-panel-closed"}`} aria-label="Sidebar navigation panel" style={{ width: isOpen ? 200 : 66, border: 'none', borderRadius: '0', display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }} suppressHydrationWarning>
       <div className="sidebar-nav-panel-top">
         {isOpen && (
           <>
@@ -267,8 +295,18 @@ function CustomSidebarInner({
 
       <div className="sidebar-nav-footer relative">
         <button
+          ref={avatarRef}
           type="button"
-          onClick={() => setUserMenuOpen(!userMenuOpen)}
+          onClick={() => {
+            if (!userMenuOpen && avatarRef.current) {
+              const rect = avatarRef.current.getBoundingClientRect();
+              setMenuPos({
+                bottom: window.innerHeight - rect.top + 8,
+                left: rect.left,
+              });
+            }
+            setUserMenuOpen(!userMenuOpen);
+          }}
           className="relative"
           style={{ width: 40, height: 40, minWidth: 40, minHeight: 40, padding: 0, border: 'none', background: 'transparent', cursor: 'pointer' }}
         >
@@ -281,12 +319,12 @@ function CustomSidebarInner({
 
         {userMenuOpen && (
           <div
+            ref={menuRef}
             style={{
-              position: 'absolute',
-              bottom: '100%',
-              left: 0,
-              marginBottom: '8px',
-              zIndex: 50,
+              position: 'fixed',
+              bottom: menuPos.bottom,
+              left: menuPos.left,
+              zIndex: 9999,
               minWidth: '220px',
             }}
           >
@@ -313,6 +351,12 @@ export function WorkspaceShell({ role, userSub, organizationLabel, onSignOut, ch
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [pathname]);
+
+  // Lock body scroll — only the main content area should scroll
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, []);
 
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
@@ -440,7 +484,7 @@ export function WorkspaceShell({ role, userSub, organizationLabel, onSignOut, ch
 
       <div className="flex-1 min-h-0 flex flex-row overflow-hidden">
         {/* Desktop sidebar - hidden on mobile */}
-        <div className="hidden md:flex">
+        <div className="hidden md:flex h-full shrink-0 overflow-visible">
           <CustomSidebar
             role={role}
             displayName={displayName}
@@ -452,8 +496,8 @@ export function WorkspaceShell({ role, userSub, organizationLabel, onSignOut, ch
           />
         </div>
 
-        <main className="workspace-shell-main flex-1 min-w-0 min-h-0 overflow-y-auto" style={{ alignItems: 'center' }}>
-          <div className="workspace-shell-main-frame mx-auto w-full max-w-[1120px]" style={{ padding: 0, gap: 0 }}>
+        <main className="workspace-shell-main flex-1 min-w-0 min-h-0 overflow-y-auto">
+          <div className="workspace-shell-main-frame mx-auto w-full max-w-[1120px]">
             {children}
           </div>
         </main>

@@ -7,38 +7,38 @@ import { PillButton } from 'usds';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Use Cases — PERMIT.GOV',
+  title: 'Project Types — PERMIT.GOV',
   description:
     'From critical minerals to electricity transmission, explore the federal permitting process for major infrastructure and energy projects.',
 };
 
-export default function UseCasesPage() {
+export default function ProjectTypesPage() {
   return (
     <>
       <style>{`
-        .use-cases-page nav.sticky {
+        .project-types-page nav.sticky {
           background-color: rgba(0, 0, 0, 0.85) !important;
           backdrop-filter: blur(12px) !important;
         }
-        .use-cases-page [class*="sticky top-14"] {
+        .project-types-page [class*="sticky top-14"] {
           background-color: rgba(0, 0, 0, 0.85) !important;
         }
       `}</style>
-      <div className="use-cases-page">
+      <div className="project-types-page">
         <Navigation />
 
       {/* Hero */}
       <section className="flex justify-center bg-black text-[var(--color-text-body)] px-2 sm:px-6 lg:px-8" style={{ paddingTop: 'var(--space-3xl)', paddingBottom: 'var(--space-3xl)' }}>
         <div className="w-full max-w-7xl" style={{ marginLeft: 'clamp(var(--space-sm), 5vw, var(--space-lg))', marginRight: 'clamp(var(--space-sm), 5vw, var(--space-lg))' }}>
           <p className="type-body-xs uppercase tracking-[0.16em]" style={{ marginBottom: 'var(--space-sm)', color: 'var(--color-text-disabled)' }}>
-            Federal Permit Use Cases
+            Federal Permit Project Types
           </p>
           <h1 className="max-w-4xl font-[var(--font-primary)] text-[clamp(2.4rem,5.5vw,4.8rem)] font-normal leading-[1.04] text-[var(--color-text-body)]" style={{ marginBottom: 'var(--space-lg)' }}>
             Every project starts with the right permits.
           </h1>
           <p className="max-w-2xl type-body leading-relaxed" style={{ marginBottom: 'var(--space-2xl)', color: 'var(--color-text-body)' }}>
             PERMIT.GOV supports the most complex and high-demand federal permitting workflows — from BLM
-            Plans of Operations to FERC Certificates to USACE Section 404 Permits. Select a use case to
+            Plans of Operations to FERC Certificates to USACE Section 404 Permits. Select a project type to
             understand what approvals your project requires and how to get started.
           </p>
           <div>
@@ -56,10 +56,10 @@ export default function UseCasesPage() {
       </section>
 
       {/* Quick-jump nav */}
-      <AnchorNav sections={useCaseSections} />
+      <AnchorNav sections={projectTypeSections} />
 
-      {/* Use Case Sections */}
-      {useCaseSections.map((section, index) => (
+      {/* Project Type Sections */}
+      {projectTypeSections.map((section, index) => (
         <section
           key={section.slug}
           id={section.slug}
@@ -77,7 +77,7 @@ export default function UseCasesPage() {
                 {/* Main content - 2 columns on desktop */}
                 <div className="lg:col-span-2 flex flex-col max-w-[600px]">
                   <p className="type-body-xs uppercase tracking-[0.16em]" style={{ marginBottom: 'var(--space-sm)', color: 'var(--color-text-disabled)' }}>
-                    Use Case
+                    Project Type
                   </p>
                   <h2 className="font-[var(--font-primary)] text-[clamp(1.8rem,3.5vw,2.8rem)] font-normal leading-[1.2] text-[var(--color-text-body)]" style={{ marginBottom: 'var(--space-md)' }}>
                     {section.title}
@@ -154,7 +154,7 @@ export default function UseCasesPage() {
   );
 }
 
-const useCaseSections = [
+const projectTypeSections = [
   {
     slug: 'critical-minerals-mining',
     title: 'Critical Minerals Mining',

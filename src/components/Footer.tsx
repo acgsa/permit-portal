@@ -26,6 +26,7 @@ export function Footer() {
             <div className="flex flex-col gap-2">
               <Link href="/login" className="type-body-sm text-white/80 transition-colors hover:text-white">Applicant Login</Link>
               <Link href="/staff" className="type-body-sm text-white/80 transition-colors hover:text-white">Federal Employee Login</Link>
+              <Link href="/about" className="type-body-sm text-white/80 transition-colors hover:text-white">About</Link>
               <Link href="/help-desk" className="type-body-sm text-white/80 transition-colors hover:text-white">Help Desk</Link>
             </div>
           </div>

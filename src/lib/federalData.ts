@@ -12,7 +12,7 @@ const SECTOR_MAP: Record<string, string[]> = {
   'rights-of-way': ['Surface Transportation', 'Broadband'],
 };
 
-/* ── Use-case slug → relevant CE agency unit codes ───────────────── */
+/* ── Project-type slug → relevant CE agency unit codes ───────────────── */
 const CE_AGENCY_MAP: Record<string, string[]> = {
   'critical-minerals-mining': ['DOI - BLM', 'USDA', 'EPA', 'DOI - OSMRE'],
   'oil-gas-drilling': ['DOI - BLM', 'DOE', 'EPA', 'DOI - BSEE'],

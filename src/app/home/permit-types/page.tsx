@@ -113,7 +113,7 @@ export default function PermitTypesPage() {
               return (
               <ImageCardDetail
                 key={row.name}
-                href={`/use-cases#${row.slug}`}
+                href={`/project-types#${row.slug}`}
                 image={row.image}
                 imageAlt={row.name}
                 title={row.name}

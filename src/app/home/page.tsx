@@ -153,13 +153,6 @@ export default function HomePage() {
   const approvedProjects = PROJECTS.filter((p) => p.statusKey === 'approved').length;
   const deniedProjects = PROJECTS.filter((p) => p.statusKey === 'denied').length;
 
-  const summaryCards = [
-    { label: 'Total Projects', value: totalProjects, color: 'var(--color-text)' },
-    { label: 'Pending', value: pendingProjects, color: '#f59e0b' },
-    { label: 'Approved', value: approvedProjects, color: '#10b981' },
-    { label: 'Denied', value: deniedProjects, color: 'var(--color-error, #ef4444)' },
-  ];
-
   const projectsWithTasks = PROJECTS.filter((p) => p.nextTask !== null);
 
   return (
@@ -192,53 +185,89 @@ export default function HomePage() {
             </div>
           </section>
 
-          {/* ── Resume draft banner ── */}
-          {hasDraft && (
-            <section
-              className="flex flex-col gap-[var(--space-sm)] rounded-[var(--radius-sm)] border border-[var(--color-border)] bg-[var(--color-bg)] sm:flex-row sm:items-center sm:justify-between"
-              style={{ paddingInline: 'var(--space-md)', paddingBlock: 'var(--space-md)' }}
-            >
-              <div>
-                <p className="type-body-sm font-medium text-[var(--color-text)]">You have an unfinished project intake</p>
-                {draftSavedAt && <p className="type-body-xs text-[var(--color-text-disabled)]">Last saved {new Date(draftSavedAt).toLocaleString()}</p>}
+          {/* ── Action Needed ── */}
+          {(hasDraft || projectsWithTasks.length > 0) && (
+            <section className="flex flex-col gap-[var(--space-md)]">
+              <div className="flex items-center justify-between gap-[var(--space-sm)]">
+                <h2 className="type-heading-h6 text-[var(--color-text)]">Action Needed</h2>
               </div>
-              <Button variant="primary" size="sm" onClick={() => router.push('/project-intake')}>
-                Resume Draft
-              </Button>
+
+              <div className="flex flex-col gap-[var(--space-sm)]">
+                {hasDraft && (
+                  <div
+                    className="flex flex-col gap-[var(--space-sm)] rounded-[var(--radius-sm)] border border-[var(--color-border)] bg-[var(--color-bg)] md:flex-row md:items-center md:justify-between"
+                    style={{
+                      paddingInlineStart: 'var(--space-md, 16px)',
+                      paddingInlineEnd: 'var(--space-lg, 24px)',
+                      paddingBlock: 'var(--space-md, 16px)',
+                    }}
+                  >
+                    <div className="flex-1 md:pr-[var(--space-xl)]">
+                      <div className="flex items-center gap-[var(--space-sm)]">
+                        <p className="type-body-sm font-medium text-[var(--color-text)]">Unfinished Project Intake</p>
+                        <Badge color="yellow" size="sm">DRAFT</Badge>
+                      </div>
+                      {draftSavedAt && (
+                        <p className="mt-[var(--space-2xs)] type-body-xs text-[var(--color-text-disabled)]">
+                          Last saved {new Date(draftSavedAt).toLocaleString()}
+                        </p>
+                      )}
+                    </div>
+                    <Button variant="primary" size="sm" onClick={() => router.push('/project-intake')}>
+                      Resume Draft
+                    </Button>
+                  </div>
+                )}
+
+                {projectsWithTasks.map((project) => {
+                  const task = project.nextTask!;
+                  const tMeta = taskBadge(task.status);
+                  return (
+                    <div
+                      key={project.id}
+                      className="flex flex-col gap-[var(--space-sm)] rounded-[var(--radius-sm)] border border-[var(--color-border)] bg-[var(--color-bg)] md:flex-row md:items-center md:justify-between"
+                      style={{
+                        paddingInlineStart: 'var(--space-md, 16px)',
+                        paddingInlineEnd: 'var(--space-lg, 24px)',
+                        paddingBlock: 'var(--space-md, 16px)',
+                      }}
+                    >
+                      <div className="flex-1 md:pr-[var(--space-xl)]">
+                        <div className="flex items-center gap-[var(--space-sm)]">
+                          <p className="type-body-sm font-medium text-[var(--color-text)]">{task.name}</p>
+                          <Badge color={tMeta.badgeColor} size="sm">{tMeta.label}</Badge>
+                        </div>
+                        <p className="mt-[var(--space-2xs)] type-body-xs text-[var(--color-text-disabled)]">
+                          {project.projectNumber} · {project.title}
+                        </p>
+                      </div>
+
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={() => router.push(`/projects/${project.id}`)}
+                      >
+                        {task.status === 'in-progress' || task.status === 'overdue' ? 'Continue' : 'Start'}
+                      </Button>
+                    </div>
+                  );
+                })}
+              </div>
             </section>
           )}
 
-          {/* ── Summary cards ── */}
-          <section
-            className="rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg-subtle)] shadow-[var(--shadow-sm)]"
-            style={{ padding: 'var(--space-xs)' }}
-          >
-            <div className="grid grid-cols-2 gap-[var(--space-md)] lg:grid-cols-4 lg:gap-0">
-              {summaryCards.map((item, index) => (
-                <div
-                  key={item.label}
-                  className="relative flex min-h-[100px] sm:min-h-[148px] flex-col justify-between rounded-[var(--radius-sm)] lg:rounded-none"
-                  style={{ padding: 'var(--space-md) var(--space-lg)' }}
-                >
-                  {index > 0 ? (
-                    <span
-                      aria-hidden="true"
-                      className="pointer-events-none absolute bottom-[var(--space-md)] left-0 top-[var(--space-md)] hidden w-px bg-[var(--color-border)] lg:block"
-                    />
-                  ) : null}
-                  <p className="text-base font-medium text-[var(--color-text-body)]">{item.label}</p>
-                  <h2 style={{ color: item.color, margin: 0 }} className="type-heading-h2 leading-none">
-                    {item.value}
-                  </h2>
-                </div>
-              ))}
-            </div>
-          </section>
-
           {/* ── My Projects overview ── */}
-          <section className="flex flex-col gap-[var(--space-md)]">
-            <div className="flex items-center justify-between gap-[var(--space-sm)]">
-              <h2 className="type-heading-h6 text-[var(--color-text)]">My Projects</h2>
+          <section className="flex flex-col gap-[var(--space-md)]" style={{ paddingTop: 'var(--space-lg)' }}>
+            <div className="flex items-end justify-between gap-[var(--space-sm)]">
+              <div className="flex items-baseline gap-[var(--space-lg)]">
+                <h2 className="type-heading-h6 text-[var(--color-text)]" style={{ margin: 0 }}>My Projects</h2>
+                <div className="hidden sm:flex items-baseline gap-[var(--space-md)] type-body-xs text-[var(--color-text-body)]">
+                  <span><span className="font-semibold text-[var(--color-text)]">{totalProjects}</span> Total</span>
+                  <span><span className="font-semibold" style={{ color: '#f59e0b' }}>{pendingProjects}</span> Pending</span>
+                  <span><span className="font-semibold" style={{ color: '#10b981' }}>{approvedProjects}</span> Approved</span>
+                  <span><span className="font-semibold" style={{ color: 'var(--color-error, #ef4444)' }}>{deniedProjects}</span> Denied</span>
+                </div>
+              </div>
               <Button variant="primary" size="sm" onClick={() => router.push('/my-projects')}>
                 View All Projects
               </Button>
@@ -293,55 +322,6 @@ export default function HomePage() {
                 </tbody>
               </table>
             </div>
-          </section>
-
-          {/* ── Task quick links ── */}
-          <section className="flex flex-col gap-[var(--space-md)]">
-            <div className="flex items-center justify-between gap-[var(--space-sm)]">
-              <h2 className="type-heading-h6 text-[var(--color-text)]">Action Needed</h2>
-            </div>
-
-            {projectsWithTasks.length === 0 ? (
-              <p className="type-body-sm text-[var(--color-text-body)]">
-                No pending tasks. You&apos;re all caught up!
-              </p>
-            ) : (
-              <div className="flex flex-col gap-[var(--space-sm)]">
-                {projectsWithTasks.map((project) => {
-                  const task = project.nextTask!;
-                  const tMeta = taskBadge(task.status);
-                  return (
-                    <div
-                      key={project.id}
-                      className="flex flex-col gap-[var(--space-sm)] rounded-[var(--radius-sm)] border border-[var(--color-border)] bg-[var(--color-bg)] md:flex-row md:items-center md:justify-between"
-                      style={{
-                        paddingInlineStart: 'var(--space-md, 16px)',
-                        paddingInlineEnd: 'var(--space-lg, 24px)',
-                        paddingBlock: 'var(--space-md, 16px)',
-                      }}
-                    >
-                      <div className="flex-1 md:pr-[var(--space-xl)]">
-                        <div className="flex items-center gap-[var(--space-sm)]">
-                          <p className="type-body-sm font-medium text-[var(--color-text)]">{task.name}</p>
-                          <Badge color={tMeta.badgeColor} size="sm">{tMeta.label}</Badge>
-                        </div>
-                        <p className="mt-[var(--space-2xs)] type-body-xs text-[var(--color-text-disabled)]">
-                          {project.projectNumber} · {project.title}
-                        </p>
-                      </div>
-
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        onClick={() => router.push(`/projects/${project.id}`)}
-                      >
-                        {task.status === 'in-progress' || task.status === 'overdue' ? 'Continue' : 'Start'}
-                      </Button>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
           </section>
 
           {intakeSubmission ? (

@@ -27,6 +27,9 @@ function isPortalRoute(pathname: string): boolean {
     '/applications',
     '/my-projects',
     '/projects',
+    '/settings',
+    '/auth',
+    '/project-intake',
   ];
 
   return portalPrefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));

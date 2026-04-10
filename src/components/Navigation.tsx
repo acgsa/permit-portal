@@ -36,16 +36,22 @@ export function Navigation() {
           <div className="hidden md:flex items-center gap-4">
             <div className="flex items-center gap-[var(--space-lg)]">
               <Link
-                href="/use-cases"
+                href="/project-types"
                 className="type-body-sm text-[color:var(--color-text-body)/0.78] transition-colors hover:text-[var(--color-text-body)]"
               >
-                Use Cases
+                Project Types
               </Link>
               <Link
-                href="/about"
+                href="/dashboard"
                 className="type-body-sm text-[color:var(--color-text-body)/0.78] transition-colors hover:text-[var(--color-text-body)]"
               >
-                About
+                Dashboard
+              </Link>
+              <Link
+                href="/api"
+                className="type-body-sm text-[color:var(--color-text-body)/0.78] transition-colors hover:text-[var(--color-text-body)]"
+              >
+                API
               </Link>
               <span aria-hidden="true" className="h-5 w-px bg-[var(--color-border)]" />
             </div>
@@ -83,18 +89,25 @@ export function Navigation() {
           style={{ padding: '2rem 1.5rem', gap: '2rem' }}
         >
           <Link
-            href="/use-cases"
+            href="/project-types"
             className="type-body-lg text-[color:var(--color-text-body)/0.9] hover:text-[var(--color-text-body)]"
             onClick={() => setMobileMenuOpen(false)}
           >
-            Use Cases
+            Project Types
           </Link>
           <Link
-            href="/about"
+            href="/dashboard"
             className="type-body-lg text-[color:var(--color-text-body)/0.9] hover:text-[var(--color-text-body)]"
             onClick={() => setMobileMenuOpen(false)}
           >
-            About
+            Dashboard
+          </Link>
+          <Link
+            href="/api"
+            className="type-body-lg text-[color:var(--color-text-body)/0.9] hover:text-[var(--color-text-body)]"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            API
           </Link>
           <div className="flex w-full flex-col items-stretch gap-4 pt-2">
             <PillButton

@@ -2,61 +2,27 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Bird, Building2, Cloud, Landmark, Waves } from 'lucide-react';
 import { OnboardingPageScaffold } from '@/components/OnboardingPageScaffold';
-import { LucideIcon } from '@/components/LucideIcon';
 import { WorkspaceShell } from '@/components/WorkspaceShell';
-import { Button, Card, FormChoice, Input, PillButton, Select, Textarea } from 'usds';
+import { Card, FormChoice, Input, PillButton, Textarea } from 'usds';
 import { useAuth } from '@/contexts/AuthContext';
-
-type YesNo = 'yes' | 'no' | '';
-
-type ImpactField = {
-  answer: YesNo;
-  details: string;
-};
+import { evaluateSynopsis } from '@/lib/api';
 
 type IntakeFormState = {
   projectCategories: string[];
   projectDescription: string;
-  locationStreetOrLandmark: string;
-  locationCountyState: string;
-  locationTownshipRangeSection: string;
-  locationMapNotes: string;
-  impactsWaterBodies: ImpactField;
-  impactsSpeciesHabitat: ImpactField;
-  impactsHistoricCultural: ImpactField;
-  impactsAirEnvironmental: ImpactField;
-  impactsWaterways: ImpactField;
-  applicantFullName: string;
-  applicantOrganization: string;
-  applicantMailingAddress: string;
-  applicantPhone: string;
-  applicantEmail: string;
-  applicantType: string;
+  projectLocation: string;
+  locationNotes: string;
 };
 
 const INTAKE_DRAFT_KEY = 'permit.projectIntake.v1';
-const INTAKE_SUBMISSION_KEY = 'permit.projectIntake.submitted.v1';
+const SYNOPSIS_KEY = 'permit.projectIntake.synopsis.v1';
 
 const DEFAULT_FORM: IntakeFormState = {
   projectCategories: [],
   projectDescription: '',
-  locationStreetOrLandmark: '',
-  locationCountyState: '',
-  locationTownshipRangeSection: '',
-  locationMapNotes: '',
-  impactsWaterBodies: { answer: '', details: '' },
-  impactsSpeciesHabitat: { answer: '', details: '' },
-  impactsHistoricCultural: { answer: '', details: '' },
-  impactsAirEnvironmental: { answer: '', details: '' },
-  impactsWaterways: { answer: '', details: '' },
-  applicantFullName: '',
-  applicantOrganization: '',
-  applicantMailingAddress: '',
-  applicantPhone: '',
-  applicantEmail: '',
-  applicantType: '',
+  projectLocation: '',
+  locationNotes: '',
 };
 
 const CATEGORY_OPTIONS = [
@@ -67,35 +33,14 @@ const CATEGORY_OPTIONS = [
   { value: 'other', label: 'Other' },
 ];
 
-const APPLICANT_TYPE_OPTIONS = [
-  { value: 'individual', label: 'Individual' },
-  { value: 'corporation', label: 'Corporation' },
-  { value: 'partnership-association', label: 'Partnership / Association' },
-  { value: 'state-local-government', label: 'State or Local Government' },
-  { value: 'federal-agency', label: 'Federal Agency' },
-  { value: 'other', label: 'Other' },
-];
-
-const IMPACT_QUESTIONS = [
-  { key: 'impactsWaterBodies', label: 'Wetlands, streams, or other water bodies', icon: Waves },
-  { key: 'impactsSpeciesHabitat', label: 'Endangered or threatened species habitat', icon: Bird },
-  { key: 'impactsHistoricCultural', label: 'Historic or cultural resources', icon: Landmark },
-  { key: 'impactsAirEnvironmental', label: 'Air emissions or other environmental concerns', icon: Cloud },
-  { key: 'impactsWaterways', label: 'Waterways', icon: Building2 },
-] as const;
-
-function loginRedirectPath(targetPath: string): string {
-  return `/login?return_to=${encodeURIComponent(targetPath)}`;
-}
-
 export default function ProjectIntakePage() {
   const router = useRouter();
   const { token, user, logout } = useAuth();
   const [form, setForm] = useState<IntakeFormState>(DEFAULT_FORM);
   const [submitError, setSubmitError] = useState('');
-  const [submitted, setSubmitted] = useState(false);
-  const [mapFileNames, setMapFileNames] = useState<string[]>([]);
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
+  const [synopsisLoading, setSynopsisLoading] = useState(false);
+  const [synopsisError, setSynopsisError] = useState('');
 
   useEffect(() => {
     const raw = window.localStorage.getItem(INTAKE_DRAFT_KEY);
@@ -110,42 +55,16 @@ export default function ProjectIntakePage() {
   }, []);
 
   useEffect(() => {
-    if (submitted) return;
     const now = new Date().toISOString();
     window.localStorage.setItem(INTAKE_DRAFT_KEY, JSON.stringify({ ...form, lastSavedAt: now }));
     setLastSavedAt(now);
-  }, [form, submitted]);
-
-  const updateImpact = (key: typeof IMPACT_QUESTIONS[number]['key'], value: Partial<ImpactField>) => {
-    setForm((current) => ({
-      ...current,
-      [key]: {
-        ...current[key],
-        ...value,
-      },
-    }));
-  };
+  }, [form]);
 
   const validateForm = (): string => {
     if (!form.projectCategories.length) return 'Choose at least one project category.';
     if (!form.projectDescription.trim()) return 'Project description is required.';
-    if (!form.locationStreetOrLandmark.trim()) return 'Street address or nearest landmark is required.';
-    if (!form.locationCountyState.trim()) return 'County and State are required.';
-    if (!form.applicantFullName.trim()) return 'Applicant full name is required.';
-    if (!form.applicantMailingAddress.trim()) return 'Mailing address is required.';
-    if (!form.applicantPhone.trim()) return 'Telephone number is required.';
-    if (!form.applicantEmail.trim()) return 'Email address is required.';
-    if (!form.applicantType.trim()) return 'Applicant type is required.';
+    if (!form.projectLocation.trim()) return 'Project location is required.';
     return '';
-  };
-
-  const recordIntakeSubmission = () => {
-    const payload = {
-      submittedAt: new Date().toISOString(),
-      title: 'Project Intake',
-      status: 'submitted',
-    };
-    window.localStorage.setItem(INTAKE_SUBMISSION_KEY, JSON.stringify(payload));
   };
 
   const handleSubmit = () => {
@@ -154,54 +73,34 @@ export default function ProjectIntakePage() {
       setSubmitError(error);
       return;
     }
-
     setSubmitError('');
-    recordIntakeSubmission();
-    window.localStorage.removeItem(INTAKE_DRAFT_KEY);
-    setSubmitted(true);
+    handleEvaluateSynopsis();
   };
 
-  const handleLogin = () => {
-    router.push(loginRedirectPath('/home?intake_submitted=1'));
+  const handleEvaluateSynopsis = async () => {
+    setSynopsisLoading(true);
+    setSynopsisError('');
+    try {
+      const result = await evaluateSynopsis(form as unknown as Record<string, unknown>);
+      // Store synopsis and navigate to the results page
+      window.localStorage.setItem(SYNOPSIS_KEY, JSON.stringify(result));
+      router.push('/project-intake/synopsis');
+    } catch (err) {
+      setSynopsisError(err instanceof Error ? err.message : 'Failed to evaluate project. Please try again.');
+    } finally {
+      setSynopsisLoading(false);
+    }
   };
 
-  const handlePortalHome = () => {
-    router.push('/home?intake_submitted=1');
-  };
-
-  const intakeContent = submitted ? (
-    <section className="pre-screener-page mx-auto w-full max-w-[700px] pb-[var(--space-2xl)]">
-      <Card size="lg">
-        <div className="page-card-body">
-          <h1 className="type-heading-h4 text-[var(--color-text)]">Thank you!</h1>
-          <p className="type-body-md text-[var(--color-text-body)]">Your Project Intake request has been received.</p>
-
-          {!token ? (
-            <PillButton variant="primary" size="lg" onClick={handleLogin}>
-              Log In to view your intake request
-            </PillButton>
-          ) : null}
-
-          <p className="type-body-md text-[var(--color-text-body)]">
-            Our team will review the details and contact you soon with the exact federal forms you need (including a pre-filled SF-299 if applicable).
-          </p>
-          <p className="type-body-md text-[var(--color-text-body)]">You will receive an email confirmation shortly.</p>
-
-          <PillButton variant="secondary" size="lg" onClick={handlePortalHome}>
-            Portal Home
-          </PillButton>
-        </div>
-      </Card>
-    </section>
-  ) : (
-    <section className="pre-screener-page mx-auto w-full max-w-[700px] pb-[var(--space-2xl)]">
+  const intakeContent = (
+    <section className="pre-screener-page w-full">
       <div className="pre-screener-intro space-y-[var(--space-md)] text-center text-[var(--color-text)]">
-        <h1 className="type-heading-h3 text-[var(--color-text)]">Let's get started</h1>
+        <h1 className="type-heading-h3 text-[var(--color-text)]">Let&apos;s get started</h1>
       </div>
 
       <Card size="lg">
         <div className="page-card-body">
-          <p className="pre-screener-step-kicker type-body-xs uppercase tracking-[0.16em] text-[var(--color-text-disabled)]">Step 1 of 5</p>
+          <p className="pre-screener-step-kicker type-body-xs uppercase tracking-[0.16em] text-[var(--color-text-disabled)]">Step 1 of 3</p>
           <h2 className="type-heading-h5 text-[var(--color-text)]">Which best describes your project?</h2>
           <p className="type-body-md text-[var(--color-text-body)]">Choose all that apply.*</p>
 
@@ -231,177 +130,38 @@ export default function ProjectIntakePage() {
 
       <Card size="lg">
         <div className="page-card-body">
-          <p className="pre-screener-step-kicker type-body-xs uppercase tracking-[0.16em] text-[var(--color-text-disabled)]">Step 2 of 5</p>
+          <p className="pre-screener-step-kicker type-body-xs uppercase tracking-[0.16em] text-[var(--color-text-disabled)]">Step 2 of 3</p>
           <h2 className="type-heading-h5 text-[var(--color-text)]">Project Location</h2>
           <p className="type-body-md text-[var(--color-text-body)]">Where is your project located?*</p>
 
           <Input
             inputSize="lg"
-            placeholder="Street address or nearest landmark (if known)"
-            value={form.locationStreetOrLandmark}
-            onChange={(event) => setForm((current) => ({ ...current, locationStreetOrLandmark: event.target.value }))}
-          />
-          <Input
-            inputSize="lg"
-            placeholder="County and State"
-            value={form.locationCountyState}
-            onChange={(event) => setForm((current) => ({ ...current, locationCountyState: event.target.value }))}
-          />
-          <Input
-            inputSize="lg"
-            placeholder="Township, Range, Section (if known)"
-            value={form.locationTownshipRangeSection}
-            onChange={(event) => setForm((current) => ({ ...current, locationTownshipRangeSection: event.target.value }))}
+            placeholder="Address, landmark, or general location description"
+            value={form.projectLocation}
+            onChange={(event) => setForm((current) => ({ ...current, projectLocation: event.target.value }))}
           />
 
-          <div className="space-y-[var(--space-sm)]">
-            <p className="type-body-sm text-[var(--color-text-body)]">Attach or describe any maps or coordinates you have</p>
-            <div aria-hidden="true" style={{ height: 'var(--space-lg)' }} />
-            <div className="flex flex-wrap items-center gap-[var(--space-sm)]">
-              <label htmlFor="intake-map-upload">
-                <Button variant="primary" size="sm" style={{ minWidth: '7.5rem' }}>Upload</Button>
-              </label>
-              <input
-                id="intake-map-upload"
-                type="file"
-                multiple
-                className="sr-only"
-                onChange={(event) => {
-                  const files = event.target.files;
-                  if (!files) {
-                    setMapFileNames([]);
-                    return;
-                  }
-                  setMapFileNames(Array.from(files).map((file) => file.name));
-                }}
-              />
-              {mapFileNames.length ? (
-                <p className="type-body-xs text-[var(--color-text-disabled)]">{mapFileNames.join(', ')}</p>
-              ) : null}
-            </div>
-            <div aria-hidden="true" style={{ height: 'var(--space-lg)' }} />
-            <Textarea
-              rows={3}
-              placeholder="Describe map details or coordinates"
-              value={form.locationMapNotes}
-              onChange={(event) => setForm((current) => ({ ...current, locationMapNotes: event.target.value }))}
-            />
-          </div>
-        </div>
-      </Card>
-
-      <Card size="lg">
-        <div className="page-card-body">
-          <p className="pre-screener-step-kicker type-body-xs uppercase tracking-[0.16em] text-[var(--color-text-disabled)]">Step 3 of 5</p>
-          <h2 className="type-heading-h5 text-[var(--color-text)]">Potential Impact</h2>
-          <p className="type-body-md text-[var(--color-text-body)]">Does your project involve any of the following?</p>
-
-          <div className="space-y-[var(--space-md)]">
-            {IMPACT_QUESTIONS.map((question) => {
-              const impact = form[question.key];
-              return (
-                <div key={question.key} className="page-form-question-block page-form-question-tight">
-                  <div className="flex flex-col items-center gap-[var(--space-2xs)] text-center">
-                    <LucideIcon
-                      icon={question.icon}
-                      size={20}
-                      className="shrink-0 text-[var(--color-text-body)]"
-                    />
-                    <p className="type-body-md text-[1.0625rem] text-[var(--color-text-body)]">{question.label}</p>
-                  </div>
-                  <FormChoice
-                    type="checkbox"
-                    layout="split"
-                    options={[{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }]}
-                    value={impact.answer ? [impact.answer] : []}
-                    onChange={(val) => {
-                      const selected = Array.isArray(val) ? (val as string[]) : [];
-                      if (!selected.length) {
-                        updateImpact(question.key, { answer: '' });
-                        return;
-                      }
-                      const next = selected[selected.length - 1];
-                      updateImpact(question.key, { answer: next === 'yes' ? 'yes' : 'no' });
-                    }}
-                  />
-                  {impact.answer === 'yes' ? (
-                    <Textarea
-                      rows={2}
-                      placeholder="Brief details"
-                      value={impact.details}
-                      onChange={(event) => updateImpact(question.key, { details: event.target.value })}
-                    />
-                  ) : null}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </Card>
-
-      <Card size="lg">
-        <div className="page-card-body">
-          <p className="pre-screener-step-kicker type-body-xs uppercase tracking-[0.16em] text-[var(--color-text-disabled)]">Step 4 of 5</p>
-          <h2 className="type-heading-h5 text-[var(--color-text)]">Applicant Information</h2>
-
-          <Input
-            inputSize="lg"
-            placeholder="Full name of applicant"
-            value={form.applicantFullName}
-            onChange={(event) => setForm((current) => ({ ...current, applicantFullName: event.target.value }))}
-          />
-          <Input
-            inputSize="lg"
-            placeholder="Organization / Company name (if applicable)"
-            value={form.applicantOrganization}
-            onChange={(event) => setForm((current) => ({ ...current, applicantOrganization: event.target.value }))}
-          />
-          <Input
-            inputSize="lg"
-            placeholder="Mailing address"
-            value={form.applicantMailingAddress}
-            onChange={(event) => setForm((current) => ({ ...current, applicantMailingAddress: event.target.value }))}
-          />
-          <Input
-            inputSize="lg"
-            placeholder="Telephone number"
-            value={form.applicantPhone}
-            onChange={(event) => setForm((current) => ({ ...current, applicantPhone: event.target.value }))}
-          />
-          <Input
-            inputSize="lg"
-            placeholder="Email address"
-            value={form.applicantEmail}
-            onChange={(event) => setForm((current) => ({ ...current, applicantEmail: event.target.value }))}
-          />
-          <Select
-            options={APPLICANT_TYPE_OPTIONS}
-            value={form.applicantType}
-            onChange={(event) => setForm((current) => ({ ...current, applicantType: event.target.value }))}
+          <Textarea
+            rows={3}
+            placeholder="Additional location notes, coordinates, or map references (optional)"
+            value={form.locationNotes}
+            onChange={(event) => setForm((current) => ({ ...current, locationNotes: event.target.value }))}
           />
         </div>
       </Card>
 
       <Card size="lg">
         <div className="page-card-body">
-          <p className="pre-screener-step-kicker type-body-xs uppercase tracking-[0.16em] text-[var(--color-text-disabled)]">Step 5 of 5</p>
-          <h2 className="type-heading-h5 text-[var(--color-text)]">Review & Submit</h2>
-          <p className="type-body-md text-[var(--color-text-body)]">Review the information you provided.</p>
+          <p className="pre-screener-step-kicker type-body-xs uppercase tracking-[0.16em] text-[var(--color-text-disabled)]">Step 3 of 3</p>
+          <h2 className="type-heading-h5 text-[var(--color-text)]">Get Your Project Synopsis</h2>
           <p className="type-body-md text-[var(--color-text-body)]">
-This is an intake request only - our team will review it and contact you (usually within a few business days) with the exact forms you need and next steps.
-          </p>
-          <p className="type-body-md text-[var(--color-text-body)]">
-            If SF-299 is required, we will pre-fill it with the details you just entered.
+            Before submitting, let&apos;s determine which federal reviews, permits, and agencies your project will involve.
           </p>
 
           {submitError ? <p className="type-body-sm text-[var(--color-error)]">{submitError}</p> : null}
 
-          <div aria-hidden="true" className="hidden sm:block" style={{ height: 'var(--space-3xl)' }} />
-          <div className="flex w-full flex-col items-stretch gap-[var(--space-md)] sm:flex-row sm:items-center sm:justify-between">
-            <PillButton variant="primary" size="lg" onClick={() => router.push(token ? '/home' : '/')}>
-              Back to Home
-            </PillButton>
-            <div className="flex flex-col items-stretch gap-[var(--space-sm)] sm:flex-row sm:items-center">
+          {!synopsisLoading && (
+            <div className="flex w-full flex-col items-stretch gap-[var(--space-md)] sm:flex-row sm:items-center sm:justify-between">
               <PillButton variant="primary" size="lg" onClick={() => {
                 const now = new Date().toISOString();
                 window.localStorage.setItem(INTAKE_DRAFT_KEY, JSON.stringify({ ...form, lastSavedAt: now }));
@@ -411,11 +171,28 @@ This is an intake request only - our team will review it and contact you (usuall
                 Save & Exit
               </PillButton>
               <PillButton variant="secondary" size="lg" onClick={handleSubmit}>
-                Submit for Review
+                Generate Synopsis
               </PillButton>
             </div>
-          </div>
-          {lastSavedAt && (
+          )}
+
+          {synopsisLoading && (
+            <div className="flex flex-col items-center gap-[var(--space-md)] py-[var(--space-xl)]">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-[var(--color-border)] border-t-[var(--color-primary)]" />
+              <p className="type-body-md text-[var(--color-text-body)]">Analyzing your project...</p>
+            </div>
+          )}
+
+          {synopsisError && (
+            <div className="space-y-[var(--space-sm)]">
+              <p className="type-body-sm text-[var(--color-error)]">{synopsisError}</p>
+              <PillButton variant="secondary" size="sm" onClick={handleEvaluateSynopsis}>
+                Retry
+              </PillButton>
+            </div>
+          )}
+
+          {lastSavedAt && !synopsisLoading && (
             <p className="type-body-xs text-center text-[var(--color-text-disabled)]" style={{ paddingTop: 'var(--space-xs)' }}>
               Draft auto-saved at {new Date(lastSavedAt).toLocaleTimeString()}
             </p>
@@ -435,7 +212,9 @@ This is an intake request only - our team will review it and contact you (usuall
           router.push('/');
         }}
       >
-        <div className="mx-auto w-full max-w-[700px] py-[var(--space-lg)] px-[var(--space-md)]">{intakeContent}</div>
+        <div style={{ maxWidth: 700, marginInline: 'auto', paddingTop: 'var(--space-lg)', paddingBottom: 'var(--space-2xl)' }}>
+          {intakeContent}
+        </div>
       </WorkspaceShell>
     );
   }

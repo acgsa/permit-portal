@@ -57,19 +57,19 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Use Cases Section */}
+      {/* Project Types Section */}
       <section className="flex justify-center bg-black text-white px-2 sm:px-6 lg:px-8" style={{ paddingTop: 'var(--space-3xl)', paddingBottom: 'var(--space-3xl)' }}>
         <div className="w-full max-w-7xl" style={{ marginLeft: 'clamp(var(--space-sm), 5vw, var(--space-lg))', marginRight: 'clamp(var(--space-sm), 5vw, var(--space-lg))' }}>
           <div className="mb-10">
-            <p className="type-body-xs uppercase tracking-[0.16em]" style={{ marginBottom: 'var(--space-sm)', color: 'var(--color-text-disabled)' }}>Permit Use Cases</p>
-            <h2 className="type-heading-h3 text-white" style={{ marginBottom: 'var(--space-xl)' }}>High-Demand Federal Permits</h2>
+            <p className="type-body-xs uppercase tracking-[0.16em]" style={{ marginBottom: 'var(--space-sm)', color: 'var(--color-text-disabled)' }}>Project Types</p>
+            <h3 className="type-heading-h3 text-white" style={{ marginBottom: 'var(--space-xl)' }}>High-Demand Federal Permits</h3>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {useCases.map((useCase, index) => (
+            {projectTypes.map((projectType, index) => (
               <Link
-                key={useCase.title}
-                href={`/use-cases#${useCase.slug}`}
+                key={projectType.title}
+                href={`/project-types#${projectType.slug}`}
                 className={`group relative aspect-square overflow-hidden rounded-sm bg-[#0d0f12] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-focus)] ${
                   index === 2
                     ? 'md:col-span-2 md:aspect-[2/1] lg:col-span-1 lg:aspect-square'
@@ -81,18 +81,18 @@ export default function Home() {
                 }`}
               >
                 <img
-                  src={useCase.image}
-                  alt={useCase.title}
+                  src={projectType.image}
+                  alt={projectType.title}
                   className="h-full w-full object-cover transition-transform duration-[1500ms] ease-out group-hover:scale-[1.04]"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/68 via-black/20 to-black/6 transition-all duration-500 group-hover:from-black/78 group-hover:via-black/30 group-hover:to-black/14" />
                 <div className="absolute inset-x-0 bottom-0 bg-transparent" style={{ padding: 'var(--space-md)' }}>
-                  <h3 className="type-heading-h6 text-white" style={{ marginBottom: 'var(--space-2xs)' }}>{useCase.title}</h3>
+                  <h3 className="type-heading-h6 text-white" style={{ marginBottom: 'var(--space-2xs)' }}>{projectType.title}</h3>
                   <div
                     className="flex max-h-0 translate-y-2 items-center justify-between gap-3 overflow-hidden opacity-0 transition-all duration-300 ease-out group-hover:max-h-24 group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:max-h-24 group-focus-within:translate-y-0 group-focus-within:opacity-100"
                     style={{ marginTop: 'var(--space-2xs)' }}
                   >
-                    <p className="type-body-sm text-white" style={{ marginRight: 'var(--space-sm)' }}>{useCase.subhead}</p>
+                    <p className="type-body-sm text-white" style={{ marginRight: 'var(--space-sm)' }}>{projectType.subhead}</p>
                     <span
                       aria-hidden="true"
                       className="type-heading-h6 shrink-0 text-white transition-transform duration-300 group-hover:translate-x-0.5 group-focus-within:translate-x-0.5"
@@ -139,7 +139,7 @@ export default function Home() {
   );
 }
 
-const useCases = [
+const projectTypes = [
   {
     slug: 'critical-minerals-mining',
     title: 'Critical Minerals Mining',

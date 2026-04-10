@@ -24,7 +24,7 @@ export function USGRibbon() {
   const publicLoggedOutRoutes = new Set([
     '/',
     '/about',
-    '/use-cases',
+    '/project-types',
     '/partnerships',
     '/help-desk',
     '/login',

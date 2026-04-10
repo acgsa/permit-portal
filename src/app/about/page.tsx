@@ -64,12 +64,12 @@ export default function AboutPage() {
         <div className="w-full max-w-7xl" style={{ marginLeft: 'clamp(var(--space-sm), 5vw, var(--space-lg))', marginRight: 'clamp(var(--space-sm), 5vw, var(--space-lg))' }}>
           <p className="type-body-xs uppercase tracking-[0.16em]" style={{ marginBottom: 'var(--space-md)', color: 'var(--color-text-disabled)' }}>Get Started</p>
           <h2 className="font-[var(--font-primary)] text-[clamp(1.8rem,4vw,3.2rem)] font-normal leading-[1.1] text-white" style={{ marginBottom: 'var(--space-2xl)' }}>
-            Explore use cases or start a permit application now.
+            Explore project types or start a permit application now.
           </h2>
           <div className="flex flex-wrap items-center gap-4">
-            <Link href="/use-cases">
+            <Link href="/project-types">
               <PillButton variant="outline" size="lg">
-                Browse Use Cases
+                Browse Project Types
               </PillButton>
             </Link>
             <Link href="/login">

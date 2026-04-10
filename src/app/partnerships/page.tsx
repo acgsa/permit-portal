@@ -41,9 +41,9 @@ export default function PartnershipsPage() {
                   Federal Employee Login
                 </PillButton>
               </Link>
-              <Link href="/use-cases">
+              <Link href="/project-types">
                 <PillButton variant="outline" size="md">
-                  Explore Use Cases
+                  Explore Project Types
                 </PillButton>
               </Link>
             </div>

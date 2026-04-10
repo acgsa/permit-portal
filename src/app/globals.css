@@ -467,11 +467,18 @@ body {
   transition: background-color var(--transition-base), color var(--transition-base);
 }
 
+/* Lock body/html scroll when workspace shell is on screen */
+html:has(.workspace-shell-main),
+body:has(.workspace-shell-main) {
+  overflow: hidden;
+  height: 100%;
+}
+
 .workspace-shell-main {
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
-  padding-inline: var(--space-sm);
+  padding-inline: var(--space-md);
   padding-top: var(--space-md);
   padding-bottom: var(--space-md);
 }
@@ -483,13 +490,23 @@ body {
   padding: var(--space-sm);
 }
 
+/* Don't force flex layout on the inner frame — pages control their own layout */
+.workspace-shell-main > .workspace-shell-main-frame {
+  display: block;
+  gap: 0;
+  padding: 0;
+}
+
 @media (min-width: 768px) {
   .workspace-shell-main {
-    padding-inline: var(--space-md);
+    padding-inline: var(--space-2xl);
     padding-top: var(--space-xl);
   }
   .workspace-shell-main > * {
     padding: var(--space-md);
+  }
+  .workspace-shell-main > .workspace-shell-main-frame {
+    padding: 0;
   }
   .workspace-shell-content-frame {
     transform: translateX(calc(var(--sidebar-offset, 200px) / -2));
@@ -498,7 +515,7 @@ body {
 
 @media (min-width: 1024px) {
   .workspace-shell-main {
-    padding-inline: var(--space-md);
+    padding-inline: var(--space-3xl);
     padding-top: var(--space-xl);
     padding-bottom: var(--space-md);
   }
@@ -633,6 +650,32 @@ p {
   border: 0;
   background: var(--steel-900);
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.34);
+}
+
+/* Synopsis results page — theme-aware cards with consistent padding */
+.synopsis-results-page .card {
+  border-radius: 14px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-muted, var(--color-bg));
+}
+
+.synopsis-results-page .card-lg .card-body {
+  padding: var(--space-xl) var(--space-xl) var(--space-xl);
+}
+
+.synopsis-results-page .page-card-body {
+  gap: var(--space-xl);
+  text-align: left;
+}
+
+@media (max-width: 640px) {
+  .synopsis-results-page .card-lg .card-body {
+    padding: var(--space-lg) var(--space-lg) var(--space-lg);
+  }
+
+  .synopsis-results-page .page-card-body {
+    gap: var(--space-lg);
+  }
 }
 
 .screener-start-page .card.card-lg {
@@ -923,22 +966,22 @@ a:hover {
   color: var(--color-text-link-hover);
 }
 
-.use-cases-anchor-scroll {
+.project-types-anchor-scroll {
   scrollbar-width: thin;
   scrollbar-color: color-mix(in srgb, var(--steel-700) 40%, transparent) transparent;
   scroll-behavior: smooth;
   overscroll-behavior-x: contain;
 }
 
-.use-cases-anchor-scroll::-webkit-scrollbar {
+.project-types-anchor-scroll::-webkit-scrollbar {
   height: 6px;
 }
 
-.use-cases-anchor-scroll::-webkit-scrollbar-track {
+.project-types-anchor-scroll::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.use-cases-anchor-scroll::-webkit-scrollbar-thumb {
+.project-types-anchor-scroll::-webkit-scrollbar-thumb {
   background: color-mix(in srgb, var(--color-text-body) 24%, transparent);
   opacity: 0.4;
   border-radius: 999px;

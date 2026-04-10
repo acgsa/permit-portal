@@ -1,4 +1,4 @@
-from .auth import LoginRequest, TokenResponse
+from .auth import LoginRequest, TokenResponse, UserProfile, UserSettingsUpdate
 from .process_definition import (
     ProcessDefinitionCreate,
     ProcessDefinitionDetail,
@@ -12,9 +12,17 @@ from .process_definition import (
     ProcessTaskSummary,
 )
 from .pre_screener_draft import PreScreenerDraftResponse, PreScreenerDraftUpsert
+from .synopsis import (
+    IntakeSubmissionRequest,
+    IntakeSubmissionResponse,
+    SynopsisRequest,
+    SynopsisResult,
+)
 from .workflow import WorkflowCreate, WorkflowStatus
 
 __all__ = [
+    "IntakeSubmissionRequest",
+    "IntakeSubmissionResponse",
     "LoginRequest",
     "ProcessDefinitionCreate",
     "ProcessDefinitionDetail",
@@ -28,7 +36,11 @@ __all__ = [
     "ProcessTaskSummary",
     "PreScreenerDraftResponse",
     "PreScreenerDraftUpsert",
+    "SynopsisRequest",
+    "SynopsisResult",
     "TokenResponse",
+    "UserProfile",
+    "UserSettingsUpdate",
     "WorkflowCreate",
     "WorkflowStatus",
 ]
