@@ -25,6 +25,7 @@ export function USGRibbon() {
     '/',
     '/about',
     '/project-types',
+    '/api',
     '/partnerships',
     '/help-desk',
     '/login',

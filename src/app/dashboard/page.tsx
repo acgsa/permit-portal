@@ -9,6 +9,8 @@ import { LucideIcon } from '@/components/LucideIcon';
 import { AnimatedCard, StaggerContainer } from '@/components/motion';
 import { WorkspaceShell } from '@/components/WorkspaceShell';
 import { PortalPageScaffold } from '@/components/PortalPageScaffold';
+import { Navigation } from '@/components/Navigation';
+import { Footer } from '@/components/Footer';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   Badge,
@@ -63,11 +65,11 @@ const STAFF_OVERVIEW_ROWS: StaffOverviewRow[] = [
   { name: 'Vacant', office: 'Umatilla Field Office', expertise: 'Realty Specialist', role: 'Land Appraisal', projects: 0, availability: 'AVAILABLE' },
 ];
 
-const ADMIN_BUREAU_BREAKDOWN = [
+const ADMIN_AGENCY_BREAKDOWN = [
   { label: 'BLM', value: 155846, colorVar: 'var(--chart-1)' },
-  { label: 'BIA', value: 5177, colorVar: 'var(--chart-2)' },
-  { label: 'FWS', value: 2364, colorVar: 'var(--chart-3)' },
-  { label: 'BSEE', value: 1738, colorVar: 'var(--chart-4)' },
+  { label: 'USACE', value: 5177, colorVar: 'var(--chart-2)' },
+  { label: 'DOE', value: 2364, colorVar: 'var(--chart-3)' },
+  { label: 'EPA', value: 1738, colorVar: 'var(--chart-4)' },
 ];
 
 const ADMIN_COMPLETION_STATE = [
@@ -270,20 +272,141 @@ export default function DashboardPage() {
   );
 
   useEffect(() => {
-    if (!token) {
-      router.replace('/staff');
-      return;
-    }
-
     if (token && !isStaffUser) {
       router.replace('/home');
     }
   }, [token, isStaffUser, router]);
 
-  if (!token) return null;
-
-  if (!isStaffUser) {
+  if (token && !isStaffUser) {
     return null;
+  }
+
+  /* ── Public / logged-out view ───────────────────────────── */
+  if (!token) {
+    /* ── Public-facing national summary data ───────────────── */
+    const PUBLIC_KPI = [
+      { label: 'Total Federal Permits Issued', value: '1.24M' },
+      { label: 'Active Reviews', value: '42,318' },
+      { label: 'Agencies on Platform', value: '14' },
+      { label: 'Avg. Processing Time', value: '127 days' },
+    ];
+
+    const PUBLIC_PERMITS_BY_SECTOR = [
+      { label: 'Energy & Transmission', value: 48200, colorVar: 'var(--chart-1)' },
+      { label: 'Transportation', value: 31400, colorVar: 'var(--chart-2)' },
+      { label: 'Water & Infrastructure', value: 22100, colorVar: 'var(--chart-3)' },
+      { label: 'Mining & Minerals', value: 15600, colorVar: 'var(--chart-4)' },
+    ];
+
+    const PUBLIC_COMPLETION = [
+      { label: 'Completed', percent: 41, colorVar: 'var(--green-500)', hoverColorVar: 'var(--green-600)', texture: 'stripes' as const },
+      { label: 'In Review', percent: 33, colorVar: 'var(--blue-400)', hoverColorVar: 'var(--blue-500)', texture: 'stripes-alt' as const },
+      { label: 'Awaiting Submission', percent: 16, colorVar: 'var(--gold-400)', hoverColorVar: 'var(--gold-500)', texture: 'dots' as const },
+      { label: 'On Hold', percent: 10, colorVar: 'var(--steel-300)', hoverColorVar: 'var(--steel-400)', texture: 'crosshatch' as const },
+    ];
+
+    const PUBLIC_REVIEWS_BY_YEAR = [
+      { year: '2020', reviews: 8420 },
+      { year: '2021', reviews: 9100 },
+      { year: '2022', reviews: 11340 },
+      { year: '2023', reviews: 14200 },
+      { year: '2024', reviews: 18750 },
+      { year: '2025', reviews: 22400 },
+    ];
+    const pubBarMax = Math.max(...PUBLIC_REVIEWS_BY_YEAR.map((d) => d.reviews));
+
+    return (
+      <div style={{ background: 'var(--color-bg)', minHeight: '100vh' }}>
+        <Navigation />
+
+        {/* Public dashboard content */}
+        <section
+          className="flex justify-center px-2 sm:px-6 lg:px-8"
+          style={{ paddingTop: 'var(--space-2xl)', paddingBottom: 'var(--space-3xl)' }}
+        >
+          <div className="w-full max-w-5xl flex flex-col gap-[var(--space-md)]">
+            <div style={{ marginBottom: 'var(--space-md)' }}>
+              <h1 className="type-heading-h1" style={{ color: 'var(--color-text)', marginBottom: 'var(--space-xs)' }}>
+                Federal Permit Analytics
+              </h1>
+              <p className="type-body-md" style={{ color: 'var(--color-text-body)', maxWidth: 700 }}>
+                Real-time performance metrics and operational insights for federal permitting staff and administrators.
+              </p>
+            </div>
+
+            {/* KPI row */}
+            <StaggerContainer className="grid items-stretch gap-[var(--space-md)] grid-cols-2 lg:grid-cols-4">
+              {PUBLIC_KPI.map((kpi, i) => (
+                <AnimatedCard key={kpi.label} delay={i * 0.06}>
+                  <Card className="h-full bg-[var(--color-bg-subtle)]">
+                    <div className="flex flex-col gap-[var(--space-sm)]">
+                      <p className="chart-card-title" style={{ marginBottom: 0 }}>{kpi.label}</p>
+                      <p className="type-heading-h2 text-[var(--color-text)]">{kpi.value}</p>
+                    </div>
+                  </Card>
+                </AnimatedCard>
+              ))}
+            </StaggerContainer>
+
+            {/* Reviews growth bar chart + Permits by Sector donut */}
+            <StaggerContainer className="grid items-stretch gap-[var(--space-md)] pr-[var(--space-md)] md:pr-0 md:grid-cols-2">
+              <AnimatedCard className="h-full">
+                <Card className="h-full bg-[var(--color-bg-subtle)]">
+                  <div className="flex h-full flex-col">
+                    <div className="space-y-[var(--space-2xs)]">
+                      <div className="chart-card-title" style={{ marginBottom: 0 }}>Environmental Reviews Completed</div>
+                      <p className="m-0 type-body-sm text-[var(--color-text-body)]">National total by fiscal year</p>
+                    </div>
+                    <div aria-hidden="true" style={{ height: 'var(--space-xl)' }} />
+                    <div className="flex-1 min-h-[180px]" role="img" aria-label="Environmental reviews completed by year">
+                      <div className="h-full w-full flex items-end gap-[var(--space-sm)]">
+                        {PUBLIC_REVIEWS_BY_YEAR.map((item) => {
+                          const barPercent = Math.max((item.reviews / pubBarMax) * 100, 4);
+                          return (
+                            <div key={item.year} className="flex h-full min-w-0 flex-1 flex-col">
+                              <div className="flex-1 flex items-end pb-[var(--space-md)]">
+                                <div
+                                  className="w-full rounded-[var(--radius-sm)] bg-[var(--chart-bar)]"
+                                  style={{ height: `${barPercent}%`, minHeight: '6px' }}
+                                />
+                              </div>
+                              <div style={{ paddingTop: 'var(--space-md)' }}>
+                                <p className="m-0 type-body-strong-sm text-center text-[var(--color-text)]">
+                                  {item.reviews.toLocaleString()}
+                                </p>
+                                <p className="m-0 mt-[var(--space-2xs)] type-body-xs text-center text-[var(--color-text-body)]">
+                                  {item.year}
+                                </p>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </AnimatedCard>
+
+              <AnimatedCard className="dashboard-bureau-card h-full" delay={0.08}>
+                <DonutChart title="Permits by Sector" segments={PUBLIC_PERMITS_BY_SECTOR} size={160} ringThickness={40} />
+              </AnimatedCard>
+            </StaggerContainer>
+
+            {/* Completion tracker */}
+            <AnimatedCard>
+              <CompletionTracker
+                title="National Review Pipeline"
+                actionLabel=""
+                description="Distribution of active federal environmental reviews by status"
+                segments={PUBLIC_COMPLETION}
+                totalApplications={42318}
+              />
+            </AnimatedCard>
+          </div>
+        </section>
+        <Footer />
+      </div>
+    );
   }
 
   const staffProfile = resolveStaffProfile(user?.sub, user?.role);
@@ -556,7 +679,7 @@ export default function DashboardPage() {
             </AnimatedCard>
 
             <AnimatedCard className="dashboard-bureau-card h-full" delay={0.08}>
-              <DonutChart title="Permits by Bureau" segments={ADMIN_BUREAU_BREAKDOWN} size={160} ringThickness={40} />
+              <DonutChart title="Permits by Agency" segments={ADMIN_AGENCY_BREAKDOWN} size={160} ringThickness={40} />
             </AnimatedCard>
           </StaggerContainer>
 

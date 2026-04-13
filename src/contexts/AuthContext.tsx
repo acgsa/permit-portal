@@ -82,7 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Keep pilot staff personas in staff portal flow even when non-demo auth returns applicant role.
     if (normalizedSub.includes('doug.smith')) {
       role = 'admin';
-    } else if (normalizedSub.includes('sarah.chen')) {
+    } else if (normalizedSub.includes('sarah.jones')) {
       role = 'staff';
     }
 

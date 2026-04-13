@@ -33,9 +33,9 @@ export const STAFF_DEMO_USERS: ReadonlyArray<StaffProfile> = [
     region: 'All Regions',
   },
   {
-    id: 'sarah-chen',
-    displayName: 'Sarah Chen',
-    email: 'sarah.chen@usbr.gov',
+    id: 'sarah-jones',
+    displayName: 'Sarah Jones',
+    email: 'sarah.jones@usbr.gov',
     role: 'staff',
     title: 'Regional Manager',
     agency: 'Bureau of Reclamation',
@@ -51,7 +51,7 @@ export const FEDERAL_APPLICATION_MOCK_DATA: ReadonlyArray<FederalApplicationReco
     agency: 'Bureau of Reclamation',
     region: 'Upper Colorado',
     status: 'In Review',
-    assignedReviewer: 'Sarah Chen',
+    assignedReviewer: 'Sarah Jones',
     submittedDate: '2026-02-04',
     updatedDate: '2026-03-21',
   },
@@ -62,7 +62,7 @@ export const FEDERAL_APPLICATION_MOCK_DATA: ReadonlyArray<FederalApplicationReco
     agency: 'Bureau of Reclamation',
     region: 'Upper Colorado',
     status: 'Pending Interagency',
-    assignedReviewer: 'Sarah Chen',
+    assignedReviewer: 'Sarah Jones',
     submittedDate: '2026-02-18',
     updatedDate: '2026-03-19',
   },
@@ -73,7 +73,7 @@ export const FEDERAL_APPLICATION_MOCK_DATA: ReadonlyArray<FederalApplicationReco
     agency: 'Bureau of Reclamation',
     region: 'Upper Colorado',
     status: 'Submitted',
-    assignedReviewer: 'Sarah Chen',
+    assignedReviewer: 'Sarah Jones',
     submittedDate: '2026-03-10',
     updatedDate: '2026-03-20',
   },
@@ -114,10 +114,10 @@ export const FEDERAL_APPLICATION_MOCK_DATA: ReadonlyArray<FederalApplicationReco
 
 export function resolveStaffProfile(userSub?: string, role?: string): StaffProfile {
   const normalized = (userSub ?? '').toLowerCase();
-  const sarah = STAFF_DEMO_USERS.find((user) => user.id === 'sarah-chen');
+  const sarah = STAFF_DEMO_USERS.find((user) => user.id === 'sarah-jones');
   const doug = STAFF_DEMO_USERS.find((user) => user.id === 'doug-smith');
 
-  if (normalized.includes('sarah.chen') && sarah) {
+  if (normalized.includes('sarah.jones') && sarah) {
     return sarah;
   }
 

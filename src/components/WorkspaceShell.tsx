@@ -53,13 +53,17 @@ function getPrimaryNavItems(role?: string, userSub?: string): NavItem[] {
   ];
 }
 
-function getResourceNavItems(): NavItem[] {
-  return [
+function getResourceNavItems(role?: string): NavItem[] {
+  const items: NavItem[] = [
     { label: 'Permit Types', href: '/permit-types' },
     { label: 'Regulations', href: '/regulations' },
     { label: 'Tools', href: '/resources' },
-    { label: 'Help Center', href: '/help-center' },
   ];
+  if (role === 'staff' || role === 'admin') {
+    items.push({ label: 'API', href: '/api' });
+  }
+  items.push({ label: 'Help Center', href: '/help-center' });
+  return items;
 }
 
 function formatDisplayName(userSub?: string): string {
@@ -367,7 +371,7 @@ export function WorkspaceShell({ role, userSub, organizationLabel, onSignOut, ch
   }, [mobileMenuOpen]);
 
   const primaryItems = getPrimaryNavItems(role, userSub);
-  const resourceItems = getResourceNavItems();
+  const resourceItems = getResourceNavItems(role);
 
   const primaryMenuItems = primaryItems.map((item) => ({
     type: 'subtext' as const,

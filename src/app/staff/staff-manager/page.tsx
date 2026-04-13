@@ -25,7 +25,7 @@ export default function StaffManagerPage() {
   const currentProfile = resolveStaffProfile(user?.sub, user?.role);
 
   const regionalStaff = [
-    { displayName: 'Sarah Chen', title: 'Regional Manager', office: 'Regional Office', expertise: 'Regional Manager', email: 'sarah.chen@usbr.gov', projects: 45, availability: 'BUSY' as const },
+    { displayName: 'Sarah Jones', title: 'Regional Manager', office: 'Regional Office', expertise: 'Regional Manager', email: 'sarah.jones@usbr.gov', projects: 45, availability: 'BUSY' as const },
     { displayName: 'Karen Mitchell', title: 'Realty Specialist', office: 'Bend Field Office', expertise: 'Realty Specialist', email: 'k.mitchell@usbr.gov', projects: 8, availability: 'BUSY' as const },
     { displayName: 'Laura Bennett', title: 'Realty Specialist', office: 'Columbia-Cascades Area Office', expertise: 'Realty Specialist', email: 'l.bennett@usbr.gov', projects: 4, availability: 'AVAILABLE' as const },
     { displayName: 'Robert Hayes', title: 'Deputy Field Office Manager', office: 'Ephrata Field Office', expertise: 'Deputy Field Office Manager', email: 'r.hayes@usbr.gov', projects: 0, availability: 'AVAILABLE' as const },
