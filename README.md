@@ -159,14 +159,10 @@ WorkspaceShell — Portal layout shell with role-based sidebar navigation
 PortalPageScaffold — Standard portal page header (title, subtitle, eyebrow, actions)  
 OnboardingPageScaffold — Lighter scaffold for intake/screener flows  
 BPMNModeler — BPMN workflow editor (bpmn-js) for staff process authoring  
-
 WorkflowManager — React Flow–based workflow designer (/staff/workflow-manager):  
 interactive node graph with custom styled nodes (submission, router, staffReview, finance, moreInfo, approval), mini-map, controls, and an RJSF form panel for editing each node's JSON Schema and UI Schema in real time
-
 ApplicationDetailClient — Application/project detail with PIC-typed data display
-
 ThemeRouteScope — Switches theme automatically based on route (public → light, portal → dark)
-
 AnimatedCard / AnimatedTableRow — Framer Motion wrappers with reduced-motion support
 
 **Design Tokens**
