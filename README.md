@@ -178,3 +178,37 @@ Borders: none / sm (1px) / md (2px) / lg (4px)
 Live mode — Next.js frontend + Python backend API  
 Demo mode (NEXT_PUBLIC_APP_MODE=demo) — Static export with mock JWT auth and mock data; no backend required  
 
+## Getting Started
+
+**Prerequisites**  
+Node.js 18+  
+Python 3.9+  
+PostgreSQL 16 (or Docker)  
+
+Quick Start with Docker  
+Run: docker compose up  
+
+This starts Postgres, the FastAPI backend (port 8000), and the Next.js frontend (port 3000).
+
+**Local Development**  
+Install frontend dependencies (monorepo root): npm install  
+Build the USDS design system: npm run build:usds  
+Start the frontend dev server: npm run dev → http://localhost:3000  
+In a separate terminal, start the backend:  
+cd permit-portal/backend  
+pip install -r requirements.txt  
+uvicorn app.main:app --reload --port 8000  
+Environment Variables — Backend  
+DATABASE_URL (default: postgresql+psycopg://permit:localdevonly@localhost:5432/permit_pilot) — Database connection string  
+SECRET_KEY (default: change-me-in-production) — JWT signing secret  
+AUTH_MODE (default: jwt) — Auth mode: jwt or local  
+CORS_ORIGINS (default: http://localhost:3000) — Comma-separated allowed origins  
+SEED_PIC_DATA (default: false) — Seed PIC sample data on startup  
+PIC_SCHEMA_VALIDATE_RESPONSES (default: true) — Validate v1 API responses against PIC schema  
+LOGINGOV_CLIENT_ID — Login.gov OIDC client ID  
+LOGINGOV_PRIVATE_KEY — Login.gov private key (PEM)  
+LOGINGOV_REDIRECT_URI (default: http://localhost:3000/auth/callback) — Login.gov redirect URI  
+Environment Variables — Frontend   
+NEXT_PUBLIC_API_URL (default: http://localhost:8000) — Backend API base URL  
+NEXT_PUBLIC_APP_MODE — Set to "demo" for static demo mode  
+
