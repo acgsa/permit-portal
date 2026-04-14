@@ -1,13 +1,13 @@
 ## PERMIT.GOV
 A federal permitting portal built for the Council on Environmental Quality (CEQ). The portal application streamlines NEPA (National Environmental Policy Act) review by guiding applicants through project intake, automating agency routing, and giving federal staff workflow-driven task management — all backed by the PIC v1.2 data standard.
 
---
+
 
 ## Pages Preview
 
 **Live demo:** https://acgsa.github.io/permit-portal/
 
---
+
 
 ## Tech Stack
 
@@ -88,7 +88,7 @@ PIC seed data: Loaded from pic-standards/src/database/seed-v1.2.0.sql when SEED_
 Routing rules: 10 hard-coded rules seeded on first synopsis evaluation, mapping project categories (energy, transportation, telecom, etc.) and environmental impacts to federal agencies (DOI-BLM, USACE, DOT-FHWA, FCC, EPA, USFWS, ACHP).
 Default BPMN process: permit_process.bpmn seeded into process definitions on startup.
 
---
+ 
 
 ## API
 
@@ -121,7 +121,7 @@ POST /webhooks — Receive webhook events
 **PIC Compliance Middleware**
 When PIC_SCHEMA_VALIDATE_RESPONSES=true, a middleware layer validates all /api/v1/ responses against the PIC JSON Schema.
 
---
+ 
 
 ## UI Architecture
 
