@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
@@ -12,6 +12,9 @@ import { PortalPageScaffold } from '@/components/PortalPageScaffold';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { useAuth } from '@/contexts/AuthContext';
+import { getAggregateStats } from '@/lib/federalData';
+import dashboardData from '@/data/dashboard-projects.json';
+import ceData from '@/data/categorical-exclusions.json';
 import {
   Badge,
   Button,
@@ -258,6 +261,92 @@ function QuickAssignDropdown({ value, options, onSelect, widthPx = 132 }: QuickA
   );
 }
 
+/* ── Agency bar chart with USDS-style hover tooltip ─────────── */
+function AgencyBarChart({ items, max }: { items: { code: string; name: string; count: number }[]; max: number }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [hovered, setHovered] = useState<{ index: number; x: number; y: number } | null>(null);
+
+  const updatePosition = useCallback((e: React.MouseEvent, index: number) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    setHovered({ index, x: e.clientX - rect.left, y: e.clientY - rect.top });
+  }, []);
+
+  const handleMouseEnter = useCallback(
+    (e: React.MouseEvent, index: number) => updatePosition(e, index),
+    [updatePosition],
+  );
+
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent, index: number) => {
+      if (hovered?.index === index) updatePosition(e, index);
+    },
+    [hovered?.index, updatePosition],
+  );
+
+  const handleMouseLeave = useCallback(() => setHovered(null), []);
+
+  return (
+    <Card className="h-full !bg-[var(--steel-950)]">
+      <div ref={cardRef} className="relative flex h-full flex-col">
+        <div className="space-y-[var(--space-2xs)]">
+          <div className="chart-card-title" style={{ marginBottom: 0 }}>Categorical Exclusions by Agency</div>
+          <p className="m-0 type-body-sm text-[var(--color-text-body)]">Top agencies by categorical exclusion count</p>
+        </div>
+        <div aria-hidden="true" style={{ height: 'var(--space-xl)' }} />
+        <div className="flex-1 min-h-[180px]" role="img" aria-label="Permits by agency">
+          <div className="h-full w-full flex items-end gap-[var(--space-sm)]">
+            {items.map((item, i) => {
+              const barPercent = Math.max((item.count / max) * 100, 4);
+              return (
+                <div
+                  key={item.code}
+                  className="flex h-full min-w-0 flex-1 flex-col cursor-pointer"
+                  onMouseEnter={(e) => handleMouseEnter(e, i)}
+                  onMouseMove={(e) => handleMouseMove(e, i)}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  <div className="flex-1 flex items-end pb-[var(--space-md)]">
+                    <div
+                      className="w-full rounded-[var(--radius-sm)] transition-colors duration-150"
+                      style={{
+                        height: `${barPercent}%`,
+                        minHeight: '6px',
+                        background: hovered?.index === i ? 'var(--blue-300)' : 'var(--chart-bar)',
+                      }}
+                    />
+                  </div>
+                  <div style={{ paddingTop: 'var(--space-md)' }}>
+                    <p className="m-0 type-body-strong-sm text-center text-[var(--color-text)]">
+                      {item.count.toLocaleString()}
+                    </p>
+                    <p className="m-0 mt-[var(--space-2xs)] type-body-xs text-center text-[var(--color-text-body)]">
+                      {item.code}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        {hovered !== null && (
+          <div
+            className="chart-kpi-card"
+            style={{ left: hovered.x + 12, top: hovered.y + 12 }}
+          >
+            <div className="chart-kpi-card-title">{items[hovered.index].name}</div>
+            <div className="chart-kpi-card-row">
+              <span className="chart-kpi-card-bullet" style={{ background: 'var(--chart-bar)' }} />
+              <span className="chart-kpi-card-label">Exclusions</span>
+              <span className="chart-kpi-card-value">{items[hovered.index].count.toLocaleString()}</span>
+            </div>
+          </div>
+        )}
+      </div>
+    </Card>
+  );
+}
+
 export default function DashboardPage() {
   const { user, token, logout } = useAuth();
   const router = useRouter();
@@ -283,37 +372,73 @@ export default function DashboardPage() {
 
   /* ── Public / logged-out view ───────────────────────────── */
   if (!token) {
-    /* ── Public-facing national summary data ───────────────── */
+    /* ── Derive dashboard data from project JSON + CE data ──── */
+    const agg = getAggregateStats();
+
     const PUBLIC_KPI = [
-      { label: 'Total Federal Permits Issued', value: '1.24M' },
-      { label: 'Active Reviews', value: '42,318' },
-      { label: 'Agencies on Platform', value: '14' },
-      { label: 'Avg. Processing Time', value: '127 days' },
+      { label: 'Total Projects Tracked', value: agg.totalProjects.toLocaleString() },
+      { label: 'Categorical Exclusions', value: agg.totalCEs.toLocaleString() },
+      { label: 'Agency Units', value: String(agg.totalAgencyUnits) },
+      { label: 'Sectors Covered', value: String(agg.dashboardSectors) },
     ];
+
+    /* Top sectors for donut chart — pull from real JSON, group small ones */
+    const sectorEntries = Object.entries(
+      dashboardData.sectors as Record<string, { count: number }>
+    ).sort((a, b) => b[1].count - a[1].count);
+
+    const TOP_N = 5;
+    const donutColors = [
+      'var(--blue-400)', 'var(--green-400)', 'var(--gold-400)',
+      'var(--violet-400)', 'var(--turquoise-400)', 'var(--orange-400)',
+    ];
+    const topSectors = sectorEntries.slice(0, TOP_N);
+    const otherCount = sectorEntries.slice(TOP_N).reduce((sum, [, s]) => sum + s.count, 0);
 
     const PUBLIC_PERMITS_BY_SECTOR = [
-      { label: 'Energy & Transmission', value: 48200, colorVar: 'var(--chart-1)' },
-      { label: 'Transportation', value: 31400, colorVar: 'var(--chart-2)' },
-      { label: 'Water & Infrastructure', value: 22100, colorVar: 'var(--chart-3)' },
-      { label: 'Mining & Minerals', value: 15600, colorVar: 'var(--chart-4)' },
+      ...topSectors.map(([name, s], i) => ({
+        label: name,
+        value: s.count,
+        colorVar: donutColors[i],
+      })),
+      ...(otherCount > 0
+        ? [{ label: 'Other', value: otherCount, colorVar: donutColors[TOP_N] }]
+        : []),
     ];
+
+    /* Bar chart — top agencies by permit count (from CE data) */
+    const agencyEntries = Object.entries(
+      ceData.agencies as Record<string, { longName: string; count: number }>
+    ).sort((a, b) => b[1].count - a[1].count);
+    const PUBLIC_AGENCIES_BAR = agencyEntries.slice(0, 6).map(([code, a]) => ({
+      code,
+      name: a.longName,
+      count: a.count,
+    }));
+    const pubBarMax = Math.max(...PUBLIC_AGENCIES_BAR.map((d) => d.count));
+
+    /* Status pipeline — map real project statuses to pipeline categories */
+    const statusCounts: Record<string, number> = {};
+    for (const [, sector] of Object.entries(
+      dashboardData.sectors as Record<string, { count: number; examples: { status: string }[] }>
+    )) {
+      for (const ex of sector.examples) {
+        statusCounts[ex.status] = (statusCounts[ex.status] ?? 0) + 1;
+      }
+    }
+    const totalStatusExamples = Object.values(statusCounts).reduce((a, b) => a + b, 0);
+    const approved = (statusCounts['Complete'] ?? 0) + (statusCounts['Class of Action Changed'] ?? 0);
+    const inReview = statusCounts['In Progress'] ?? 0;
+    const awaitingInfo = (statusCounts['Planned'] ?? 0) + (statusCounts['Paused'] ?? 0);
+    const rejected = statusCounts['Cancelled'] ?? 0;
+    const pct = (n: number) => Math.round((n / totalStatusExamples) * 100);
 
     const PUBLIC_COMPLETION = [
-      { label: 'Completed', percent: 41, colorVar: 'var(--green-500)', hoverColorVar: 'var(--green-600)', texture: 'stripes' as const },
-      { label: 'In Review', percent: 33, colorVar: 'var(--blue-400)', hoverColorVar: 'var(--blue-500)', texture: 'stripes-alt' as const },
-      { label: 'Awaiting Submission', percent: 16, colorVar: 'var(--gold-400)', hoverColorVar: 'var(--gold-500)', texture: 'dots' as const },
-      { label: 'On Hold', percent: 10, colorVar: 'var(--steel-300)', hoverColorVar: 'var(--steel-400)', texture: 'crosshatch' as const },
+      { label: 'Approved', percent: pct(approved), colorVar: 'var(--green-500)', hoverColorVar: 'var(--green-600)', texture: 'stripes' as const },
+      { label: 'In Review', percent: pct(inReview), colorVar: 'var(--blue-400)', hoverColorVar: 'var(--blue-500)', texture: 'stripes-alt' as const },
+      { label: 'Awaiting Info', percent: pct(awaitingInfo), colorVar: 'var(--gold-400)', hoverColorVar: 'var(--gold-500)', texture: 'dots' as const },
+      { label: 'Rejected', percent: pct(rejected), colorVar: 'var(--red-400)', hoverColorVar: 'var(--red-500)', texture: 'crosshatch' as const },
     ];
-
-    const PUBLIC_REVIEWS_BY_YEAR = [
-      { year: '2020', reviews: 8420 },
-      { year: '2021', reviews: 9100 },
-      { year: '2022', reviews: 11340 },
-      { year: '2023', reviews: 14200 },
-      { year: '2024', reviews: 18750 },
-      { year: '2025', reviews: 22400 },
-    ];
-    const pubBarMax = Math.max(...PUBLIC_REVIEWS_BY_YEAR.map((d) => d.reviews));
 
     return (
       <div style={{ background: 'var(--color-bg)', minHeight: '100vh' }}>
@@ -321,7 +446,7 @@ export default function DashboardPage() {
 
         {/* Public dashboard content */}
         <section
-          className="flex justify-center px-2 sm:px-6 lg:px-8"
+          className="flex justify-center px-6 sm:px-8 lg:px-10"
           style={{ paddingTop: 'var(--space-2xl)', paddingBottom: 'var(--space-3xl)' }}
         >
           <div className="w-full max-w-5xl flex flex-col gap-[var(--space-md)]">
@@ -338,7 +463,7 @@ export default function DashboardPage() {
             <StaggerContainer className="grid items-stretch gap-[var(--space-md)] grid-cols-2 lg:grid-cols-4">
               {PUBLIC_KPI.map((kpi, i) => (
                 <AnimatedCard key={kpi.label} delay={i * 0.06}>
-                  <Card className="h-full bg-[var(--color-bg-subtle)]">
+                  <Card className="h-full !bg-[var(--steel-950)]">
                     <div className="flex flex-col gap-[var(--space-sm)]">
                       <p className="chart-card-title" style={{ marginBottom: 0 }}>{kpi.label}</p>
                       <p className="type-heading-h2 text-[var(--color-text)]">{kpi.value}</p>
@@ -348,43 +473,10 @@ export default function DashboardPage() {
               ))}
             </StaggerContainer>
 
-            {/* Reviews growth bar chart + Permits by Sector donut */}
-            <StaggerContainer className="grid items-stretch gap-[var(--space-md)] pr-[var(--space-md)] md:pr-0 md:grid-cols-2">
+            {/* Permits by Agency bar chart + Permits by Sector donut */}
+            <StaggerContainer className="grid items-stretch gap-[var(--space-md)] md:grid-cols-2">
               <AnimatedCard className="h-full">
-                <Card className="h-full bg-[var(--color-bg-subtle)]">
-                  <div className="flex h-full flex-col">
-                    <div className="space-y-[var(--space-2xs)]">
-                      <div className="chart-card-title" style={{ marginBottom: 0 }}>Environmental Reviews Completed</div>
-                      <p className="m-0 type-body-sm text-[var(--color-text-body)]">National total by fiscal year</p>
-                    </div>
-                    <div aria-hidden="true" style={{ height: 'var(--space-xl)' }} />
-                    <div className="flex-1 min-h-[180px]" role="img" aria-label="Environmental reviews completed by year">
-                      <div className="h-full w-full flex items-end gap-[var(--space-sm)]">
-                        {PUBLIC_REVIEWS_BY_YEAR.map((item) => {
-                          const barPercent = Math.max((item.reviews / pubBarMax) * 100, 4);
-                          return (
-                            <div key={item.year} className="flex h-full min-w-0 flex-1 flex-col">
-                              <div className="flex-1 flex items-end pb-[var(--space-md)]">
-                                <div
-                                  className="w-full rounded-[var(--radius-sm)] bg-[var(--chart-bar)]"
-                                  style={{ height: `${barPercent}%`, minHeight: '6px' }}
-                                />
-                              </div>
-                              <div style={{ paddingTop: 'var(--space-md)' }}>
-                                <p className="m-0 type-body-strong-sm text-center text-[var(--color-text)]">
-                                  {item.reviews.toLocaleString()}
-                                </p>
-                                <p className="m-0 mt-[var(--space-2xs)] type-body-xs text-center text-[var(--color-text-body)]">
-                                  {item.year}
-                                </p>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                </Card>
+                <AgencyBarChart items={PUBLIC_AGENCIES_BAR} max={pubBarMax} />
               </AnimatedCard>
 
               <AnimatedCard className="dashboard-bureau-card h-full" delay={0.08}>
@@ -395,11 +487,11 @@ export default function DashboardPage() {
             {/* Completion tracker */}
             <AnimatedCard>
               <CompletionTracker
-                title="National Review Pipeline"
+                title="Permit Review Pipeline"
                 actionLabel=""
-                description="Distribution of active federal environmental reviews by status"
+                description="Distribution of active permit applications by status"
                 segments={PUBLIC_COMPLETION}
-                totalApplications={42318}
+                totalApplications={agg.totalProjects}
               />
             </AnimatedCard>
           </div>

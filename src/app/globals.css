@@ -1049,29 +1049,30 @@ a:hover {
   margin: 0;
 }
 
-.federal-admin-dashboard .dashboard-bureau-card {
+/* Public dashboard: donut card fills available height to match sibling */
+.dashboard-bureau-card {
   height: 100%;
 }
 
-.current-status-progress .progress-fill {
-  background: var(--blue-500);
-}
-
-.federal-admin-dashboard .dashboard-bureau-card .chart-card {
+.dashboard-bureau-card .chart-card {
   height: 100%;
   display: flex;
   flex-direction: column;
 }
 
-.federal-admin-dashboard .dashboard-bureau-card .chart-card-content {
+.dashboard-bureau-card .chart-card-content {
   flex: 1;
 }
 
-.federal-admin-dashboard .dashboard-bureau-card .chart-donut-wrap {
+.dashboard-bureau-card .chart-donut-wrap {
   align-items: center;
   justify-content: center;
   gap: var(--space-md);
   flex-wrap: wrap;
+}
+
+.current-status-progress .progress-fill {
+  background: var(--blue-500);
 }
 
 .federal-admin-dashboard .dashboard-bureau-card .chart-donut {
