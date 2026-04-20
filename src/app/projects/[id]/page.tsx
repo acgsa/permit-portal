@@ -7,9 +7,9 @@ type Props = {
 
 export function generateStaticParams(): Array<{ id: string }> {
   return [
-    { id: 'elk-basin-pipeline' },
-    { id: 'copper-ridge-road' },
-    { id: 'greenfield-highway' },
+    { id: '1' },
+    { id: '2' },
+    { id: '3' },
   ];
 }
 

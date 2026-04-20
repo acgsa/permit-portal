@@ -7,6 +7,7 @@ import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { getToken, getTokenClaims } from '@/lib/auth';
+import { IS_DEMO_MODE } from '@/lib/appMode';
 
 function getPostLoginPath(returnTo: string | null): string {
   if (returnTo && returnTo.startsWith('/')) {
@@ -36,6 +37,7 @@ function LoginPageContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { login, loginWithLoginGov } = useAuth();
+  const showLoginGov = !IS_DEMO_MODE;
   const router = useRouter();
   const searchParams = useSearchParams();
   const returnTo = searchParams.get('return_to');
@@ -83,28 +85,32 @@ function LoginPageContent() {
                 </div>
               )}
 
-              {/* Primary: login.gov */}
-              <PillButton
-                type="button"
-                variant="primary"
-                size="lg"
-                className="w-full"
-                onClick={loginWithLoginGov}
-              >
-                Sign in with login.gov
-              </PillButton>
+              {showLoginGov && (
+                <>
+                  {/* Primary: login.gov */}
+                  <PillButton
+                    type="button"
+                    variant="primary"
+                    size="lg"
+                    className="w-full"
+                    onClick={loginWithLoginGov}
+                  >
+                    Sign in with login.gov
+                  </PillButton>
 
-              {/* Divider */}
-              <div className="flex items-center gap-[var(--space-md)]">
-                <div className="flex-1" style={{ height: 1, background: 'var(--steel-700)' }} />
-                <span className="type-body-xs" style={{ color: 'var(--color-text-body)' }}>or</span>
-                <div className="flex-1" style={{ height: 1, background: 'var(--steel-700)' }} />
-              </div>
+                  {/* Divider */}
+                  <div className="flex items-center gap-[var(--space-md)]">
+                    <div className="flex-1" style={{ height: 1, background: 'var(--steel-700)' }} />
+                    <span className="type-body-xs" style={{ color: 'var(--color-text-body)' }}>or</span>
+                    <div className="flex-1" style={{ height: 1, background: 'var(--steel-700)' }} />
+                  </div>
+                </>
+              )}
 
               {/* Secondary: demo login */}
               <PillButton
                 type="button"
-                variant="outline"
+                variant={showLoginGov ? 'outline' : 'primary'}
                 size="lg"
                 className="w-full"
                 onClick={handleDemoLogin}
