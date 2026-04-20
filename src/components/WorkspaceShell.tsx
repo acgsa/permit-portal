@@ -25,6 +25,23 @@ type NavItem = {
 
 const PORTAL_THEME_STORAGE_KEY = 'permit.portal.theme';
 
+type SidebarAvatarTone = 'green' | 'gold' | 'blue-400' | 'turquoise';
+
+function getSidebarAvatarTone(role?: string, userSub?: string): SidebarAvatarTone {
+  if (role === 'admin') return 'green';
+
+  if (role === 'staff') {
+    const profile = resolveStaffProfile(userSub, role);
+    return profile.title.toLowerCase().includes('regional manager') ? 'gold' : 'turquoise';
+  }
+
+  return 'blue-400';
+}
+
+function getUsdsAvatarColor(tone: SidebarAvatarTone): 'green' | 'gold' | 'blue-400' {
+  return tone === 'turquoise' ? 'blue-400' : tone;
+}
+
 function getPrimaryNavItems(role?: string, userSub?: string): NavItem[] {
   if (role === 'admin') {
     return [
@@ -163,9 +180,9 @@ interface AvatarMenuItem {
 }
 
 interface CustomSidebarProps {
-  role?: string;
   displayName: string;
   initials: string;
+  avatarTone: SidebarAvatarTone;
   organizationLabel?: string;
   onSignOut: () => void;
   primaryMenuItems: SidebarMenuItem[];
@@ -173,9 +190,9 @@ interface CustomSidebarProps {
 }
 
 function CustomSidebarInner({
-  role,
   displayName,
   initials,
+  avatarTone,
   organizationLabel,
   onSignOut,
   primaryMenuItems,
@@ -225,7 +242,7 @@ function CustomSidebarInner({
 
   const primaryActiveIndex = primaryMenuItems.findIndex((item) => matchesNavHref(item.href));
   const resourceActiveIndex = resourceMenuItems.findIndex((item) => matchesNavHref(item.href));
-  const avatarColor = role === 'admin' ? 'green' : role === 'staff' ? 'gold' : 'blue-400';
+  const avatarColor = getUsdsAvatarColor(avatarTone);
   const showCollapsedIconMenu = !isOpen;
 
   const toggleTheme = () => {
@@ -347,7 +364,7 @@ function CustomSidebarInner({
             }
             setUserMenuOpen(!userMenuOpen);
           }}
-          className="relative"
+          className={`relative${avatarTone === 'turquoise' ? ' avatar-tone-turquoise' : ''}`}
           style={{ width: 40, height: 40, minWidth: 40, minHeight: 40, padding: 0, border: 'none', background: 'transparent', cursor: 'pointer' }}
         >
           <Avatar initials={initials} size="md" shape="square" color={avatarColor} />
@@ -386,6 +403,8 @@ export function WorkspaceShell({ role, userSub, organizationLabel, onSignOut, ch
   const displayName = identity.displayName;
   const resolvedOrganizationLabel = identity.organizationLabel;
   const initials = getInitials(displayName);
+  const avatarTone = getSidebarAvatarTone(role, userSub);
+  const avatarColor = getUsdsAvatarColor(avatarTone);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Close mobile menu on route change
@@ -463,8 +482,8 @@ export function WorkspaceShell({ role, userSub, organizationLabel, onSignOut, ch
           )}
         </button>
         <FPPLogo size={32} />
-        <div className="w-10 h-10 flex items-center justify-center">
-          <Avatar initials={initials} size="sm" shape="square" color={role === 'admin' ? 'green' : role === 'staff' ? 'gold' : 'blue-400'} />
+        <div className={`w-10 h-10 flex items-center justify-center${avatarTone === 'turquoise' ? ' avatar-tone-turquoise' : ''}`}>
+          <Avatar initials={initials} size="sm" shape="square" color={avatarColor} />
         </div>
       </header>
 
@@ -517,8 +536,8 @@ export function WorkspaceShell({ role, userSub, organizationLabel, onSignOut, ch
               </div>
             </div>
 
-            <div className="px-4 py-3 border-t border-[var(--color-border)] flex items-center gap-[var(--space-xs)]">
-              <Avatar initials={initials} size="md" shape="square" color={role === 'admin' ? 'green' : role === 'staff' ? 'gold' : 'blue-400'} />
+            <div className={`px-4 py-3 border-t border-[var(--color-border)] flex items-center gap-[var(--space-xs)]${avatarTone === 'turquoise' ? ' avatar-tone-turquoise' : ''}`}>
+              <Avatar initials={initials} size="md" shape="square" color={avatarColor} />
               <div className="min-w-0 flex-1">
                 <div className="sidebar-nav-user-name truncate">{displayName}</div>
                 {resolvedOrganizationLabel && <div className="sidebar-nav-user-org truncate">{resolvedOrganizationLabel}</div>}
@@ -547,9 +566,9 @@ export function WorkspaceShell({ role, userSub, organizationLabel, onSignOut, ch
         {/* Desktop sidebar - hidden on mobile */}
         <div className="hidden md:flex h-full shrink-0 overflow-visible">
           <CustomSidebar
-            role={role}
             displayName={displayName}
             initials={initials}
+            avatarTone={avatarTone}
             organizationLabel={resolvedOrganizationLabel}
             onSignOut={onSignOut}
             primaryMenuItems={primaryMenuItems}

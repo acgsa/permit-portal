@@ -1047,6 +1047,15 @@ a:hover {
   display: none;
 }
 
+.avatar-tone-turquoise .avatar.avatar-blue-400 {
+  background: var(--turquoise-600) !important;
+  color: #fff !important;
+}
+
+.avatar-tone-turquoise .avatar.avatar-blue-400:hover {
+  background: var(--turquoise-700) !important;
+}
+
 .sidebar-nav-panel-closed .sidebar-nav-menus-icons-only .sidebar-nav-heading {
   display: none;
 }

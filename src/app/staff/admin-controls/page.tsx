@@ -6,7 +6,12 @@ import { WorkspaceShell } from '@/components/WorkspaceShell';
 import { PortalPageScaffold } from '@/components/PortalPageScaffold';
 import { useAuth } from '@/contexts/AuthContext';
 import { STAFF_DEMO_USERS, resolveStaffProfile } from '@/lib/mockFederalPortalData';
-import { Badge, Card, Table, TableHeader } from 'usds';
+import { Card, Table, TableHeader } from 'usds';
+
+type RoleCellValue = {
+  label: string;
+  tone: 'green' | 'gold' | 'turquoise';
+};
 
 export default function AdminControlsPage() {
   const { user, token, logout } = useAuth();
@@ -63,7 +68,7 @@ export default function AdminControlsPage() {
             <div className="flex flex-col gap-[var(--space-xs)]">
               <p className="type-body-sm text-[var(--color-text-body)]">Regional Managers</p>
               <p className="type-heading-h4 text-[var(--color-text)]">
-                {manageableUsers.filter((profile) => profile.role === 'staff').length}
+                {manageableUsers.filter((profile) => profile.title === 'Regional Manager').length}
               </p>
             </div>
           </Card>
@@ -79,11 +84,25 @@ export default function AdminControlsPage() {
                 {
                   key: 'role',
                   header: 'Role',
-                  render: (value) => (
-                    <Badge color={value === 'admin' ? 'green' : 'gold'} size="sm">
-                      {value === 'admin' ? 'Super Admin' : 'Regional Manager'}
-                    </Badge>
-                  ),
+                  render: (value: unknown) => {
+                    const roleValue = value as RoleCellValue;
+                    const roleDotColor =
+                      roleValue?.tone === 'green'
+                        ? 'var(--color-success)'
+                        : roleValue?.tone === 'gold'
+                          ? 'var(--gold-500)'
+                          : 'var(--turquoise-600)';
+                    return (
+                      <span className="inline-flex items-center gap-[var(--space-xs)] type-body-sm text-[var(--color-text)]">
+                        <span
+                          aria-hidden="true"
+                          className="inline-block h-2 w-2 rounded-full"
+                          style={{ backgroundColor: roleDotColor }}
+                        />
+                        {roleValue?.label ?? ''}
+                      </span>
+                    );
+                  },
                 },
                 { key: 'agency', header: 'Agency' },
                 {
@@ -94,10 +113,18 @@ export default function AdminControlsPage() {
               data={manageableUsers.map((profile) => ({
                 displayName: profile.displayName,
                 email: profile.email,
-                role: profile.role,
+                role: {
+                  label: profile.role === 'admin' ? 'Super Admin' : profile.title,
+                  tone:
+                    profile.role === 'admin'
+                      ? 'green'
+                      : profile.title.toLowerCase().includes('regional manager')
+                        ? 'gold'
+                        : 'turquoise',
+                },
                 agency: profile.agency,
                 accessScope:
-                  profile.role === 'admin' ? 'All agencies and regions' : `${profile.region} region only`,
+                  profile.role === 'admin' ? 'All agencies and regions' : `${profile.region} region`,
               }))}
             />
           </div>
