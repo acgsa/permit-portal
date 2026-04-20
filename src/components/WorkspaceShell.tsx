@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Menu, DrawerButton, Button, Avatar } from 'usds';
-import { Building2, CircleHelp, FileText, Home, Landmark, ListTodo, LogOut, MessageSquare, Moon, Sun, Wrench } from 'lucide-react';
+import { Building2, CircleHelp, FileText, Home, Landmark, ListTodo, LogOut, MessageSquare, Moon, Network, Sun, Wrench } from 'lucide-react';
 import { GearIcon, MenuIcon, XMarkIcon } from './Icons';
 import ceqSeal from '@/logo/US-CouncilOnEnvironmentalQuality-Seal.svg';
 import { resolveStaffProfile } from '@/lib/mockFederalPortalData';
@@ -29,7 +29,7 @@ function getPrimaryNavItems(role?: string, userSub?: string): NavItem[] {
   if (role === 'admin') {
     return [
       { label: 'Dashboard', href: '/dashboard', icon: <Home size={16} /> },
-      { label: 'Workflow Manager', href: '/staff/workflow-manager', icon: <Wrench size={16} /> },
+      { label: 'Workflows', href: '/staff/workflow-manager', icon: <Network size={16} /> },
       { label: 'Admin Controls', href: '/staff/admin-controls', icon: <GearIcon size={16} /> },
     ];
   }
@@ -39,7 +39,7 @@ function getPrimaryNavItems(role?: string, userSub?: string): NavItem[] {
     const isRegionalManager = profile.title.toLowerCase().includes('regional manager');
     const staffItems: NavItem[] = [
       { label: 'Dashboard', href: '/dashboard', icon: <Home size={16} /> },
-      { label: 'Workflow Manager', href: '/staff/workflow-manager', icon: <Wrench size={16} /> },
+      { label: 'Workflows', href: '/staff/workflow-manager', icon: <Network size={16} /> },
       ...(isRegionalManager ? [{ label: 'Staff Manager', href: '/staff/staff-manager', icon: <Building2 size={16} /> }] : []),
       { label: 'My Tasks', href: '/my-tasks', icon: <ListTodo size={16} /> },
       { label: 'Messages', href: '/messages', icon: <MessageSquare size={16} /> },
@@ -226,8 +226,7 @@ function CustomSidebarInner({
   const primaryActiveIndex = primaryMenuItems.findIndex((item) => matchesNavHref(item.href));
   const resourceActiveIndex = resourceMenuItems.findIndex((item) => matchesNavHref(item.href));
   const avatarColor = role === 'admin' ? 'green' : role === 'staff' ? 'gold' : 'blue-400';
-  const isApplicantPortal = role !== 'staff' && role !== 'admin';
-  const showCollapsedIconMenu = !isOpen && isApplicantPortal;
+  const showCollapsedIconMenu = !isOpen;
 
   const toggleTheme = () => {
     const htmlElement = document.documentElement;
