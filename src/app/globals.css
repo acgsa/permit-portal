@@ -1039,6 +1039,10 @@ a:hover {
   background-color: var(--steel-950) !important;
 }
 
+.sidebar-nav-user-menu .menu-item-icon > svg:last-child {
+  display: none;
+}
+
 .federal-admin-dashboard .card,
 .federal-admin-dashboard .chart-card,
 .federal-admin-dashboard .chart-kpi-card {

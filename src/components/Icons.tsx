@@ -670,6 +670,35 @@ export const HelpIconFilled: React.FC<IconProps> = ({
 );
 
 /**
+ * Gear Icon
+ * Displays a settings gear icon.
+ */
+export const GearIcon: React.FC<IconProps> = ({
+  size = 24,
+  className = '',
+  ...props
+}) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+    {...props}
+  >
+    <path
+      d="M10.3254 4.31797C10.7337 2.56092 13.2663 2.56093 13.6746 4.31797C13.9386 5.45475 15.2384 5.99253 16.2458 5.40083C17.8023 4.48635 19.5942 6.27823 18.6797 7.83474C18.088 8.84218 18.6258 10.142 19.7625 10.406C21.5196 10.8143 21.5196 13.3469 19.7625 13.7552C18.6258 14.0192 18.088 15.319 18.6797 16.3264C19.5942 17.8829 17.8023 19.6748 16.2458 18.7603C15.2384 18.1686 13.9386 18.7064 13.6746 19.8432C13.2663 21.6002 10.7337 21.6002 10.3254 19.8432C10.0614 18.7064 8.76159 18.1686 7.75416 18.7603C6.19765 19.6748 4.40577 17.8829 5.32025 16.3264C5.91195 15.319 5.37417 14.0192 4.23739 13.7552C2.48035 13.3469 2.48034 10.8143 4.23739 10.406C5.37417 10.142 5.91195 8.84218 5.32025 7.83474C4.40577 6.27823 6.19765 4.48635 7.75416 5.40083C8.7616 5.99253 10.0614 5.45475 10.3254 4.31797Z"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <circle cx="12" cy="12.0806" r="3" stroke="currentColor" strokeWidth="1.5" />
+  </svg>
+);
+
+/**
  * Icon component map for easy access by name
  * Usage: <Icon name="download" />
  */

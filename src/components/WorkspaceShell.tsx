@@ -4,7 +4,8 @@ import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Menu, DrawerButton, Button, Avatar } from 'usds';
-import { MenuIcon, XMarkIcon } from './Icons';
+import { LogOut, Moon, Sun } from 'lucide-react';
+import { GearIcon, MenuIcon, XMarkIcon } from './Icons';
 import ceqSeal from '@/logo/US-CouncilOnEnvironmentalQuality-Seal.svg';
 import { resolveStaffProfile } from '@/lib/mockFederalPortalData';
 
@@ -126,11 +127,18 @@ const FPPLogo = ({ size = 40 }: { size?: number }) => (
   <Image src={ceqSeal} alt="Council on Environmental Quality seal" width={size} height={size} className="object-contain" priority />
 );
 
-interface MenuItem {
+interface SidebarMenuItem {
   type: 'subtext';
   label: string;
   subtext: string;
   href: string;
+  onClick?: () => void;
+}
+
+interface AvatarMenuItem {
+  type: 'icon';
+  label: string;
+  icon: React.ReactNode;
   onClick?: () => void;
 }
 
@@ -140,8 +148,8 @@ interface CustomSidebarProps {
   initials: string;
   organizationLabel?: string;
   onSignOut: () => void;
-  primaryMenuItems: MenuItem[];
-  resourceMenuItems: MenuItem[];
+  primaryMenuItems: SidebarMenuItem[];
+  resourceMenuItems: SidebarMenuItem[];
 }
 
 function CustomSidebarInner({
@@ -166,6 +174,9 @@ function CustomSidebarInner({
   });
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [menuPos, setMenuPos] = useState<{ bottom: number; left: number }>({ bottom: 60, left: 8 });
+  const USER_MENU_RIGHT_INSET = 12;
+  const userMenuWidth = isOpen ? 184 : 220;
+  const sidebarRef = useRef<HTMLElement>(null);
   const avatarRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
@@ -204,32 +215,29 @@ function CustomSidebarInner({
     setTheme(newTheme);
   };
 
-  const userMenuItems: MenuItem[] = [
+  const userMenuItems: AvatarMenuItem[] = [
     {
-      type: 'subtext',
+      type: 'icon',
       label: 'Settings',
-      subtext: '',
-      href: '/settings',
+      icon: <GearIcon size={16} />,
       onClick: () => {
         setUserMenuOpen(false);
         router.push('/settings');
       },
     },
     {
-      type: 'subtext',
+      type: 'icon',
       label: `Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`,
-      subtext: '',
-      href: '#',
+      icon: theme === 'light' ? <Moon size={16} /> : <Sun size={16} />,
       onClick: () => {
         toggleTheme();
         setUserMenuOpen(false);
       },
     },
     {
-      type: 'subtext',
-      label: 'Sign Out',
-      subtext: '',
-      href: '#',
+      type: 'icon',
+      label: 'Log Out',
+      icon: <LogOut size={16} />,
       onClick: () => {
         setUserMenuOpen(false);
         onSignOut();
@@ -238,7 +246,7 @@ function CustomSidebarInner({
   ];
 
   return (
-    <aside className={`sidebar-nav-panel${isOpen ? "" : " sidebar-nav-panel-closed"}`} aria-label="Sidebar navigation panel" style={{ width: isOpen ? 200 : 66, border: 'none', borderRadius: '0', display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }} suppressHydrationWarning>
+    <aside ref={sidebarRef} className={`sidebar-nav-panel${isOpen ? "" : " sidebar-nav-panel-closed"}`} aria-label="Sidebar navigation panel" style={{ width: isOpen ? 200 : 66, border: 'none', borderRadius: '0', display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }} suppressHydrationWarning>
       <div className="sidebar-nav-panel-top">
         {isOpen && (
           <>
@@ -304,9 +312,14 @@ function CustomSidebarInner({
           onClick={() => {
             if (!userMenuOpen && avatarRef.current) {
               const rect = avatarRef.current.getBoundingClientRect();
+              const panelRect = sidebarRef.current?.getBoundingClientRect();
+              const alignedLeft =
+                isOpen && panelRect
+                  ? Math.max(8, panelRect.right - userMenuWidth - USER_MENU_RIGHT_INSET)
+                  : rect.left;
               setMenuPos({
                 bottom: window.innerHeight - rect.top + 8,
-                left: rect.left,
+                left: alignedLeft,
               });
             }
             setUserMenuOpen(!userMenuOpen);
@@ -324,12 +337,13 @@ function CustomSidebarInner({
         {userMenuOpen && (
           <div
             ref={menuRef}
+            className="sidebar-nav-user-menu"
             style={{
               position: 'fixed',
               bottom: menuPos.bottom,
               left: menuPos.left,
               zIndex: 9999,
-              minWidth: '220px',
+              width: `${userMenuWidth}px`,
             }}
           >
             <Menu size="sm" items={userMenuItems} />
