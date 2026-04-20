@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Menu, DrawerButton, Button, Avatar } from 'usds';
-import { LogOut, Moon, Sun } from 'lucide-react';
+import { Building2, CircleHelp, FileText, Home, Landmark, ListTodo, LogOut, MessageSquare, Moon, Sun, Wrench } from 'lucide-react';
 import { GearIcon, MenuIcon, XMarkIcon } from './Icons';
 import ceqSeal from '@/logo/US-CouncilOnEnvironmentalQuality-Seal.svg';
 import { resolveStaffProfile } from '@/lib/mockFederalPortalData';
@@ -20,6 +20,7 @@ type WorkspaceShellProps = {
 type NavItem = {
   label: string;
   href: string;
+  icon?: React.ReactNode;
 };
 
 const PORTAL_THEME_STORAGE_KEY = 'permit.portal.theme';
@@ -27,9 +28,9 @@ const PORTAL_THEME_STORAGE_KEY = 'permit.portal.theme';
 function getPrimaryNavItems(role?: string, userSub?: string): NavItem[] {
   if (role === 'admin') {
     return [
-      { label: 'Dashboard', href: '/dashboard' },
-      { label: 'Workflow Manager', href: '/staff/workflow-manager' },
-      { label: 'Admin Controls', href: '/staff/admin-controls' },
+      { label: 'Dashboard', href: '/dashboard', icon: <Home size={16} /> },
+      { label: 'Workflow Manager', href: '/staff/workflow-manager', icon: <Wrench size={16} /> },
+      { label: 'Admin Controls', href: '/staff/admin-controls', icon: <GearIcon size={16} /> },
     ];
   }
 
@@ -37,33 +38,44 @@ function getPrimaryNavItems(role?: string, userSub?: string): NavItem[] {
     const profile = resolveStaffProfile(userSub, role);
     const isRegionalManager = profile.title.toLowerCase().includes('regional manager');
     const staffItems: NavItem[] = [
-      { label: 'Dashboard', href: '/dashboard' },
-      { label: 'Workflow Manager', href: '/staff/workflow-manager' },
-      ...(isRegionalManager ? [{ label: 'Staff Manager', href: '/staff/staff-manager' }] : []),
-      { label: 'My Tasks', href: '/my-tasks' },
-      { label: 'Messages', href: '/messages' },
+      { label: 'Dashboard', href: '/dashboard', icon: <Home size={16} /> },
+      { label: 'Workflow Manager', href: '/staff/workflow-manager', icon: <Wrench size={16} /> },
+      ...(isRegionalManager ? [{ label: 'Staff Manager', href: '/staff/staff-manager', icon: <Building2 size={16} /> }] : []),
+      { label: 'My Tasks', href: '/my-tasks', icon: <ListTodo size={16} /> },
+      { label: 'Messages', href: '/messages', icon: <MessageSquare size={16} /> },
     ];
     return staffItems;
   }
 
   return [
-    { label: 'Home', href: '/home' },
-    { label: 'My Projects', href: '/my-projects' },
-    { label: 'My Tasks', href: '/my-tasks' },
-    { label: 'Messages', href: '/messages' },
+    { label: 'Home', href: '/home', icon: <Home size={16} /> },
+    { label: 'My Projects', href: '/my-projects', icon: <Building2 size={16} /> },
+    { label: 'My Tasks', href: '/my-tasks', icon: <ListTodo size={16} /> },
+    { label: 'Messages', href: '/messages', icon: <MessageSquare size={16} /> },
   ];
 }
 
 function getResourceNavItems(role?: string): NavItem[] {
-  const items: NavItem[] = [
-    { label: 'Permit Types', href: '/permit-types' },
-    { label: 'Regulations', href: '/regulations' },
-    { label: 'Tools', href: '/resources' },
-  ];
-  if (role === 'staff' || role === 'admin') {
-    items.push({ label: 'API', href: '/api' });
+  const isPortalStaff = role === 'staff' || role === 'admin';
+  const items: NavItem[] = isPortalStaff
+    ? [
+        { label: 'Permit Types', href: '/permit-types', icon: <FileText size={16} /> },
+        { label: 'Regulations', href: '/regulations', icon: <Landmark size={16} /> },
+        { label: 'Tools', href: '/resources', icon: <Wrench size={16} /> },
+      ]
+    : [
+        { label: 'Permit Types', href: '/permit-types', icon: <FileText size={16} /> },
+        { label: 'Regulations', href: '/regulations', icon: <Landmark size={16} /> },
+        { label: 'Tools', href: '/resources', icon: <Wrench size={16} /> },
+      ];
+  if (isPortalStaff) {
+    items.push({ label: 'API', href: '/api', icon: <FileText size={16} /> });
   }
-  items.push({ label: 'Help Center', href: '/help-center' });
+  items.push(
+    isPortalStaff
+      ? { label: 'Help Center', href: '/help-center', icon: <CircleHelp size={16} /> }
+      : { label: 'Help Center', href: '/help-center', icon: <CircleHelp size={16} /> },
+  );
   return items;
 }
 
@@ -127,13 +139,21 @@ const FPPLogo = ({ size = 40 }: { size?: number }) => (
   <Image src={ceqSeal} alt="Council on Environmental Quality seal" width={size} height={size} className="object-contain" priority />
 );
 
-interface SidebarMenuItem {
-  type: 'subtext';
-  label: string;
-  subtext: string;
-  href: string;
-  onClick?: () => void;
-}
+type SidebarMenuItem =
+  | {
+      type: 'subtext';
+      label: string;
+      subtext: string;
+      href: string;
+      onClick?: () => void;
+    }
+  | {
+      type: 'icon';
+      label: string;
+      icon: React.ReactNode;
+      href: string;
+      onClick?: () => void;
+    };
 
 interface AvatarMenuItem {
   type: 'icon';
@@ -206,6 +226,8 @@ function CustomSidebarInner({
   const primaryActiveIndex = primaryMenuItems.findIndex((item) => matchesNavHref(item.href));
   const resourceActiveIndex = resourceMenuItems.findIndex((item) => matchesNavHref(item.href));
   const avatarColor = role === 'admin' ? 'green' : role === 'staff' ? 'gold' : 'blue-400';
+  const isApplicantPortal = role !== 'staff' && role !== 'admin';
+  const showCollapsedIconMenu = !isOpen && isApplicantPortal;
 
   const toggleTheme = () => {
     const htmlElement = document.documentElement;
@@ -284,7 +306,9 @@ function CustomSidebarInner({
         <span className="sidebar-nav-new-app-text">New Project</span>
       </Button>
 
-      <div className={`sidebar-nav-menus${isOpen ? "" : " sidebar-nav-menus-hidden"} flex-1`}>
+      <div
+        className={`sidebar-nav-menus${!isOpen && !showCollapsedIconMenu ? " sidebar-nav-menus-hidden" : ""}${showCollapsedIconMenu ? " sidebar-nav-menus-icons-only" : ""} flex-1`}
+      >
         <div className="sidebar-nav-menu-wrap">
           <Menu
             size="sm"
@@ -295,7 +319,7 @@ function CustomSidebarInner({
         </div>
 
         <div className="sidebar-nav-heading">Resources</div>
-        <div className="sidebar-nav-menu-wrap">
+        <div className={`sidebar-nav-menu-wrap${showCollapsedIconMenu ? " sidebar-nav-menu-wrap-resources" : ""}`}>
           <Menu
             size="sm"
             activeIndex={resourceActiveIndex >= 0 ? resourceActiveIndex : undefined}
@@ -387,21 +411,41 @@ export function WorkspaceShell({ role, userSub, organizationLabel, onSignOut, ch
   const primaryItems = getPrimaryNavItems(role, userSub);
   const resourceItems = getResourceNavItems(role);
 
-  const primaryMenuItems = primaryItems.map((item) => ({
-    type: 'subtext' as const,
-    label: item.label,
-    subtext: '',
-    href: item.href,
-    onClick: () => router.push(item.href),
-  }));
+  const primaryMenuItems = primaryItems.map((item) =>
+    item.icon
+      ? {
+          type: 'icon' as const,
+          label: item.label,
+          icon: item.icon,
+          href: item.href,
+          onClick: () => router.push(item.href),
+        }
+      : {
+          type: 'subtext' as const,
+          label: item.label,
+          subtext: '',
+          href: item.href,
+          onClick: () => router.push(item.href),
+        },
+  );
 
-  const resourceMenuItems = resourceItems.map((item) => ({
-    type: 'subtext' as const,
-    label: item.label,
-    subtext: '',
-    href: item.href,
-    onClick: () => router.push(item.href),
-  }));
+  const resourceMenuItems = resourceItems.map((item) =>
+    item.icon
+      ? {
+          type: 'icon' as const,
+          label: item.label,
+          icon: item.icon,
+          href: item.href,
+          onClick: () => router.push(item.href),
+        }
+      : {
+          type: 'subtext' as const,
+          label: item.label,
+          subtext: '',
+          href: item.href,
+          onClick: () => router.push(item.href),
+        },
+  );
 
   return (
     <div className="h-screen min-h-0 overflow-hidden bg-[var(--color-bg)] flex flex-col" suppressHydrationWarning>

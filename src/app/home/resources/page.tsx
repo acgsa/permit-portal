@@ -93,7 +93,7 @@ export default function ResourcesPage() {
           style={{ marginTop: 'calc(var(--space-xl) - var(--space-md))' }}
         >
           {filteredTools.map((item) => (
-            <div key={item.title} className="image-card rounded-[var(--radius-md)] shadow-[var(--shadow-sm)]">
+            <div key={item.title} className="image-card rounded-[var(--radius-md)]">
                 <div
                   className="image-card-image"
                   style={

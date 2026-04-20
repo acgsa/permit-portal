@@ -1043,6 +1043,39 @@ a:hover {
   display: none;
 }
 
+.sidebar-nav-menu-wrap .menu-item-icon > svg:last-child {
+  display: none;
+}
+
+.sidebar-nav-panel-closed .sidebar-nav-menus-icons-only .sidebar-nav-heading {
+  display: none;
+}
+
+.sidebar-nav-panel-closed .sidebar-nav-menus-icons-only .sidebar-nav-menu-wrap .menu {
+  align-items: center;
+}
+
+.sidebar-nav-panel-closed .sidebar-nav-menus-icons-only .sidebar-nav-menu-wrap-resources {
+  margin-top: var(--space-sm);
+  padding-top: var(--space-sm);
+  border-top: var(--border-sm) solid var(--color-border);
+}
+
+.sidebar-nav-panel-closed .sidebar-nav-menus-icons-only .sidebar-nav-menu-wrap .menu-item {
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  margin: 0 auto;
+  padding: 0;
+  justify-content: center;
+}
+
+.sidebar-nav-panel-closed .sidebar-nav-menus-icons-only .sidebar-nav-menu-wrap .menu-item .menu-item-label,
+.sidebar-nav-panel-closed .sidebar-nav-menus-icons-only .sidebar-nav-menu-wrap .menu-item .menu-item-sub,
+.sidebar-nav-panel-closed .sidebar-nav-menus-icons-only .sidebar-nav-menu-wrap .menu-item .menu-item-text {
+  display: none;
+}
+
 .federal-admin-dashboard .card,
 .federal-admin-dashboard .chart-card,
 .federal-admin-dashboard .chart-kpi-card {
