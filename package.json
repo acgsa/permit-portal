@@ -6,20 +6,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "generate:types": "npx json-schema-to-typescript backend/pic-standards/src/jsonschema/nepa.schema.json -o src/types/pic.d.ts"
   },
   "dependencies": {
     "@fontsource/space-mono": "^5.2.9",
-    "@rjsf/core": "^6.4.1",
-    "@rjsf/validator-ajv8": "^6.4.1",
-    "@tanstack/react-query": "^5.96.2",
-    "@tanstack/react-table": "^8.21.3",
     "@vimeo/player": "^2.30.3",
-    "@xyflow/react": "^12.10.1",
     "bpmn-js": "^18.13.1",
     "bpmn-js-spiffworkflow": "^0.0.10",
     "clsx": "^2.1.1",
-    "framer-motion": "^12.38.0",
     "geist": "^1.7.0",
     "lucide-react": "^1.0.1",
     "next": "16.1.6",

@@ -443,6 +443,306 @@
   box-shadow: 0 28px 72px rgba(0, 0, 0, 0.46);
 }
 
+/* ============================================================
+   Workflow Manager Canvas + Nodes
+   ============================================================ */
+
+.workflow-canvas-shell {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--color-border-emphasis) 55%, transparent);
+  background:
+    radial-gradient(circle at 30% 0%, color-mix(in srgb, var(--blue-100) 48%, transparent) 0%, transparent 52%),
+    linear-gradient(165deg, color-mix(in srgb, var(--steel-50) 96%, white) 0%, color-mix(in srgb, var(--blue-50) 72%, var(--steel-50) 28%) 100%);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-white) 72%, transparent);
+
+  --workflow-grid-dot: color-mix(in srgb, var(--steel-500) 44%, transparent);
+  --workflow-edge-default: var(--blue-600);
+  --workflow-edge-alert: var(--red-500);
+  --workflow-edge-label-bg: color-mix(in srgb, var(--color-bg) 92%, var(--blue-100) 8%);
+  --workflow-edge-label-border: color-mix(in srgb, var(--blue-500) 36%, transparent);
+  --workflow-minimap-node: color-mix(in srgb, var(--steel-700) 70%, var(--blue-500) 30%);
+  --workflow-minimap-mask: color-mix(in srgb, var(--steel-200) 28%, transparent);
+}
+
+[data-theme="dark"] .workflow-canvas-shell {
+  border-color: color-mix(in srgb, var(--steel-700) 56%, transparent);
+  background:
+    radial-gradient(circle at 25% -10%, color-mix(in srgb, var(--blue-700) 42%, transparent) 0%, transparent 50%),
+    linear-gradient(165deg, color-mix(in srgb, var(--steel-950) 94%, black) 0%, color-mix(in srgb, var(--blue-950) 72%, var(--steel-950) 28%) 100%);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--steel-700) 34%, transparent);
+
+  --workflow-grid-dot: color-mix(in srgb, var(--steel-600) 46%, transparent);
+  --workflow-edge-default: var(--blue-400);
+  --workflow-edge-alert: var(--red-400);
+  --workflow-edge-label-bg: color-mix(in srgb, var(--steel-900) 86%, var(--steel-800) 14%);
+  --workflow-edge-label-border: color-mix(in srgb, var(--steel-600) 64%, transparent);
+  --workflow-minimap-node: color-mix(in srgb, var(--steel-300) 54%, var(--blue-400) 46%);
+  --workflow-minimap-mask: color-mix(in srgb, var(--steel-900) 34%, transparent);
+}
+
+.workflow-canvas-overlay {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.workflow-canvas-zone {
+  position: absolute;
+  top: var(--space-md);
+  margin: 0;
+  font-size: var(--font-size-body-sm);
+  line-height: var(--line-height-body-sm);
+  color: color-mix(in srgb, var(--color-text-body) 74%, transparent);
+}
+
+.workflow-canvas-zone--path {
+  left: var(--space-lg);
+}
+
+.workflow-canvas-zone--risk {
+  left: 43%;
+}
+
+.workflow-canvas-divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 38%;
+  border-left: 1px dashed color-mix(in srgb, var(--color-border-emphasis) 52%, transparent);
+}
+
+.workflow-flow {
+  --xy-edge-stroke-default: var(--workflow-edge-default);
+  --xy-edge-stroke-selected-default: var(--color-border-focus);
+}
+
+.workflow-flow .react-flow__renderer,
+.workflow-flow .react-flow__pane,
+.workflow-flow .react-flow__viewport {
+  background: transparent;
+}
+
+.workflow-flow .react-flow__node {
+  border-radius: var(--radius-md);
+  transition: transform var(--transition-fast), filter var(--transition-fast);
+}
+
+.workflow-flow .react-flow__node:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.02);
+}
+
+.workflow-node {
+  min-width: 290px;
+  max-width: 340px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--workflow-node-border);
+  background: var(--workflow-node-bg);
+  color: var(--workflow-node-text);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--workflow-node-border) 26%, transparent);
+}
+
+.workflow-node--selected {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+.workflow-node__content {
+  border-left: 3px solid color-mix(in srgb, var(--workflow-node-accent) 90%, transparent);
+  padding: var(--space-md) var(--space-lg);
+}
+
+.workflow-node__role {
+  margin: 0;
+  font-size: var(--font-size-body-sm);
+  line-height: var(--line-height-body-sm);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--workflow-node-role-text);
+}
+
+.workflow-node__label {
+  margin: var(--space-2xs) 0 0;
+  font-size: var(--font-size-heading-h6);
+  line-height: var(--line-height-heading-h6);
+  font-weight: var(--font-weight-semibold);
+  color: var(--workflow-node-text);
+}
+
+.workflow-node__description {
+  margin: var(--space-sm) 0 0;
+  font-size: var(--font-size-body-sm);
+  line-height: var(--line-height-body-sm);
+  color: var(--workflow-node-description-text);
+}
+
+.workflow-canvas-shell--fullscreen {
+  width: 100vw;
+  height: 100vh !important;
+  border-radius: 0;
+  border: 0;
+}
+
+.workflow-canvas-shell--fullscreen-fallback {
+  position: fixed !important;
+  inset: 0;
+  z-index: 80;
+}
+
+.workflow-canvas-shell--fullscreen .workflow-canvas-zone {
+  top: var(--space-lg);
+  font-size: var(--font-size-body-md);
+  line-height: var(--line-height-body-md);
+}
+
+.workflow-node--submission {
+  --workflow-node-border: color-mix(in srgb, var(--color-success) 72%, var(--steel-700) 28%);
+  --workflow-node-accent: var(--color-success);
+  --workflow-node-bg: color-mix(in srgb, var(--color-success) 16%, var(--color-bg) 84%);
+  --workflow-node-text: color-mix(in srgb, var(--color-text) 92%, var(--steel-900) 8%);
+  --workflow-node-role-text: color-mix(in srgb, var(--color-success) 72%, var(--steel-900) 28%);
+  --workflow-node-description-text: color-mix(in srgb, var(--color-text-body) 86%, transparent);
+}
+
+.workflow-node--router {
+  --workflow-node-border: color-mix(in srgb, var(--steel-600) 74%, var(--blue-500) 26%);
+  --workflow-node-accent: color-mix(in srgb, var(--blue-500) 50%, var(--steel-500) 50%);
+  --workflow-node-bg: color-mix(in srgb, var(--steel-200) 56%, var(--blue-100) 44%);
+  --workflow-node-text: var(--color-text);
+  --workflow-node-role-text: color-mix(in srgb, var(--blue-700) 64%, var(--steel-700) 36%);
+  --workflow-node-description-text: color-mix(in srgb, var(--color-text-body) 86%, transparent);
+}
+
+.workflow-node--staffReview {
+  --workflow-node-border: color-mix(in srgb, var(--color-warning) 74%, var(--steel-600) 26%);
+  --workflow-node-accent: var(--color-warning);
+  --workflow-node-bg: color-mix(in srgb, var(--color-warning) 18%, var(--color-bg) 82%);
+  --workflow-node-text: var(--color-text);
+  --workflow-node-role-text: color-mix(in srgb, var(--color-warning) 82%, var(--steel-900) 18%);
+  --workflow-node-description-text: color-mix(in srgb, var(--color-text-body) 86%, transparent);
+}
+
+.workflow-node--finance,
+.workflow-node--approval {
+  --workflow-node-border: color-mix(in srgb, var(--blue-600) 68%, var(--steel-600) 32%);
+  --workflow-node-accent: var(--blue-600);
+  --workflow-node-bg: color-mix(in srgb, var(--blue-100) 44%, var(--color-bg) 56%);
+  --workflow-node-text: var(--color-text);
+  --workflow-node-role-text: color-mix(in srgb, var(--blue-700) 74%, var(--steel-700) 26%);
+  --workflow-node-description-text: color-mix(in srgb, var(--color-text-body) 86%, transparent);
+}
+
+.workflow-node--moreInfo {
+  --workflow-node-border: color-mix(in srgb, var(--color-error) 72%, var(--steel-600) 28%);
+  --workflow-node-accent: var(--color-error);
+  --workflow-node-bg: color-mix(in srgb, var(--color-error) 18%, var(--color-bg) 82%);
+  --workflow-node-text: var(--color-text);
+  --workflow-node-role-text: color-mix(in srgb, var(--color-error) 78%, var(--steel-900) 22%);
+  --workflow-node-description-text: color-mix(in srgb, var(--color-text-body) 86%, transparent);
+}
+
+.workflow-node--default {
+  --workflow-node-border: var(--color-border-strong);
+  --workflow-node-accent: var(--color-border-emphasis);
+  --workflow-node-bg: var(--color-bg);
+  --workflow-node-text: var(--color-text);
+  --workflow-node-role-text: var(--color-text-placeholder);
+  --workflow-node-description-text: var(--color-text-body);
+}
+
+[data-theme="dark"] .workflow-node--submission {
+  --workflow-node-bg: color-mix(in srgb, var(--color-success) 26%, var(--steel-950) 74%);
+  --workflow-node-text: color-mix(in srgb, var(--steel-50) 90%, var(--color-success) 10%);
+  --workflow-node-role-text: color-mix(in srgb, var(--color-success) 70%, var(--steel-100) 30%);
+  --workflow-node-description-text: color-mix(in srgb, var(--steel-200) 82%, transparent);
+}
+
+[data-theme="dark"] .workflow-node--router {
+  --workflow-node-bg: color-mix(in srgb, var(--steel-900) 78%, var(--blue-900) 22%);
+  --workflow-node-text: var(--steel-100);
+  --workflow-node-role-text: color-mix(in srgb, var(--blue-300) 72%, var(--steel-300) 28%);
+  --workflow-node-description-text: color-mix(in srgb, var(--steel-300) 78%, transparent);
+}
+
+[data-theme="dark"] .workflow-node--staffReview {
+  --workflow-node-bg: color-mix(in srgb, var(--color-warning) 26%, var(--steel-950) 74%);
+  --workflow-node-text: color-mix(in srgb, var(--steel-50) 88%, var(--color-warning) 12%);
+  --workflow-node-role-text: color-mix(in srgb, var(--color-warning) 76%, var(--steel-200) 24%);
+  --workflow-node-description-text: color-mix(in srgb, var(--steel-300) 78%, transparent);
+}
+
+[data-theme="dark"] .workflow-node--finance,
+[data-theme="dark"] .workflow-node--approval {
+  --workflow-node-bg: color-mix(in srgb, var(--blue-700) 34%, var(--steel-950) 66%);
+  --workflow-node-text: var(--steel-100);
+  --workflow-node-role-text: color-mix(in srgb, var(--blue-300) 76%, var(--steel-200) 24%);
+  --workflow-node-description-text: color-mix(in srgb, var(--steel-300) 78%, transparent);
+}
+
+[data-theme="dark"] .workflow-node--moreInfo {
+  --workflow-node-bg: color-mix(in srgb, var(--color-error) 28%, var(--steel-950) 72%);
+  --workflow-node-text: color-mix(in srgb, var(--steel-50) 88%, var(--color-error) 12%);
+  --workflow-node-role-text: color-mix(in srgb, var(--color-error) 78%, var(--steel-200) 22%);
+  --workflow-node-description-text: color-mix(in srgb, var(--steel-300) 78%, transparent);
+}
+
+.workflow-flow .react-flow__edge-path {
+  stroke: var(--workflow-edge-default);
+  stroke-width: 2;
+}
+
+.workflow-flow .react-flow__edge.workflow-edge--alert .react-flow__edge-path {
+  stroke: var(--workflow-edge-alert);
+}
+
+.workflow-flow .react-flow__edge-textbg {
+  fill: var(--workflow-edge-label-bg);
+  stroke: var(--workflow-edge-label-border);
+  stroke-width: 1;
+}
+
+.workflow-flow .react-flow__edge-text {
+  fill: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold);
+}
+
+.workflow-minimap {
+  border-radius: var(--radius-sm);
+  border: 1px solid color-mix(in srgb, var(--color-border-emphasis) 48%, transparent);
+  background: color-mix(in srgb, var(--color-bg) 78%, transparent);
+}
+
+.workflow-controls {
+  border-radius: var(--radius-sm);
+  border: 1px solid color-mix(in srgb, var(--color-border-emphasis) 48%, transparent);
+  overflow: hidden;
+}
+
+.workflow-controls .react-flow__controls-button {
+  border-bottom-color: color-mix(in srgb, var(--color-border) 62%, transparent);
+  background: color-mix(in srgb, var(--color-bg) 84%, transparent);
+  color: var(--color-text);
+}
+
+.workflow-controls .react-flow__controls-button:hover {
+  background: var(--color-bg-hover);
+}
+
+@media (max-width: 1024px) {
+  .workflow-canvas-zone--risk {
+    left: 45%;
+  }
+
+  .workflow-canvas-divider {
+    left: 40%;
+  }
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
   border-color: var(--color-border);

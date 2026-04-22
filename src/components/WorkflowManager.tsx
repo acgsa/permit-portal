@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useMemo, useState, type ComponentType } from 'react';
+import { useEffect, useMemo, useRef, useState, type ComponentType } from 'react';
 import {
   Background,
+  BackgroundVariant,
   Controls,
   MarkerType,
   MiniMap,
@@ -44,43 +45,35 @@ type RjsfSchema = {
 
 type RjsfUiSchema = Record<string, unknown>;
 
-function nodeStyleByType(nodeType: WorkflowNodeType): { border: string; background: string } {
+function nodeToneByType(nodeType: WorkflowNodeType): string {
   switch (nodeType) {
     case 'submission':
-      return { border: '1px solid var(--blue-500)', background: 'var(--blue-950)' };
+      return 'workflow-node--submission';
     case 'router':
-      return { border: '1px solid var(--steel-500)', background: 'var(--steel-900)' };
+      return 'workflow-node--router';
     case 'staffReview':
-      return { border: '1px solid #f5c32c', background: 'rgba(245, 195, 44, 0.12)' };
+      return 'workflow-node--staffReview';
     case 'finance':
-      return { border: '1px solid #8dd969', background: 'rgba(141, 217, 105, 0.12)' };
+      return 'workflow-node--finance';
     case 'moreInfo':
-      return { border: '1px solid var(--red-500)', background: 'rgba(242, 61, 89, 0.12)' };
+      return 'workflow-node--moreInfo';
     case 'approval':
-      return { border: '1px solid #8dd969', background: 'rgba(141, 217, 105, 0.18)' };
+      return 'workflow-node--approval';
     default:
-      return { border: '1px solid var(--color-border-strong)', background: 'var(--color-bg-subtle)' };
+      return 'workflow-node--default';
   }
 }
 
 function WorkflowNodeCard({ data, selected }: NodeProps<WorkflowNode>) {
-  const style = nodeStyleByType(data.nodeType);
+  const toneClass = nodeToneByType(data.nodeType);
 
   return (
-    <div
-      style={{
-        minWidth: 220,
-        maxWidth: 260,
-        borderRadius: 'var(--radius-md)',
-        border: selected ? '2px solid var(--color-border-focus)' : style.border,
-        background: style.background,
-        padding: 'var(--space-sm)',
-        boxShadow: 'var(--shadow-sm)',
-      }}
-    >
-      <p className="text-xs uppercase tracking-wide text-[var(--color-text-placeholder)]">{data.role}</p>
-      <h3 className="mt-1 text-sm font-semibold text-[var(--color-text)]">{data.label}</h3>
-      <p className="mt-2 text-xs text-[var(--color-text-body)]">{data.description}</p>
+    <div className={`workflow-node ${toneClass} ${selected ? 'workflow-node--selected' : ''}`}>
+      <div className="workflow-node__content">
+        <p className="workflow-node__role">{data.role}</p>
+        <h3 className="workflow-node__label">{data.label}</h3>
+        <p className="workflow-node__description">{data.description}</p>
+      </div>
     </div>
   );
 }
@@ -159,13 +152,57 @@ const initialNodes: WorkflowNode[] = [
 ];
 
 const initialEdges: Edge[] = [
-  { id: 'e-sub-router', source: 'submission', target: 'auto-router', markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: 'e-router-review', source: 'auto-router', target: 'staff-review', label: 'Review lane', markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: 'e-router-finance', source: 'auto-router', target: 'finance', label: 'Payment lane', markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: 'e-review-more', source: 'staff-review', target: 'more-info', label: 'Need more info', markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: 'e-more-review', source: 'more-info', target: 'staff-review', label: 'Resubmitted', markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: 'e-finance-approval', source: 'finance', target: 'final-approval', markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: 'e-review-approval', source: 'staff-review', target: 'final-approval', markerEnd: { type: MarkerType.ArrowClosed } },
+  {
+    id: 'e-sub-router',
+    source: 'submission',
+    target: 'auto-router',
+    label: 'Intake',
+    markerEnd: { type: MarkerType.ArrowClosed },
+  },
+  {
+    id: 'e-router-review',
+    source: 'auto-router',
+    target: 'staff-review',
+    label: 'Review lane',
+    markerEnd: { type: MarkerType.ArrowClosed },
+  },
+  {
+    id: 'e-router-finance',
+    source: 'auto-router',
+    target: 'finance',
+    label: 'Payment lane',
+    markerEnd: { type: MarkerType.ArrowClosed },
+  },
+  {
+    id: 'e-review-more',
+    source: 'staff-review',
+    target: 'more-info',
+    label: 'Need more info',
+    markerEnd: { type: MarkerType.ArrowClosed },
+    className: 'workflow-edge--alert',
+  },
+  {
+    id: 'e-more-review',
+    source: 'more-info',
+    target: 'staff-review',
+    label: 'Resubmitted',
+    markerEnd: { type: MarkerType.ArrowClosed },
+    className: 'workflow-edge--alert',
+  },
+  {
+    id: 'e-finance-approval',
+    source: 'finance',
+    target: 'final-approval',
+    label: 'Cleared',
+    markerEnd: { type: MarkerType.ArrowClosed },
+  },
+  {
+    id: 'e-review-approval',
+    source: 'staff-review',
+    target: 'final-approval',
+    label: 'Approved',
+    markerEnd: { type: MarkerType.ArrowClosed },
+  },
 ];
 
 const starterSchema: RjsfSchema = {
@@ -191,6 +228,7 @@ const RjsfForm = Form as unknown as ComponentType<Record<string, unknown>>;
 function WorkflowManagerContent() {
   const { user, token, logout } = useAuth();
   const router = useRouter();
+  const canvasShellRef = useRef<HTMLDivElement | null>(null);
 
   const [nodes, , onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
@@ -198,15 +236,69 @@ function WorkflowManagerContent() {
   const [schemaJson, setSchemaJson] = useState<string>(JSON.stringify(starterSchema, null, 2));
   const [uiSchemaJson, setUiSchemaJson] = useState<string>(JSON.stringify(starterUiSchema, null, 2));
   const [formData, setFormData] = useState<Record<string, unknown>>({});
+  const [isCanvasFullscreen, setIsCanvasFullscreen] = useState<boolean>(false);
+  const [isCanvasExpanded, setIsCanvasExpanded] = useState<boolean>(false);
 
   const onConnect = (params: Connection) => {
-    setEdges((prevEdges: Edge[]) => addEdge({ ...params, markerEnd: { type: MarkerType.ArrowClosed } }, prevEdges));
+    setEdges((prevEdges: Edge[]) =>
+      addEdge(
+        {
+          ...params,
+          markerEnd: { type: MarkerType.ArrowClosed },
+          type: 'smoothstep',
+          style: { strokeWidth: 2 },
+          labelStyle: {
+            fill: 'var(--color-text-secondary)',
+            fontWeight: 600,
+            fontSize: 11,
+          },
+          labelBgPadding: [8, 4],
+          labelBgBorderRadius: 999,
+          labelBgStyle: {
+            fill: 'var(--workflow-edge-label-bg)',
+            stroke: 'var(--workflow-edge-label-border)',
+            strokeWidth: 1,
+          },
+        },
+        prevEdges,
+      ),
+    );
   };
 
   const selectedNode = useMemo(
     () => nodes.find((node) => node.id === selectedNodeId) ?? nodes[0],
     [nodes, selectedNodeId],
   );
+
+  const isCanvasInFullscreenMode = isCanvasFullscreen || isCanvasExpanded;
+
+  const toggleCanvasFullscreen = async () => {
+    const shell = canvasShellRef.current;
+    if (!shell) return;
+
+    if (document.fullscreenElement === shell) {
+      await document.exitFullscreen();
+      setIsCanvasExpanded(false);
+      return;
+    }
+
+    if (isCanvasExpanded) {
+      setIsCanvasExpanded(false);
+      return;
+    }
+
+    if (typeof shell.requestFullscreen === 'function') {
+      try {
+        await shell.requestFullscreen();
+        return;
+      } catch {
+        // Some environments block fullscreen requests (e.g. embedded views);
+        // fall back to a fixed, viewport-sized canvas mode.
+      }
+    }
+
+    setIsCanvasExpanded(true);
+  };
 
   const parsedSchema = useMemo(() => {
     try {
@@ -234,6 +326,42 @@ function WorkflowManagerContent() {
     }
   }, [token, isStaffUser, router]);
 
+  useEffect(() => {
+    const onFullscreenChange = () => {
+      setIsCanvasFullscreen(document.fullscreenElement === canvasShellRef.current);
+    };
+
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', onFullscreenChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isCanvasExpanded) return;
+
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
+
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsCanvasExpanded(false);
+      }
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [isCanvasExpanded]);
+
   if (!token) return null;
 
   if (!isStaffUser) {
@@ -257,9 +385,24 @@ function WorkflowManagerContent() {
         <section className="grid grid-cols-1 gap-[var(--space-md)] xl:grid-cols-[1.9fr_1fr]">
           <Card>
             <div className="flex flex-col gap-[var(--space-md)]">
-              <h2 className="type-heading-h6 text-[var(--color-text)]">Workflow Canvas</h2>
-              <div className="h-[620px] rounded-[var(--radius-sm)] border border-[var(--color-border)] bg-[var(--color-bg-subtle)]">
+              <div className="flex items-center justify-between gap-[var(--space-sm)]">
+                <h2 className="type-heading-h6 text-[var(--color-text)]">Workflow Canvas</h2>
+                <Button type="button" variant="secondary" size="sm" onClick={toggleCanvasFullscreen}>
+                  {isCanvasInFullscreenMode ? 'Exit Full Screen' : 'Full Screen'}
+                </Button>
+              </div>
+
+              <div
+                ref={canvasShellRef}
+                className={`workflow-canvas-shell ${isCanvasInFullscreenMode ? 'workflow-canvas-shell--fullscreen' : ''} ${isCanvasExpanded ? 'workflow-canvas-shell--fullscreen-fallback' : ''} h-[620px]`}
+              >
+                <div className="workflow-canvas-overlay" aria-hidden>
+                  <p className="workflow-canvas-zone workflow-canvas-zone--path">Applicant</p>
+                  <p className="workflow-canvas-zone workflow-canvas-zone--risk">Federal Staff</p>
+                  <div className="workflow-canvas-divider" />
+                </div>
                 <ReactFlow
+                  className="workflow-flow"
                   nodes={nodes}
                   edges={edges}
                   onNodesChange={onNodesChange}
@@ -268,10 +411,40 @@ function WorkflowManagerContent() {
                   onNodeClick={(_event: unknown, node: Node) => setSelectedNodeId(node.id)}
                   fitView
                   nodeTypes={nodeTypes}
+                  fitViewOptions={{ padding: 0.2 }}
+                  defaultEdgeOptions={{
+                    type: 'smoothstep',
+                    style: { strokeWidth: 2 },
+                    markerEnd: { type: MarkerType.ArrowClosed },
+                    labelStyle: {
+                      fill: 'var(--color-text-secondary)',
+                      fontWeight: 600,
+                      fontSize: 11,
+                    },
+                    labelBgPadding: [8, 4],
+                    labelBgBorderRadius: 999,
+                    labelBgStyle: {
+                      fill: 'var(--workflow-edge-label-bg)',
+                      stroke: 'var(--workflow-edge-label-border)',
+                      strokeWidth: 1,
+                    },
+                  }}
                 >
-                  <MiniMap pannable zoomable />
-                  <Controls />
-                  <Background gap={20} color="var(--color-border-strong)" />
+                  <MiniMap
+                    pannable
+                    zoomable
+                    className="workflow-minimap"
+                    nodeColor="var(--workflow-minimap-node)"
+                    maskColor="var(--workflow-minimap-mask)"
+                  />
+                  <Controls className="workflow-controls" showInteractive={false} />
+                  <Background
+                    id="workflow-grid"
+                    variant={BackgroundVariant.Dots}
+                    gap={24}
+                    size={1.2}
+                    color="var(--workflow-grid-dot)"
+                  />
                 </ReactFlow>
               </div>
             </div>
