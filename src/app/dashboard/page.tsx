@@ -446,10 +446,16 @@ export default function DashboardPage() {
 
         {/* Public dashboard content */}
         <section
-          className="flex justify-center px-6 sm:px-8 lg:px-10"
+          className="flex justify-center bg-black text-white px-2 sm:px-6 lg:px-8"
           style={{ paddingTop: 'var(--space-2xl)', paddingBottom: 'var(--space-3xl)' }}
         >
-          <div className="w-full max-w-5xl flex flex-col gap-[var(--space-md)]">
+          <div
+            className="w-full max-w-5xl flex flex-col gap-[var(--space-md)]"
+            style={{
+              marginLeft: 'clamp(var(--space-sm), 5vw, var(--space-lg))',
+              marginRight: 'clamp(var(--space-sm), 5vw, var(--space-lg))',
+            }}
+          >
             <div style={{ marginBottom: 'var(--space-md)' }}>
               <h1 className="type-heading-h1" style={{ color: 'var(--color-text)', marginBottom: 'var(--space-xs)' }}>
                 Federal Permit Analytics
@@ -460,7 +466,7 @@ export default function DashboardPage() {
             </div>
 
             {/* KPI row */}
-            <StaggerContainer className="grid items-stretch gap-[var(--space-md)] grid-cols-2 lg:grid-cols-4">
+            <StaggerContainer className="grid items-stretch gap-[var(--space-md)] grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
               {PUBLIC_KPI.map((kpi, i) => (
                 <AnimatedCard key={kpi.label} delay={i * 0.06}>
                   <Card className="h-full !bg-[var(--steel-950)]">
