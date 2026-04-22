@@ -12,11 +12,6 @@ import { ThemeRouteScope } from "@/components/ThemeRouteScope";
 export const metadata: Metadata = {
   title: "PERMIT.GOV - Federal Permit Portal",
   description: "Streamlined permit applications for federal projects and activities",
-  icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
-    apple: "/favicon.svg",
-  },
 };
 
 export default function RootLayout({

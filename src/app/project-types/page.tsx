@@ -42,7 +42,7 @@ export default function ProjectTypesPage() {
             understand what approvals your project requires and how to get started.
           </p>
           <div>
-            <Link href="/project-intake">
+            <Link href="/a/project-intake">
               <PillButton
                 size="lg"
                 variant="secondary"
@@ -136,7 +136,7 @@ export default function ProjectTypesPage() {
           <h2 className="type-heading-h3 text-[var(--color-text-body)] text-left">
             Ready to move your project forward?
           </h2>
-          <Link href="/project-intake" className="w-full sm:w-auto text-left">
+          <Link href="/a/project-intake" className="w-full sm:w-auto text-left">
             <PillButton
               variant="secondary"
               size="lg"

@@ -50,19 +50,19 @@ export function HelpDeskContent({ mode = 'public' }: HelpDeskContentProps) {
           <HelpImageCard
             title="Application Support"
             subtitle="Applicants: check milestones, respond to information requests, and resolve upload issues."
-            href="/home"
+            href="/a/home"
             gradient="cyan"
           />
           <HelpImageCard
             title="Agency Review Support"
             subtitle="Federal Employees: access agency review tools, shared milestones, and coordination workflows."
-            href="/staff/modeler"
+            href="/f/staff/modeler"
             gradient="orange"
           />
         </div>
 
         <div className="flex flex-wrap gap-[var(--space-sm)]">
-          <Link href="/messages">
+          <Link href="/a/messages">
             <Button variant="primary" size="sm">Contact Help</Button>
           </Link>
         </div>
@@ -92,7 +92,7 @@ export function HelpDeskContent({ mode = 'public' }: HelpDeskContentProps) {
           <HelpImageCard
             title="Agency Review Support"
             subtitle="Access agency review queues, shared milestones, and interagency coordination tools."
-            href="/staff"
+            href="/f/staff"
             gradient="orange"
           />
         </div>

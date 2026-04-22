@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Navigation } from '@/components/Navigation';
-import { saveToken } from '@/lib/auth';
+import { getTokenClaims, saveToken } from '@/lib/auth';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 
@@ -47,7 +47,9 @@ function CallbackHandler() {
       })
       .then((data) => {
         saveToken(data.access_token);
-        router.replace('/home');
+        const claims = getTokenClaims(data.access_token);
+        const role = typeof claims.role === 'string' ? claims.role : 'applicant';
+        router.replace(role === 'staff' || role === 'admin' ? '/f/dashboard' : '/a/home');
       })
       .catch((err) => {
         setError(err instanceof Error ? err.message : 'Authentication failed.');

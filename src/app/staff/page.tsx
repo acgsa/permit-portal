@@ -21,7 +21,7 @@ export default function StaffLoginPage() {
     setLoading(true);
     try {
       await login(demoEmail, DEMO_PASSWORD);
-      router.push('/dashboard');
+      router.push('/f/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed. Please try again.');
     } finally {

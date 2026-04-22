@@ -322,7 +322,7 @@ function WorkflowManagerContent() {
 
   useEffect(() => {
     if (token && !isStaffUser) {
-      router.replace('/home');
+      router.replace('/a/home');
     }
   }, [token, isStaffUser, router]);
 

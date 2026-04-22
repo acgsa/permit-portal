@@ -110,7 +110,7 @@ export default function MyProjectsPage() {
                           <AnimatedTableRow key={project.id} index={idx}>
                             <td className="type-body-sm">
                               <Link
-                                href={`/projects/${project.id}`}
+                                href={`/a/projects/${project.id}`}
                                 className="text-[var(--color-text-link)] hover:text-[var(--color-text-link-hover)] hover:underline focus:underline focus:outline-none"
                               >
                                 {project.title}

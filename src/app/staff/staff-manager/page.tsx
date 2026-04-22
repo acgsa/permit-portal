@@ -15,7 +15,7 @@ export default function StaffManagerPage() {
 
   useEffect(() => {
     if (token && !isStaff) {
-      router.replace('/dashboard');
+      router.replace('/f/dashboard');
     }
   }, [token, isStaff, router]);
 

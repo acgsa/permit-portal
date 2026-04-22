@@ -20,7 +20,7 @@ export default function AdminControlsPage() {
 
   useEffect(() => {
     if (token && !isAdmin) {
-      router.replace('/dashboard');
+      router.replace('/f/dashboard');
     }
   }, [token, isAdmin, router]);
 

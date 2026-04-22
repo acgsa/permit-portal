@@ -141,7 +141,7 @@ export default function MyTasksPage() {
                         <AnimatedTableRow key={row.id} index={idx}>
                           <td className="type-body-sm">
                             <Link
-                              href={`/projects/${row.projectId}`}
+                              href={`/a/projects/${row.projectId}`}
                               className="text-[var(--color-text-link)] hover:text-[var(--color-text-link-hover)] hover:underline focus:underline focus:outline-none"
                             >
                               {row.taskName}
@@ -155,7 +155,7 @@ export default function MyTasksPage() {
                           <td className="type-body-sm">{row.updatedLabel}</td>
                           <td>
                             {(row.statusKey === 'in-progress' || row.statusKey === 'overdue') && (
-                              <Button variant="primary" size="sm" onClick={() => router.push(`/projects/${row.projectId}`)}>
+                              <Button variant="primary" size="sm" onClick={() => router.push(`/a/projects/${row.projectId}`)}>
                                 Continue
                               </Button>
                             )}

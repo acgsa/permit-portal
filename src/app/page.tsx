@@ -34,7 +34,7 @@ export default function Home() {
         <div className="w-full max-w-7xl flex flex-col items-center gap-8 text-center" style={{ marginLeft: 'clamp(var(--space-sm), 5vw, var(--space-lg))', marginRight: 'clamp(var(--space-sm), 5vw, var(--space-lg))' }}>
           <div className="flex justify-center">
             <div className="w-full max-w-sm">
-            <Link href="/project-intake" className="w-full max-w-xs">
+            <Link href="/a/project-intake" className="w-full max-w-xs">
               <PillButton
                 size="lg"
                 variant="secondary"
@@ -70,7 +70,7 @@ export default function Home() {
               <Link
                 key={projectType.title}
                 href={`/project-types#${projectType.slug}`}
-                className={`group relative aspect-square overflow-hidden rounded-sm bg-[#0d0f12] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-focus)] ${
+                className={`group relative aspect-square overflow-hidden bg-[#0d0f12] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-focus)] ${
                   index === 2
                     ? 'md:col-span-2 md:aspect-[2/1] lg:col-span-1 lg:aspect-square'
                     : index === 3
@@ -117,7 +117,7 @@ export default function Home() {
               with shared milestones, status transparency, and a centralized authoritative record.
             </h3>
             <div className="mt-8 flex flex-wrap gap-4">
-              <Link href="/staff">
+              <Link href="/f/staff">
                 <PillButton variant="primary" size="lg">
                   For Federal Employees
                 </PillButton>

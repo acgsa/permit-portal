@@ -56,7 +56,7 @@ export default function ScreenerStartPage() {
 									<p className="type-body-sm font-medium text-white">Continue where you left off</p>
 									{draftSavedAt && <p className="type-body-xs text-[var(--color-text-disabled)]">Last saved {new Date(draftSavedAt).toLocaleString()}</p>}
 								</div>
-								<PillButton variant="secondary" size="md" onClick={() => router.push('/project-intake')}>
+												  <PillButton variant="secondary" size="md" onClick={() => router.push('/a/project-intake')}>
 									Resume Draft
 								</PillButton>
 							</div>
@@ -86,7 +86,7 @@ export default function ScreenerStartPage() {
 								<div style={{ display: 'grid', gap: 'var(--space-lg)' }}>
 									<h2 className="type-heading-h5 text-white">I need guidance</h2>
 									<p className="type-body-md text-[var(--color-text-body)]">I'm not sure which federal permits or forms my project needs - including whether or not it involves federal land or multiple agencies.</p>
-									<PillButton variant="secondary" size="lg" onClick={() => router.push('/project-intake')}>
+												  <PillButton variant="secondary" size="lg" onClick={() => router.push('/a/project-intake')}>
 										Start My Guided Application
 									</PillButton>
 								</div>

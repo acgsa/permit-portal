@@ -26,19 +26,19 @@ export default function SynopsisPage() {
   useEffect(() => {
     const raw = window.localStorage.getItem(SYNOPSIS_KEY);
     if (!raw) {
-      router.replace('/project-intake');
+      router.replace('/a/project-intake');
       return;
     }
     try {
       setSynopsis(JSON.parse(raw) as SynopsisResult);
     } catch {
-      router.replace('/project-intake');
+      router.replace('/a/project-intake');
     }
   }, [router]);
 
   const handleEdit = () => {
     window.localStorage.removeItem(SYNOPSIS_KEY);
-    router.push('/project-intake');
+    router.push('/a/project-intake');
   };
 
   const handleFinalSubmit = async () => {
@@ -71,7 +71,7 @@ export default function SynopsisPage() {
   };
 
   const handlePortalHome = () => {
-    router.push('/home?intake_submitted=1');
+    router.push('/a/home?intake_submitted=1');
   };
 
   if (!synopsis) return null;

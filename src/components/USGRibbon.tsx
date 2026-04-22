@@ -30,6 +30,7 @@ export function USGRibbon() {
     '/help-desk',
     '/login',
     '/staff',
+    '/f/staff',
   ]);
 
   const isPublicLoggedOutRoute = publicLoggedOutRoutes.has(pathname);

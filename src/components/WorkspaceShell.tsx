@@ -45,9 +45,9 @@ function getUsdsAvatarColor(tone: SidebarAvatarTone): 'green' | 'gold' | 'blue-4
 function getPrimaryNavItems(role?: string, userSub?: string): NavItem[] {
   if (role === 'admin') {
     return [
-      { label: 'Dashboard', href: '/dashboard', icon: <Home size={16} /> },
-      { label: 'Workflows', href: '/staff/workflow-manager', icon: <Network size={16} /> },
-      { label: 'Admin Controls', href: '/staff/admin-controls', icon: <GearIcon size={16} /> },
+      { label: 'Dashboard', href: '/f/dashboard', icon: <Home size={16} /> },
+      { label: 'Workflows', href: '/f/staff/workflow-manager', icon: <Network size={16} /> },
+      { label: 'Admin Controls', href: '/f/staff/admin-controls', icon: <GearIcon size={16} /> },
     ];
   }
 
@@ -55,43 +55,44 @@ function getPrimaryNavItems(role?: string, userSub?: string): NavItem[] {
     const profile = resolveStaffProfile(userSub, role);
     const isRegionalManager = profile.title.toLowerCase().includes('regional manager');
     const staffItems: NavItem[] = [
-      { label: 'Dashboard', href: '/dashboard', icon: <Home size={16} /> },
-      { label: 'Workflows', href: '/staff/workflow-manager', icon: <Network size={16} /> },
-      ...(isRegionalManager ? [{ label: 'Staff Manager', href: '/staff/staff-manager', icon: <Building2 size={16} /> }] : []),
-      { label: 'My Tasks', href: '/my-tasks', icon: <ListTodo size={16} /> },
-      { label: 'Messages', href: '/messages', icon: <MessageSquare size={16} /> },
+      { label: 'Dashboard', href: '/f/dashboard', icon: <Home size={16} /> },
+      { label: 'Workflows', href: '/f/staff/workflow-manager', icon: <Network size={16} /> },
+      ...(isRegionalManager ? [{ label: 'Staff Manager', href: '/f/staff/staff-manager', icon: <Building2 size={16} /> }] : []),
+      { label: 'My Tasks', href: '/f/my-tasks', icon: <ListTodo size={16} /> },
+      { label: 'Messages', href: '/f/messages', icon: <MessageSquare size={16} /> },
     ];
     return staffItems;
   }
 
   return [
-    { label: 'Home', href: '/home', icon: <Home size={16} /> },
-    { label: 'My Projects', href: '/my-projects', icon: <Building2 size={16} /> },
-    { label: 'My Tasks', href: '/my-tasks', icon: <ListTodo size={16} /> },
-    { label: 'Messages', href: '/messages', icon: <MessageSquare size={16} /> },
+    { label: 'Home', href: '/a/home', icon: <Home size={16} /> },
+    { label: 'My Projects', href: '/a/my-projects', icon: <Building2 size={16} /> },
+    { label: 'My Tasks', href: '/a/my-tasks', icon: <ListTodo size={16} /> },
+    { label: 'Messages', href: '/a/messages', icon: <MessageSquare size={16} /> },
   ];
 }
 
 function getResourceNavItems(role?: string): NavItem[] {
   const isPortalStaff = role === 'staff' || role === 'admin';
+  const basePrefix = isPortalStaff ? '/f' : '/a';
   const items: NavItem[] = isPortalStaff
     ? [
-        { label: 'Permit Types', href: '/permit-types', icon: <FileText size={16} /> },
-        { label: 'Regulations', href: '/regulations', icon: <Landmark size={16} /> },
-        { label: 'Tools', href: '/resources', icon: <Wrench size={16} /> },
+        { label: 'Permit Types', href: `${basePrefix}/permit-types`, icon: <FileText size={16} /> },
+        { label: 'Regulations', href: `${basePrefix}/regulations`, icon: <Landmark size={16} /> },
+        { label: 'Tools', href: `${basePrefix}/resources`, icon: <Wrench size={16} /> },
       ]
     : [
-        { label: 'Permit Types', href: '/permit-types', icon: <FileText size={16} /> },
-        { label: 'Regulations', href: '/regulations', icon: <Landmark size={16} /> },
-        { label: 'Tools', href: '/resources', icon: <Wrench size={16} /> },
+        { label: 'Permit Types', href: `${basePrefix}/permit-types`, icon: <FileText size={16} /> },
+        { label: 'Regulations', href: `${basePrefix}/regulations`, icon: <Landmark size={16} /> },
+        { label: 'Tools', href: `${basePrefix}/resources`, icon: <Wrench size={16} /> },
       ];
   if (isPortalStaff) {
     items.push({ label: 'API', href: '/api', icon: <FileText size={16} /> });
   }
   items.push(
     isPortalStaff
-      ? { label: 'Help Center', href: '/help-center', icon: <CircleHelp size={16} /> }
-      : { label: 'Help Center', href: '/help-center', icon: <CircleHelp size={16} /> },
+      ? { label: 'Help Center', href: `${basePrefix}/help-center`, icon: <CircleHelp size={16} /> }
+      : { label: 'Help Center', href: `${basePrefix}/help-center`, icon: <CircleHelp size={16} /> },
   );
   return items;
 }
@@ -234,9 +235,13 @@ function CustomSidebarInner({
   }, [userMenuOpen]);
 
   const currentPath = pathname.endsWith('/') && pathname !== '/' ? pathname.slice(0, -1) : pathname;
+  const isFederalPath = currentPath === '/f' || currentPath.startsWith('/f/');
+  const portalPrefix = isFederalPath ? '/f' : '/a';
+  const settingsHref = `${portalPrefix}/settings`;
+  const newProjectHref = isFederalPath ? '/f/dashboard' : '/a/project-intake';
 
   const matchesNavHref = (href: string): boolean => {
-    if (href === '/home') return currentPath === '/home';
+    if (href === '/a/home' || href === '/f/dashboard') return currentPath === href;
     return currentPath === href || currentPath.startsWith(`${href}/`);
   };
 
@@ -260,7 +265,7 @@ function CustomSidebarInner({
       icon: <GearIcon size={16} />,
       onClick: () => {
         setUserMenuOpen(false);
-        router.push('/settings');
+        router.push(settingsHref);
       },
     },
     {
@@ -316,7 +321,7 @@ function CustomSidebarInner({
         variant="secondary"
         size="md"
         className={`sidebar-nav-new-app${!isOpen ? " sidebar-nav-new-app-collapsed" : ""}`}
-        onClick={() => router.push('/project-intake')}
+        onClick={() => router.push(newProjectHref)}
       >
         <span className="sidebar-nav-plus" aria-hidden="true">+</span>
         <span className="sidebar-nav-new-app-text">New Project</span>
@@ -399,6 +404,8 @@ const CustomSidebar = (props: CustomSidebarProps) => <CustomSidebarInner {...pro
 export function WorkspaceShell({ role, userSub, organizationLabel, onSignOut, children }: WorkspaceShellProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const isFederalPortalPath = pathname === '/f' || pathname.startsWith('/f/');
+  const newProjectHref = isFederalPortalPath ? '/f/dashboard' : '/a/project-intake';
   const identity = resolveSidebarIdentity(role, userSub, organizationLabel);
   const displayName = identity.displayName;
   const resolvedOrganizationLabel = identity.organizationLabel;
@@ -520,7 +527,7 @@ export function WorkspaceShell({ role, userSub, organizationLabel, onSignOut, ch
                 variant="secondary"
                 size="md"
                 className="sidebar-nav-new-app w-full"
-                onClick={() => router.push('/project-intake')}
+                onClick={() => router.push(newProjectHref)}
               >
                 <span className="sidebar-nav-plus" aria-hidden="true">+</span>
                 <span className="sidebar-nav-new-app-text">New Project</span>

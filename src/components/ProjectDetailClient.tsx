@@ -852,7 +852,7 @@ export default function ProjectDetailClient({ projectId }: Props) {
 
           {/* ── Back link ── */}
           <div>
-            <Link href="/my-projects" className="inline-flex items-center gap-2 type-body-sm text-[var(--color-text-body)] hover:text-[var(--color-text)]">
+            <Link href="/a/my-projects" className="inline-flex items-center gap-2 type-body-sm text-[var(--color-text-body)] hover:text-[var(--color-text)]">
               <LucideIcon icon={MoveLeft} size={16} />
               My Projects
             </Link>

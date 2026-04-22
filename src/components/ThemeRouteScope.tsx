@@ -9,11 +9,13 @@ const PORTAL_THEME_STORAGE_KEY = 'permit.portal.theme';
 
 function isPortalRoute(pathname: string): boolean {
   // Keep the logged-out staff login page in the public (dark) theme.
-  if (pathname === '/staff') {
+  if (pathname === '/staff' || pathname === '/f/staff') {
     return false;
   }
 
   const portalPrefixes = [
+    '/a',
+    '/f',
     '/home',
     '/my-applications',
     '/my-tasks',
@@ -43,7 +45,11 @@ export function ThemeRouteScope() {
     const htmlElement = document.documentElement;
     const isLoggedIn = isTokenValid(getToken());
 
-    const isProjectIntake = pathname === '/project-intake' || pathname.startsWith('/project-intake/');
+    const isProjectIntake =
+      pathname === '/project-intake' ||
+      pathname.startsWith('/project-intake/') ||
+      pathname === '/a/project-intake' ||
+      pathname.startsWith('/a/project-intake/');
 
     // Logged-out project intake is forced to light mode.
     if (isProjectIntake && !isLoggedIn) {

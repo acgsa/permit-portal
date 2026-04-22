@@ -140,7 +140,7 @@ export default function HomePage() {
 
   useEffect(() => {
     if (user?.role === 'staff' || user?.role === 'admin') {
-      router.replace('/dashboard');
+      router.replace('/f/dashboard');
     }
   }, [user?.role, router]);
 
@@ -177,7 +177,7 @@ export default function HomePage() {
                   size="md"
                   className="px-[var(--space-lg)] font-semibold"
                   leadingIcon={<PlusIcon size={16} />}
-                  onClick={() => router.push('/project-intake')}
+                  onClick={() => router.push('/a/project-intake')}
                 >
                   <span>Start New Project</span>
                 </Button>
@@ -213,7 +213,7 @@ export default function HomePage() {
                         </p>
                       )}
                     </div>
-                    <Button variant="primary" size="sm" onClick={() => router.push('/project-intake')}>
+                    <Button variant="primary" size="sm" onClick={() => router.push('/a/project-intake')}>
                       Resume Draft
                     </Button>
                   </div>
@@ -245,7 +245,7 @@ export default function HomePage() {
                       <Button
                         variant="primary"
                         size="sm"
-                        onClick={() => router.push(`/projects/${project.id}`)}
+                        onClick={() => router.push(`/a/projects/${project.id}`)}
                       >
                         {task.status === 'in-progress' || task.status === 'overdue' ? 'Continue' : 'Start'}
                       </Button>
@@ -268,7 +268,7 @@ export default function HomePage() {
                   <span><span className="font-semibold" style={{ color: 'var(--color-error, #ef4444)' }}>{deniedProjects}</span> Denied</span>
                 </div>
               </div>
-              <Button variant="primary" size="sm" onClick={() => router.push('/my-projects')}>
+              <Button variant="primary" size="sm" onClick={() => router.push('/a/my-projects')}>
                 View All Projects
               </Button>
             </div>
@@ -290,7 +290,7 @@ export default function HomePage() {
                       <tr key={project.id}>
                         <td className="type-body-sm">
                           <Link
-                            href={`/projects/${project.id}`}
+                            href={`/a/projects/${project.id}`}
                             className="text-[var(--color-text-link)] hover:text-[var(--color-text-link-hover)] hover:underline focus:underline focus:outline-none"
                           >
                             {project.title}

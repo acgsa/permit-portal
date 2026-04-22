@@ -15,10 +15,10 @@ function getPostLoginPath(returnTo: string | null): string {
   }
 
   const token = getToken();
-  if (!token) return '/home';
+  if (!token) return '/a/home';
   const claims = getTokenClaims(token);
   const role = typeof claims.role === 'string' ? claims.role : 'applicant';
-  return role === 'staff' || role === 'admin' ? '/dashboard' : '/home';
+  return role === 'staff' || role === 'admin' ? '/f/dashboard' : '/a/home';
 }
 
 export default function LoginPage() {
@@ -124,7 +124,7 @@ function LoginPageContent() {
           <div className="text-center" style={{ marginTop: 'var(--space-2xl)' }}>
             <p className="type-body-sm" style={{ color: 'var(--color-text-body)' }}>
               Are you a staff member?{' '}
-              <Link href="/staff" className="font-semibold hover:text-white transition-colors" style={{ color: 'white' }}>
+              <Link href="/f/staff" className="font-semibold hover:text-white transition-colors" style={{ color: 'white' }}>
                 Access Federal Portal
               </Link>
             </p>

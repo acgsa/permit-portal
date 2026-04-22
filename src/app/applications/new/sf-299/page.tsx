@@ -244,7 +244,7 @@ function Sf299FormPageContent() {
           <PillButton variant="primary" size="lg" disabled={saving || !canSubmit} onClick={() => void saveDraft('submitted')}>
             Submit Application
           </PillButton>
-          <PillButton variant="outline" size="lg" onClick={() => router.push('/home')}>
+          <PillButton variant="outline" size="lg" onClick={() => router.push('/a/home')}>
             Back to Applicant Home
           </PillButton>
         </div>

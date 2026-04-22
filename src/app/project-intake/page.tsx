@@ -84,7 +84,7 @@ export default function ProjectIntakePage() {
       const result = await evaluateSynopsis(form as unknown as Record<string, unknown>);
       // Store synopsis and navigate to the results page
       window.localStorage.setItem(SYNOPSIS_KEY, JSON.stringify(result));
-      router.push('/project-intake/synopsis');
+      router.push('/a/project-intake/synopsis');
     } catch (err) {
       setSynopsisError(err instanceof Error ? err.message : 'Failed to evaluate project. Please try again.');
     } finally {
@@ -166,7 +166,7 @@ export default function ProjectIntakePage() {
                 const now = new Date().toISOString();
                 window.localStorage.setItem(INTAKE_DRAFT_KEY, JSON.stringify({ ...form, lastSavedAt: now }));
                 setLastSavedAt(now);
-                router.push(token ? '/home' : '/');
+                router.push(token ? '/a/home' : '/');
               }}>
                 Save & Exit
               </PillButton>

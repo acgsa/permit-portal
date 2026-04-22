@@ -362,7 +362,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (token && !isStaffUser) {
-      router.replace('/home');
+      router.replace('/a/home');
     }
   }, [token, isStaffUser, router]);
 
@@ -941,7 +941,7 @@ export default function DashboardPage() {
                         <Button
                           variant="primary"
                           size="sm"
-                          onClick={() => router.push('/staff/staff-manager')}
+                          onClick={() => router.push('/f/staff/staff-manager')}
                         >
                           Manage Staff
                         </Button>

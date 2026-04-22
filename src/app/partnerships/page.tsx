@@ -36,7 +36,7 @@ export default function PartnershipsPage() {
               <li>Operational onboarding for federal teams</li>
             </ul>
             <div className="mt-8 flex flex-wrap gap-4">
-              <Link href="/staff">
+              <Link href="/f/staff">
                 <PillButton variant="secondary" size="md">
                   Federal Employee Login
                 </PillButton>
