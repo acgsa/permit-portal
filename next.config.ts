@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
     unoptimized: isStaticDemoExport,
   },
   async redirects() {
+    if (isStaticDemoExport) return [];
     return [
       { source: '/home', destination: '/a/home', permanent: false },
       { source: '/my-projects', destination: '/a/my-projects', permanent: false },
