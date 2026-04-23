@@ -360,18 +360,8 @@ export default function DashboardPage() {
     QUICK_ASSIGN_ROWS.map((row) => row.assignee),
   );
 
-  useEffect(() => {
-    if (token && !isStaffUser) {
-      router.replace('/a/home');
-    }
-  }, [token, isStaffUser, router]);
-
-  if (token && !isStaffUser) {
-    return null;
-  }
-
   /* ── Public / logged-out view ───────────────────────────── */
-  if (!token) {
+  if (!token || !isStaffUser) {
     /* ── Derive dashboard data from project JSON + CE data ──── */
     const agg = getAggregateStats();
 
