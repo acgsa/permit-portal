@@ -94,11 +94,13 @@ export default function AdminControlsPage() {
                           : 'var(--turquoise-600)';
                     return (
                       <span className="inline-flex items-start gap-[var(--space-xs)] type-body-sm text-[var(--color-text)]">
-                        <span
-                          aria-hidden="true"
-                          className="inline-block h-2 w-2 shrink-0 rounded-full mt-[0.3em]"
-                          style={{ backgroundColor: roleDotColor }}
-                        />
+                        <span className="flex shrink-0 items-center" style={{ height: '1.4em' }}>
+                          <span
+                            aria-hidden="true"
+                            className="inline-block h-2 w-2 rounded-full"
+                            style={{ backgroundColor: roleDotColor }}
+                          />
+                        </span>
                         {roleValue?.label ?? ''}
                       </span>
                     );
