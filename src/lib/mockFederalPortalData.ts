@@ -26,7 +26,7 @@ export const STAFF_DEMO_USERS: ReadonlyArray<StaffProfile> = [
   {
     id: 'doug-smith',
     displayName: 'Doug Smith',
-    email: 'doug.smith@doi.gov',
+    email: 'doug.smith@domain.gov',
     role: 'admin',
     title: 'Secretary of the Interior',
     agency: 'Department of the Interior',
@@ -35,7 +35,7 @@ export const STAFF_DEMO_USERS: ReadonlyArray<StaffProfile> = [
   {
     id: 'sarah-jones',
     displayName: 'Sarah Jones',
-    email: 'sarah.jones@usbr.gov',
+    email: 'sarah.jones@domain.gov',
     role: 'staff',
     title: 'Regional Manager',
     agency: 'Bureau of Reclamation',
@@ -44,7 +44,7 @@ export const STAFF_DEMO_USERS: ReadonlyArray<StaffProfile> = [
   {
     id: 'karen-mitchell',
     displayName: 'Karen Mitchell',
-    email: 'k.mitchell@usbr.gov',
+    email: 'k.mitchell@domain.gov',
     role: 'staff',
     title: 'Realty Specialist',
     agency: 'Bureau of Reclamation',
@@ -53,7 +53,7 @@ export const STAFF_DEMO_USERS: ReadonlyArray<StaffProfile> = [
   {
     id: 'laura-bennett',
     displayName: 'Laura Bennett',
-    email: 'l.bennett@usbr.gov',
+    email: 'l.bennett@domain.gov',
     role: 'staff',
     title: 'Realty Specialist',
     agency: 'Bureau of Reclamation',
@@ -62,7 +62,7 @@ export const STAFF_DEMO_USERS: ReadonlyArray<StaffProfile> = [
   {
     id: 'robert-hayes',
     displayName: 'Robert Hayes',
-    email: 'r.hayes@usbr.gov',
+    email: 'r.hayes@domain.gov',
     role: 'staff',
     title: 'Deputy Field Office Manager',
     agency: 'Bureau of Reclamation',
@@ -71,7 +71,7 @@ export const STAFF_DEMO_USERS: ReadonlyArray<StaffProfile> = [
   {
     id: 'maria-santos',
     displayName: 'Maria Santos',
-    email: 'm.santos@usbr.gov',
+    email: 'm.santos@domain.gov',
     role: 'staff',
     title: 'Realty Specialist',
     agency: 'Bureau of Reclamation',
@@ -80,7 +80,7 @@ export const STAFF_DEMO_USERS: ReadonlyArray<StaffProfile> = [
   {
     id: 'tanya-brooks',
     displayName: 'Tanya Brooks',
-    email: 't.brooks@usbr.gov',
+    email: 't.brooks@domain.gov',
     role: 'staff',
     title: 'Realty Specialist',
     agency: 'Bureau of Reclamation',
@@ -89,7 +89,7 @@ export const STAFF_DEMO_USERS: ReadonlyArray<StaffProfile> = [
   {
     id: 'derek-walsh',
     displayName: 'Derek Walsh',
-    email: 'd.walsh@usbr.gov',
+    email: 'd.walsh@domain.gov',
     role: 'staff',
     title: 'Realty Specialist',
     agency: 'Bureau of Reclamation',
@@ -98,7 +98,7 @@ export const STAFF_DEMO_USERS: ReadonlyArray<StaffProfile> = [
   {
     id: 'brian-foster',
     displayName: 'Brian Foster',
-    email: 'b.foster@usbr.gov',
+    email: 'b.foster@domain.gov',
     role: 'staff',
     title: 'Realty Specialist',
     agency: 'Bureau of Reclamation',
