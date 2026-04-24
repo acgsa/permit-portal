@@ -1,1 +1,1 @@
-export { default } from '@/app/my-tasks/page';
+export { default } from '@/app/staff/my-tasks/page';

@@ -10,7 +10,7 @@ import { WorkspaceShell } from '@/components/WorkspaceShell';
 import { ImageCardDetail } from '@/components/ImageCardDetail';
 import { Button } from 'usds';
 import { useAuth } from '@/contexts/AuthContext';
-import { getPermitTypeDashboardStats, getPermitTypeCEStats, getAggregateStats } from '@/lib/federalData';
+import { getAggregateStats } from '@/lib/federalData';
 
 const PERMIT_TYPE_ROWS = [
   {
@@ -108,8 +108,6 @@ export default function PermitTypesPage() {
         <section>
           <div className="grid grid-cols-1 gap-[var(--space-xl)] md:grid-cols-2" style={{ marginTop: 'var(--space-lg)' }}>
             {PERMIT_TYPE_ROWS.map((row) => {
-              const dash = getPermitTypeDashboardStats(row.slug);
-              const ce = getPermitTypeCEStats(row.slug);
               return (
               <ImageCardDetail
                 key={row.name}
@@ -120,8 +118,6 @@ export default function PermitTypesPage() {
                 agencies={row.agencies}
                 examples={row.examples}
                 reviews={parseList(row.reviews)}
-                dashboardProjects={dash.projectCount > 0 ? dash.projectCount : undefined}
-                categoricalExclusions={ce.totalCEs > 0 ? ce.totalCEs : undefined}
               />
               );
             })}
@@ -129,8 +125,8 @@ export default function PermitTypesPage() {
         </section>
 
         <section style={{ borderTop: '1px solid var(--color-border)', paddingTop: 'var(--space-lg)' }}>
-          <h2 className="type-heading-h6" style={{ marginBottom: 'var(--space-md)' }}>Federal Sources Referenced For Placeholder Content</h2>
-          <ul className="mt-[var(--space-md)] grid gap-[var(--space-sm)] md:grid-cols-2">
+          <h2 className="type-heading-h6" style={{ marginBottom: 'var(--space-md)' }}>Federal Sources Referenced</h2>
+          <ul className="mt-[var(--space-md)] flex flex-col gap-[var(--space-sm)]">
             <li>
               <a href="https://www.ecfr.gov/current/title-40/chapter-V/part-1500" target="_blank" rel="noreferrer" className="type-body-sm text-blue-600 dark:text-blue-400 hover:underline">
                 CEQ NEPA Regulations (40 CFR 1500-1508)
@@ -154,7 +150,7 @@ export default function PermitTypesPage() {
           </ul>
         </section>
 
-        <div className="flex flex-wrap gap-[var(--space-sm)]">
+        <div className="flex flex-wrap gap-[var(--space-sm)]" style={{ paddingTop: 'var(--space-2xl)', paddingBottom: 'var(--space-2xl)' }}>
           <Link href="/regulations">
             <Button variant="primary" size="sm">Review Regulations</Button>
           </Link>

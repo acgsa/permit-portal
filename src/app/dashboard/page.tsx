@@ -782,7 +782,7 @@ export default function DashboardPage() {
                   <p className="m-0 type-heading-h1 text-[var(--color-error)]">3,235</p>
                 </div>
                 <div className="flex flex-col items-end gap-[var(--space-2xs)] text-[var(--color-error)] self-end">
-                  <ArrowUp size={38} aria-hidden="true" />
+                  <ArrowUp size={56} aria-hidden="true" />
                   <p className="m-0 type-body-sm">MoM +6.2%</p>
                 </div>
               </div>
@@ -823,7 +823,7 @@ export default function DashboardPage() {
                   </div>
                   <div className="space-y-[var(--space-sm)] sm:pl-[var(--space-sm)]">
                     <p className="type-heading-h1 text-[var(--color-text)]">32</p>
-                    <p className="type-body-sm text-[var(--color-text-body)]">Average Days in Processing Time</p>
+                    <p className="type-body-sm text-[var(--color-text-body)]">Avg Days Processing</p>
                   </div>
                   <div className="space-y-[var(--space-sm)] sm:pr-[var(--space-sm)]">
                     <p className="type-heading-h1 text-[var(--color-text)]">87%</p>

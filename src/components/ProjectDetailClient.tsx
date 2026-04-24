@@ -2,7 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowRight, Check, Circle, Clock3, Download, ExternalLink, Eye, FileText, MoveLeft } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowRight, Check, ChevronDown, ChevronUp, Circle, Clock3, Download, ExternalLink, Eye, FileText, MoveLeft } from 'lucide-react';
 import { Badge, type BadgeColor, Button, Progress, Tabs } from 'usds';
 import { WorkspaceShell } from '@/components/WorkspaceShell';
 import { LucideIcon } from '@/components/LucideIcon';
@@ -336,6 +337,20 @@ const DETAIL_FIELDS: { label: string; value: string }[] = [
   { label: 'Legal Authority', value: other.legalAuthority },
 ];
 
+/* ── SF-299 submitted data (expandable) ── */
+const SF299_SUBMITTED_FIELDS: { label: string; value: string }[] = [
+  { label: 'Project Title', value: other.applicantOrganization ? `${other.applicantOrganization} — Right-of-Way Application` : PROJECT.title },
+  { label: 'Applicant Organization', value: other.applicantOrganization },
+  { label: 'Contact Name', value: other.contactName },
+  { label: 'Contact Email', value: other.contactEmail },
+  { label: 'Project Location', value: PROJECT.location_text ?? '—' },
+  { label: 'State', value: other.stateCode },
+  { label: 'Corridor Length (miles)', value: other.corridorLengthMiles },
+  { label: 'Legal Authority', value: other.legalAuthority },
+  { label: 'Lead Agency', value: PROJECT.lead_agency ?? '—' },
+  { label: 'Region', value: 'Rocky Mountain' },
+];
+
 /* ------------------------------------------------------------------ */
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
@@ -343,6 +358,7 @@ const DETAIL_FIELDS: { label: string; value: string }[] = [
 export default function ProjectDetailClient({ projectId }: Props) {
   const { user, token, logout } = useAuth();
   const router = useRouter();
+  const [sf299Expanded, setSf299Expanded] = useState(false);
 
   if (!token) return null;
 
@@ -517,53 +533,86 @@ export default function ProjectDetailClient({ projectId }: Props) {
         const state = deriveFormState(form);
         const meta = getFormStatusMeta(form, state);
         const isConditional = form.agency_id === 'NEPA-EA';
+        const isSF299 = form.agency_id === 'SF-299';
         const displayMeta = isConditional ? { label: 'CONDITIONAL', badgeColor: 'steel' as BadgeColor } : meta;
         return (
           <div key={form.id}>
             <section
               className="overflow-hidden rounded-[var(--radius-sm)] border border-[var(--color-border)]"
-              style={{ background: 'var(--color-bg-subtle, var(--color-bg))', padding: 'var(--space-md, 16px)', opacity: isConditional ? 0.5 : 1 }}
+              style={{ background: 'var(--color-bg-subtle, var(--color-bg))', opacity: isConditional ? 0.5 : 1 }}
             >
-              <div className="flex items-start" style={{ gap: 'var(--space-sm, 8px)' }}>
-                {/* Status indicator icon */}
-                <span
-                  className="flex shrink-0 items-center justify-center"
-                  style={{
-                    width: 24,
-                    height: 24,
-                    marginTop: 1,
-                    color: state === 'complete'
-                      ? 'var(--color-text)'
-                      : state === 'in-progress'
+              <div style={{ padding: 'var(--space-md, 16px)' }}>
+                <div className="flex items-start" style={{ gap: 'var(--space-sm, 8px)' }}>
+                  {/* Status indicator icon */}
+                  <span
+                    className="flex shrink-0 items-center justify-center"
+                    style={{
+                      width: 24,
+                      height: 24,
+                      marginTop: 1,
+                      color: state === 'complete'
                         ? 'var(--color-text)'
-                        : 'var(--color-text-disabled)',
-                  }}
-                  aria-hidden="true"
-                >
-                  {state === 'complete'
-                    ? <LucideIcon icon={Check} size={18} />
-                    : state === 'in-progress'
-                      ? <LucideIcon icon={Clock3} size={16} />
-                      : <LucideIcon icon={Circle} size={14} />}
-                </span>
-                {/* Content */}
-                <div className="flex flex-1 flex-col" style={{ gap: 'var(--space-3xs, 2px)' }}>
-                  <div className="flex items-center justify-between">
-                    <p className="type-body-sm font-semibold text-[var(--color-text)]">{form.description}</p>
-                    <Badge color={displayMeta.badgeColor} size="sm">{displayMeta.label}</Badge>
-                  </div>
-                  <p className="type-body-xs text-[var(--color-text-disabled)]">
-                    {form.type} · {form.lead_agency}
-                  </p>
-                  <div className="flex items-center type-body-xs text-[var(--color-text-disabled)]" style={{ gap: 'var(--space-md, 16px)', marginTop: 'var(--space-3xs, 2px)' }}>
-                    {form.start_date && (
-                      <span>Started: {formatDate(form.start_date)}</span>
-                    )}
-                    {form.complete_date && (
-                      <span>{form.type === 'Permit Application' ? 'Submitted' : 'Approved'}: {formatDate(form.complete_date)}</span>
-                    )}
-                    {!form.start_date && !form.complete_date && (
-                      <span>Not yet scheduled</span>
+                        : state === 'in-progress'
+                          ? 'var(--color-text)'
+                          : 'var(--color-text-disabled)',
+                    }}
+                    aria-hidden="true"
+                  >
+                    {state === 'complete'
+                      ? <LucideIcon icon={Check} size={18} />
+                      : state === 'in-progress'
+                        ? <LucideIcon icon={Clock3} size={16} />
+                        : <LucideIcon icon={Circle} size={14} />}
+                  </span>
+                  {/* Content */}
+                  <div className="flex flex-1 flex-col" style={{ gap: 'var(--space-3xs, 2px)' }}>
+                    <div className="flex items-center justify-between">
+                      <p className="type-body-sm font-semibold text-[var(--color-text)]">{form.description}</p>
+                      <Badge color={displayMeta.badgeColor} size="sm">{displayMeta.label}</Badge>
+                    </div>
+                    <p className="type-body-xs text-[var(--color-text-disabled)]">
+                      {form.type} · {form.lead_agency}
+                    </p>
+                    <div className="flex items-center type-body-xs text-[var(--color-text-disabled)]" style={{ gap: 'var(--space-md, 16px)', marginTop: 'var(--space-3xs, 2px)' }}>
+                      {form.start_date && (
+                        <span>Started: {formatDate(form.start_date)}</span>
+                      )}
+                      {form.complete_date && (
+                        <span>{form.type === 'Permit Application' ? 'Submitted' : 'Approved'}: {formatDate(form.complete_date)}</span>
+                      )}
+                      {!form.start_date && !form.complete_date && (
+                        <span>Not yet scheduled</span>
+                      )}
+                    </div>
+                    {isSF299 && (
+                      <div style={{ marginTop: 'var(--space-sm, 8px)' }}>
+                        <button
+                          type="button"
+                          onClick={() => setSf299Expanded((v) => !v)}
+                          className="inline-flex items-center type-body-xs font-semibold text-[var(--color-text-body)] hover:text-[var(--color-text)]"
+                          style={{ gap: 'var(--space-2xs, 4px)', background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+                        >
+                          <LucideIcon icon={sf299Expanded ? ChevronUp : ChevronDown} size={14} />
+                          {sf299Expanded ? 'Hide submitted data' : 'View submitted data'}
+                        </button>
+                        {sf299Expanded && (
+                          <div
+                            className="grid grid-cols-1 md:grid-cols-2"
+                            style={{ marginTop: 'var(--space-sm, 8px)', gap: 'var(--space-sm, 8px) var(--space-lg, 24px)', padding: 'var(--space-md, 16px)', background: 'var(--color-bg)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border)' }}
+                          >
+                            {SF299_SUBMITTED_FIELDS.map((f) => (
+                              <div key={f.label} className="flex flex-col" style={{ gap: 'var(--space-3xs, 2px)' }}>
+                                <dt className="type-body-xs text-[var(--color-text-disabled)]">{f.label}</dt>
+                                <dd className="type-body-sm text-[var(--color-text)]">{f.value || '—'}</dd>
+                              </div>
+                            ))}
+                            <div className="md:col-span-2 flex flex-col" style={{ gap: 'var(--space-3xs, 2px)' }}>
+                              <dt className="type-body-xs text-[var(--color-text-disabled)]">Project Description</dt>
+                              <dd className="type-body-sm text-[var(--color-text)]" style={{ lineHeight: 1.6 }}>{PROJECT.description}</dd>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>

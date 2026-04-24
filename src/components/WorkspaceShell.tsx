@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Menu, DrawerButton, Button, Avatar } from 'usds';
-import { Building2, CircleHelp, FileText, Home, Landmark, ListTodo, LogOut, MessageSquare, Moon, Network, Sun, Wrench } from 'lucide-react';
+import { Building2, CircleHelp, CreditCard, FileText, FolderOpen, Home, Landmark, ListTodo, LogOut, MessageSquare, Moon, Network, Sun, Wrench } from 'lucide-react';
 import { GearIcon, MenuIcon, XMarkIcon } from './Icons';
 import ceqSeal from '@/logo/US-CouncilOnEnvironmentalQuality-Seal.svg';
 import { resolveStaffProfile } from '@/lib/mockFederalPortalData';
@@ -46,6 +46,8 @@ function getPrimaryNavItems(role?: string, userSub?: string): NavItem[] {
   if (role === 'admin') {
     return [
       { label: 'Dashboard', href: '/f/dashboard', icon: <Home size={16} /> },
+      { label: 'Projects', href: '/f/projects', icon: <FolderOpen size={16} /> },
+      { label: 'Payments', href: '/f/staff/payments', icon: <CreditCard size={16} /> },
       { label: 'Workflows', href: '/f/staff/workflow-manager', icon: <Network size={16} /> },
       { label: 'Admin Controls', href: '/f/staff/admin-controls', icon: <GearIcon size={16} /> },
     ];
@@ -56,10 +58,11 @@ function getPrimaryNavItems(role?: string, userSub?: string): NavItem[] {
     const isRegionalManager = profile.title.toLowerCase().includes('regional manager');
     const staffItems: NavItem[] = [
       { label: 'Dashboard', href: '/f/dashboard', icon: <Home size={16} /> },
-      { label: 'Workflows', href: '/f/staff/workflow-manager', icon: <Network size={16} /> },
+      { label: 'Projects', href: '/f/projects', icon: <FolderOpen size={16} /> },
       ...(isRegionalManager ? [{ label: 'Staff Manager', href: '/f/staff/staff-manager', icon: <Building2 size={16} /> }] : []),
       { label: 'My Tasks', href: '/f/my-tasks', icon: <ListTodo size={16} /> },
       { label: 'Messages', href: '/f/messages', icon: <MessageSquare size={16} /> },
+      { label: 'Workflows', href: '/f/staff/workflow-manager', icon: <Network size={16} /> },
     ];
     return staffItems;
   }

@@ -377,11 +377,9 @@ function WorkflowManagerContent() {
         router.push('/');
       }}
     >
-      <PortalPageScaffold
-        eyebrow="Federal Staff Portal"
-        title="Workflow Manager"
-        subtitle="Design the permit lifecycle from submission through reviews, payment checks, and final approvals. Custom BPMN-style nodes use USDS tokens, and node forms are configured with RJSF schemas."
-      >
+      <PortalPageScaffold title="">
+        <div className="w-full flex flex-col gap-[var(--space-lg)]">
+        <h6 className="type-heading-h6">Workflow Manager</h6>
         <section className="grid grid-cols-1 gap-[var(--space-md)] xl:grid-cols-[1.9fr_1fr]">
           <Card>
             <div className="flex flex-col gap-[var(--space-md)]">
@@ -515,6 +513,7 @@ function WorkflowManagerContent() {
             )}
           </div>
         </Card>
+        </div>
       </PortalPageScaffold>
     </WorkspaceShell>
   );

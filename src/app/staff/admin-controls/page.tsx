@@ -43,11 +43,9 @@ export default function AdminControlsPage() {
         router.push('/');
       }}
     >
-      <PortalPageScaffold
-        eyebrow="Federal Staff Portal"
-        title="Admin Controls"
-        subtitle="Manage role-based visibility and who can view federal application queues."
-      >
+      <PortalPageScaffold title="">
+        <div className="w-full flex flex-col gap-[var(--space-lg)]">
+        <h6 className="type-heading-h6">Admin Controls</h6>
 
         <section className="grid gap-[var(--space-md)] md:grid-cols-3">
           <Card>
@@ -131,6 +129,7 @@ export default function AdminControlsPage() {
             />
           </div>
         </section>
+        </div>
       </PortalPageScaffold>
     </WorkspaceShell>
   );
